@@ -6,6 +6,8 @@ from game import Game
 from square import Square
 from move import Move
 
+#I made a comment for fun.
+
 class Main:
     def __init__(self):
         pygame.init()
