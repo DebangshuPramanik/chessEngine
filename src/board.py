@@ -7,6 +7,7 @@ from square import Square
 from piece import *
 from move import Move
 from sound import Sound
+#test
 
 class Board:
 
@@ -475,5 +476,5 @@ class Board:
         # queen
         self.squares[row_other][3] = Square(row_other, 3, Queen(color))
 
-        # king
-        self.squares[row_other][4] = Square(row_other, 4, King(color))
+        #Adding the kings
+            self.squares[row_other][4] = Square(row_other, 4, King(color))
