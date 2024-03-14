@@ -7,6 +7,7 @@ from square import Square
 from piece import *
 from move import Move
 from sound import Sound
+#test
 
 class Board:
     def __init__(self):
