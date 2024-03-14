@@ -61,7 +61,7 @@ class Board:
 
     def valid_move(self, piece, move):
         return move in piece.moves
-    
+
     def check_promotion(self, piece, final):
         if (final.row == 0  and piece.color == 'white') or (final.row == 7 and piece.color == 'black'):
             #The tutorial showed only how to get a queen promotion using the uncommented version of the line below. I however, wanted all promotion options
@@ -89,10 +89,10 @@ class Board:
 
     def castling(self, initial, final):
         return abs(initial.col - final.col) == 2
-    
+
     def en_passant(self, initial, final):
         return abs(initial.row - final.row) == 2
-    
+
     def set_true_en_passant(self, piece):
         if not isinstance(piece, Pawn):
             return
@@ -150,7 +150,7 @@ class Board:
                    else: break
                #Not in range
                else: break
-          
+
            #taking diagonally (diagonal moves)
            possible_move_row = row + piece.dir
            possible_move_cols = [col -1, col +1]
@@ -215,8 +215,8 @@ class Board:
                             else:
                                 # append new move
                                 piece.add_move(move)
-                           
-                            
+
+
         def knight_moves():
              # At the center of the board, the knight has 8 possible moves...
             possible_moves = [
@@ -285,10 +285,10 @@ class Board:
                         #has team piece
                         elif self.squares[possible_move_row][possible_move_col].has_team_piece(piece.color):
                             break  
- 
+
                     #Not in range
                     else: break
-                    
+
                     #Incrementing increments
                     possible_move_row += row_incr
                     possible_move_col += col_incr
@@ -440,6 +440,6 @@ class Board:
 
         #Adding the queens
             self.squares[row_other][3] = Square(row_other, 3, Queen(color))
-        
+
         #Adding the kings
             self.squares[row_other][4] = Square(row_other, 4, King(color))
