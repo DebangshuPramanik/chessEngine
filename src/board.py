@@ -477,4 +477,4 @@ class Board:
         self.squares[row_other][3] = Square(row_other, 3, Queen(color))
 
         #Adding the kings
-            self.squares[row_other][4] = Square(row_other, 4, King(color))
+        self.squares[row_other][4] = Square(row_other, 4, King(color))
