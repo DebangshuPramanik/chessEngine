@@ -330,10 +330,9 @@ class Board:
                         move = Move(initial, final)
                         # check potencial checks
                         if bool:
-                            if not self.in_check(piece, move):
+                            if (not self.in_check(piece, move)) and final.isEmpty_or_rival(piece.color):
                                 # append new move
                                 piece.add_move(move)
-                            else: break
                         else:
                             # append new move
                             piece.add_move(move)
