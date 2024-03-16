@@ -43,7 +43,7 @@ class Board:
                         os.path.join('assets/sounds/capture.wav'))
                     sound.play()    
             
-             else:
+            else:
                 #pawn promotion
                 if not testing:
                     assert surface != None
