@@ -13,6 +13,11 @@ class Config:
         self.font = pygame.font.SysFont('monospace', 18, True)
         self.move_sound = Sound(os.path.join('assets/sounds/move.wav'))
         self.capture_sound = Sound(os.path.join('assets/sounds/capture.wav'))
+        self.check_sound = Sound(os.path.join('assets/sounds/check.wav'))
+        self.castling_sound = Sound(os.path.join('assets/sounds/castle.wav'))
+        self.end_game_sound = Sound(os.path.join('assets/sounds/game-end.wav'))
+        self.notify_sound = Sound(os.path.join('assets/sounds/notify.wav'))
+        self.promotion_sound = Sound(os.path.join('assets/sounds/promote.wav'))
 
     def change_theme(self):
         self.idx +=1
