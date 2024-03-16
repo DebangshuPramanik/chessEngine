@@ -15,20 +15,30 @@ class Main:
         pygame.display.set_caption('Chess')
         self.game = Game()
 
-    def check_game_over(self, color):
+    def check_game_over(self):
+        game = self.game
+        total_moves = []
+        total_moves.append(self.get_total_moves('white'))
+        print(total_moves)
+        if len(total_moves) == 0:
+            game.display_winner('black')   
+            game.set_game_over(True)
+        total_moves = []
+        total_moves.append(self.get_total_moves('black'))
+        print(total_moves)
+        if len(total_moves) == 0:
+            game.display_winner('white')
+            game.set_game_over(True)
+
+
+    def get_total_moves(self, color):
         total_moves = []
         for row in range(ROWS):
             for col in range(COLS):
-                current_square = self.game.board.squares[row][col]
-                if current_square.has_piece():
+                if self.game.board.squares[row][col].has_piece() and self.game.board.squares[row][col].piece.color == color:
                     piece = self.game.board.squares[row][col].piece
-                    if piece.color == color:
-                        total_moves.append(piece.moves)
-        if len(total_moves) == 0:
-            self.set_game_over(True)
-            self.get_game_over()
-            self.display_winner(color)
-            self.end_the_game()
+                    total_moves.append(piece.moves)
+        return total_moves
 
     def mainloop(self):
         screen = self.screen
@@ -60,9 +70,7 @@ class Main:
 
                         #Valid piece, color, making sure you can only play on your turn
                         if piece.color == game.next_player:
-                            self.check_game_over(piece.color)
-                            if game.get_game_over():
-                                game.set_game_over(True)
+                            self.check_game_over()
                             board.calc_moves(piece, clicked_row, clicked_col, bool = True)
                             dragger.save_initial(event.pos)
                             dragger.drag_piece(piece)
@@ -115,10 +123,7 @@ class Main:
                             game.show_bg(screen)
                             game.show_last_move(screen)
                             game.show_pieces(screen)
-
-                            #check game over
-                            self.check_game_over(piece.color)
-
+                            
                             #next turn...
                             game.next_turn()
 

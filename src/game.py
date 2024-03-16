@@ -130,9 +130,6 @@ class Game:
         self.over = boolean
 
     def dispay_winner(self, color):
-        if color == 'white':
-            self.winner = 'black'
-        else:
-            self.winner = 'white' 
+        self.winner = color
         print(f'{self.winner} has won the game')
 
