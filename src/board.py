@@ -7,6 +7,7 @@ from square import Square
 from piece import *
 from move import Move
 from sound import Sound
+
 #test
 
 class Board:
@@ -50,9 +51,11 @@ class Board:
         # king castling
         if isinstance(piece, King):
             if self.castling(initial, final) and not testing:
+                castling_sound = Sound(os.path.join('assets/sounds/castle.wav'))
                 diff = final.col - initial.col
                 rook = piece.left_rook if (diff < 0) else piece.right_rook
                 self.move(rook, rook.moves[-1])
+                castling_sound.play()
 
         # move
         piece.moved = True
@@ -103,6 +106,8 @@ class Board:
                                 selected_piece = choices[3]
 
             self.squares[final.row][final.col].piece = selected_piece
+            promotion_sound = Sound(os.path.join('assets/sounds/promote.wav'))
+            promotion_sound.play()
 
     def castling(self, initial, final):
         return abs(initial.col - final.col) == 2
@@ -305,10 +310,11 @@ class Board:
                                 if not self.in_check(piece, move):
                                     # append new move
                                     piece.add_move(move)
+                                    break
                             else:
                                 # append new move
                                 piece.add_move(move)
-                            break
+                                break
 
                         # has team piece = break
                         elif self.squares[possible_move_row][possible_move_col].has_team_piece(piece.color):
