@@ -62,7 +62,7 @@ class Main:
                         if piece.color == game.next_player:
                             self.check_game_over(piece.color)
                             if game.get_game_over():
-                                break
+                                game.set_game_over(True)
                             board.calc_moves(piece, clicked_row, clicked_col, bool = True)
                             dragger.save_initial(event.pos)
                             dragger.drag_piece(piece)
