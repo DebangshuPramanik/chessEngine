@@ -19,7 +19,7 @@ class Board:
         self._add_pieces('white')
         self._add_pieces('black')
 
-    def move(self, piece, move, surface=None, testing=False):
+    def move(self, piece, move, screen=None, testing=False):
         initial = move.initial
         final = move.final
 
@@ -41,13 +41,12 @@ class Board:
                 if not testing:
                     sound = Sound(
                         os.path.join('assets/sounds/capture.wav'))
-                    sound.play()    
-            
+                    sound.play()
             else:
                 #pawn promotion
                 if not testing:
-                    assert surface != None
-                    self.check_promotion(piece, final, surface)
+                    assert screen != None
+                    self.check_promotion(piece, final, screen)
 
         # king castling
         if isinstance(piece, King):
@@ -82,16 +81,29 @@ class Board:
             selected_piece = None
 
             while selected_piece not in choices:
+                it = 0;
+                for choice_piece in choices:
+                    choice_piece.set_texture(size=80)
+                    img = pygame.image.load(choice_piece.texture)
+                    img_center = (8 + it % 2) * SQSIZE + SQSIZE //2, (it//2) * SQSIZE + SQSIZE // 2
+                    piece.texture_rect = img.get_rect(center = img_center)
+                    surface.blit(img, piece.texture_rect)
+                    #print(img)
+                    it += 1
+                pygame.display.update()
                 for event in pygame.event.get():
-                    if event.type == pygame.KEYDOWN:
-                        if event.key == pygame.K_k:
-                            selected_piece = k
-                        elif event.key == pygame.K_b:
-                            selected_piece = b
-                        elif event.key == pygame.K_r:
-                            selected_piece = r
-                        elif event.key == pygame.K_q:
-                            selected_piece = q
+                    if event.type == pygame.MOUSEBUTTONUP:
+                        x, y = pygame.mouse.get_pos()
+                        if (8 * SQSIZE) <= x <= (9 * SQSIZE):
+                            if 0 <= y <= SQSIZE:
+                                selected_piece = choices[0]
+                            elif SQSIZE <= y <= SQSIZE * 2:
+                                selected_piece = choices[2]
+                        elif 9 * SQSIZE <= x <= (10 * SQSIZE):
+                            if 0 <= y <= SQSIZE:
+                                selected_piece = choices[1]
+                            elif SQSIZE <= y <= SQSIZE * 2:
+                                selected_piece = choices[3]
 
             self.squares[final.row][final.col].piece = selected_piece
             promotion_sound = Sound(os.path.join('assets/sounds/promote.wav'))
