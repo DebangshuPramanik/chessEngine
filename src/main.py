@@ -104,7 +104,7 @@ class Main:
                         if board.valid_move(dragger.piece, move):
                             #Normal Capture.......
                             captured = board.squares[released_row][released_col].has_piece()
-                            board.move(dragger.piece, move)
+                            board.move(dragger.piece, move, screen)
 
                             board.set_true_en_passant(dragger.piece)
 
