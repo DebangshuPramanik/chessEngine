@@ -17,9 +17,10 @@ class Board:
         self._add_pieces('white')
         self._add_pieces('black')
 
-    def move(self, piece, move, testing=False):
+    def move(self, piece, move, surface=None, testing=False,):
          initial = move.initial
          final = move.final
+
 
          #En-passant boolean
          en_passant_empty = self.squares[final.row][final.col].isEmpty() 
@@ -42,7 +43,9 @@ class Board:
                 piece.en_passant = True
              else:
                 #pawn promotion
-                self.check_promotion(piece, final)
+                if not testing:
+                    assert surface != None
+                    self.check_promotion(piece, final, surface)
 
          #King castling
          if isinstance(piece, King):
@@ -63,7 +66,7 @@ class Board:
     def valid_move(self, piece, move):
         return move in piece.moves
 
-    def check_promotion(self, piece, final):
+    def check_promotion(self, piece, final, surface):
         if (final.row == 0  and piece.color == 'white') or (final.row == 7 and piece.color == 'black'):
             #The tutorial showed only how to get a queen promotion using the uncommented version of the line below. I however, wanted all promotion options
             #self.squares[final.row][final.col].piece = Queen(piece.color)
