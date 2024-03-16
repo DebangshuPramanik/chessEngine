@@ -23,7 +23,6 @@ class Board:
         initial = move.initial
         final = move.final
 
-
         #En-passant boolean
         en_passant_empty = self.squares[final.row][final.col].isEmpty()
 
