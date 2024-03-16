@@ -44,6 +44,8 @@ class Game:
                     lbl_pos = (col*SQSIZE + SQSIZE - 20, HEIGHT - 20)
                     #blit
                     surface.blit(lbl, lbl_pos)
+        new_rect = (800, 0, 200, 800)
+        pygame.draw.rect(surface, (255, 255, 255), new_rect)
 
     def show_pieces(self, surface):
         for row in range(ROWS):
@@ -101,7 +103,11 @@ class Game:
         self.next_player = 'white' if self.next_player == 'black' else 'black'
 
     def set_hover(self, row, col):
-        self.hovered_sqr = self.board.squares[row][col]
+        if row in range(0,8) and col in range(0, 8):
+            self.hovered_sqr = self.board.squares[row][col]
+        else:
+            self.hovered_sqr = None
+
 
     def change_theme(self):
         self.config.change_theme()

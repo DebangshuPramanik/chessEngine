@@ -77,6 +77,10 @@ class Main:
                         released_row = dragger.mouseY//SQSIZE
                         released_col = dragger.mouseX//SQSIZE
 
+                        if not (released_col in range(0,8) and released_col in range(0, 8)):
+                            dragger.undrag_piece(piece)
+                            continue
+
                         #Create possible move. 
                         initial = Square(dragger.initial_row, dragger.initial_col)
                         final = Square(released_row, released_col)
