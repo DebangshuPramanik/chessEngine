@@ -15,13 +15,28 @@ class Main:
         pygame.display.set_caption('Chess')
         self.game = Game()
 
+    def check_game_over(self, color):
+        total_moves = []
+        for row in range(ROWS):
+            for col in range(COLS):
+                current_square = self.game.board.squares[row][col]
+                if current_square.has_piece():
+                    piece = self.game.board.squares[row][col].piece
+                    if piece.color == color:
+                        total_moves.append(piece.moves)
+        if len(total_moves) == 0:
+            self.set_game_over(True)
+            self.get_game_over()
+            self.display_winner(color)
+            self.end_the_game()
+
     def mainloop(self):
         screen = self.screen
         game = self.game
         dragger = game.dragger
         board = game.board
 
-        while True:
+        while game.over == False:
             #Show methods
             game.show_bg(screen)     
             game.show_last_move(screen)
@@ -45,6 +60,9 @@ class Main:
 
                         #Valid piece, color, making sure you can only play on your turn
                         if piece.color == game.next_player:
+                            self.check_game_over(piece.color)
+                            if game.get_game_over():
+                                break
                             board.calc_moves(piece, clicked_row, clicked_col, bool = True)
                             dragger.save_initial(event.pos)
                             dragger.drag_piece(piece)
@@ -97,6 +115,10 @@ class Main:
                             game.show_bg(screen)
                             game.show_last_move(screen)
                             game.show_pieces(screen)
+
+                            #check game over
+                            self.check_game_over(piece.color)
+
                             #next turn...
                             game.next_turn()
 
@@ -114,9 +136,9 @@ class Main:
 
                 #Quit Application
                 elif event.type == pygame.QUIT:
-                    pygame.quit()
-                    sys.exit()
+                    game.end_the_game()
             pygame.display.update()
+        game.end_the_game()
 
 main = Main()
 main.mainloop()

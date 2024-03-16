@@ -1,4 +1,5 @@
 import pygame
+import sys
 
 from board import Board
 from const import *
@@ -13,6 +14,8 @@ class Game:
         self.next_player = 'white'
         self.hovered_sqr = None
         self.config = Config()
+        self.over = False
+        self.winner = None
 
         #Show methods (background and pieces respectively)
     def show_bg(self, surface):
@@ -20,6 +23,7 @@ class Game:
 
         for row in range (ROWS):
             for col in range (COLS):
+                #Color
                 color = theme.bg.light if (row + col) % 2 == 0 else theme.bg.dark
                 #Rect
                 rect = (col * SQSIZE, row * SQSIZE, SQSIZE, SQSIZE)
@@ -114,3 +118,21 @@ class Game:
 
     def reset(self):
         self.__init__()
+
+    def end_the_game(self):
+        pygame.quit()
+        sys.exit()
+
+    def get_game_over(self):
+        return self.over
+    
+    def set_game_over(self, boolean):
+        self.over = boolean
+
+    def dispay_winner(self, color):
+        if color == 'white':
+            self.winner = 'black'
+        else:
+            self.winner = 'white' 
+        print(f'{self.winner} has won the game')
+
