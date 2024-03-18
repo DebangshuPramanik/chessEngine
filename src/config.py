@@ -4,29 +4,58 @@ import os
 from sound import Sound
 from theme import Theme
 
+
 class Config:
     def __init__(self):
         self.themes = []
         self._add_themes()
         self.idx = 0
         self.theme = self.themes[self.idx]
-        self.font = pygame.font.SysFont('monospace', 18, True)
-        self.move_sound = Sound(os.path.join('assets/sounds/move.wav'))
-        self.capture_sound = Sound(os.path.join('assets/sounds/capture.wav'))
-        self.check_sound = Sound(os.path.join('assets/sounds/check.wav'))
-        self.castling_sound = Sound(os.path.join('assets/sounds/castle.wav'))
-        self.end_game_sound = Sound(os.path.join('assets/sounds/game-end.wav'))
-        self.notify_sound = Sound(os.path.join('assets/sounds/notify.wav'))
-        self.promotion_sound = Sound(os.path.join('assets/sounds/promote.wav'))
+        self.font = pygame.font.SysFont("monospace", 18, True)
+        self.move_sound = Sound(os.path.join("assets/sounds/move.wav"))
+        self.capture_sound = Sound(os.path.join("assets/sounds/capture.wav"))
+        self.check_sound = Sound(os.path.join("assets/sounds/check.wav"))
+        self.castling_sound = Sound(os.path.join("assets/sounds/castle.wav"))
+        self.end_game_sound = Sound(os.path.join("assets/sounds/game-end.wav"))
+        self.notify_sound = Sound(os.path.join("assets/sounds/notify.wav"))
+        self.promotion_sound = Sound(os.path.join("assets/sounds/promote.wav"))
 
     def change_theme(self):
-        self.idx +=1
+        self.idx += 1
         self.idx %= len(self.themes)
         self.theme = self.themes[self.idx]
 
     def _add_themes(self):
-        green = Theme((234, 235, 200), (119, 154, 88), (244, 247, 116), (172, 195, 51), '#C86464', '#C84646')
-        blue = Theme((235, 209, 166), (165, 170, 80), (245, 234, 100), (209, 185, 59), '#C86464', '#C84646')
-        brown = Theme((229, 228, 200), (60, 95, 135), (183, 187, 227), (43, 119, 191), '#C86464', '#C84646')
-        gray = Theme((120, 119, 118), (86, 85, 84), (99, 126, 143), (82, 102, 128), '#C86464', '#C84646')
+        green = Theme(
+            (234, 235, 200),
+            (119, 154, 88),
+            (244, 247, 116),
+            (172, 195, 51),
+            "#C86464",
+            "#C84646",
+        )
+        blue = Theme(
+            (235, 209, 166),
+            (165, 170, 80),
+            (245, 234, 100),
+            (209, 185, 59),
+            "#C86464",
+            "#C84646",
+        )
+        brown = Theme(
+            (229, 228, 200),
+            (60, 95, 135),
+            (183, 187, 227),
+            (43, 119, 191),
+            "#C86464",
+            "#C84646",
+        )
+        gray = Theme(
+            (120, 119, 118),
+            (86, 85, 84),
+            (99, 126, 143),
+            (82, 102, 128),
+            "#C86464",
+            "#C84646",
+        )
         self.themes = [green, blue, brown, gray]
