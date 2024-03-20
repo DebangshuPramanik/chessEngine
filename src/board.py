@@ -13,6 +13,18 @@ from sound import Sound
 
 class Board:
 
+    # rudimentary bot stuff
+    def evaluateBoard(self):
+       total = 0
+       for row in range(ROWS):
+            for col in range(COLS):
+                if(not self.squares[row][col].has_piece()):
+                   continue
+                else:
+                    total+=self.squares[row][col].piece
+       return total
+        
+
     def __init__(self):
         self.squares = [[0, 0, 0, 0, 0, 0, 0, 0] for col in range(COLS)]
         self.last_move = None
