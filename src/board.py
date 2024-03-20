@@ -20,12 +20,15 @@ class Board:
         self._add_pieces("white")
         self._add_pieces("black")
 
-    def move(self, piece, move, screen=None, testing=False):
+    def move(self, piece, move, sidebar=None, testing=False, castling=False):
         initial = move.initial
         final = move.final
 
         # En-passant boolean
         en_passant_empty = self.squares[final.row][final.col].isEmpty()
+
+        if not (testing or castling):
+            sidebar.add_move(piece, move)
 
         # console board move update
         self.squares[initial.row][initial.col].piece = None
@@ -43,9 +46,10 @@ class Board:
                     sound.play()
             else:
                 # pawn promotion
+                # don't need to check for castling, because that is not a pawn move
                 if not testing:
-                    assert screen != None
-                    self.check_promotion(piece, final, screen)
+                    assert sidebar != None
+                    self.check_promotion(piece, final, sidebar)
 
         # king castling
         if isinstance(piece, King):
@@ -53,7 +57,7 @@ class Board:
                 castling_sound = Sound(os.path.join("assets/sounds/castle.wav"))
                 diff = final.col - initial.col
                 rook = piece.left_rook if (diff < 0) else piece.right_rook
-                self.move(rook, rook.moves[-1])
+                self.move(rook, rook.moves[-1], castling=True)
                 castling_sound.play()
 
         # move
@@ -68,7 +72,7 @@ class Board:
     def valid_move(self, piece, move):
         return move in piece.moves
 
-    def check_promotion(self, piece, final, surface):
+    def check_promotion(self, piece, final, sidebar):
         if (final.row == 0 and piece.color == "white") or (
             final.row == 7 and piece.color == "black"
         ):
@@ -81,32 +85,7 @@ class Board:
             choices = [k, b, r, q]
             selected_piece = None
 
-            while selected_piece not in choices:
-                it = 0
-                for choice_piece in choices:
-                    choice_piece.set_texture(size=80)
-                    img = pygame.image.load(choice_piece.texture)
-                    img_center = (8 + it % 2) * SQSIZE + SQSIZE // 2, (
-                        it // 2
-                    ) * SQSIZE + SQSIZE // 2
-                    piece.texture_rect = img.get_rect(center=img_center)
-                    surface.blit(img, piece.texture_rect)
-                    # print(img)
-                    it += 1
-                pygame.display.update()
-                for event in pygame.event.get():
-                    if event.type == pygame.MOUSEBUTTONUP:
-                        x, y = pygame.mouse.get_pos()
-                        if (8 * SQSIZE) <= x <= (9 * SQSIZE):
-                            if 0 <= y <= SQSIZE:
-                                selected_piece = choices[0]
-                            elif SQSIZE <= y <= SQSIZE * 2:
-                                selected_piece = choices[2]
-                        elif 9 * SQSIZE <= x <= (10 * SQSIZE):
-                            if 0 <= y <= SQSIZE:
-                                selected_piece = choices[1]
-                            elif SQSIZE <= y <= SQSIZE * 2:
-                                selected_piece = choices[3]
+            selected_piece = sidebar.get_promotion(choices)
 
             self.squares[final.row][final.col].piece = selected_piece
             promotion_sound = Sound(os.path.join("assets/sounds/promote.wav"))

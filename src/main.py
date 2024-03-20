@@ -5,6 +5,7 @@ from const import *
 from game import Game
 from square import Square
 from move import Move
+from sidebar import Sidebar
 
 # I made a comment for fun.
 
@@ -15,6 +16,7 @@ class Main:
         self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
         pygame.display.set_caption("Chess")
         self.game = Game()
+        self.sidebar = Sidebar(self.screen)
 
     def check_game_over(self):
         game = self.game
@@ -48,6 +50,7 @@ class Main:
         game = self.game
         dragger = game.dragger
         board = game.board
+        sidebar = self.sidebar
 
         while game.over == False:
             # Show methods
@@ -56,6 +59,7 @@ class Main:
             game.show_moves(screen)
             game.show_hover(screen)
             game.show_pieces(screen)
+            sidebar.show_sidebar()
 
             if dragger.dragging:
                 dragger.update_blit(screen)  # update blit
@@ -123,7 +127,7 @@ class Main:
                             captured = board.squares[released_row][
                                 released_col
                             ].has_piece()
-                            board.move(dragger.piece, move, screen)
+                            board.move(dragger.piece, move, sidebar)
 
                             board.set_true_en_passant(dragger.piece)
 
