@@ -14,7 +14,7 @@ from sound import Sound
 class Board:
 
     # rudimentary bot stuff
-    def evaluateBoard(self):
+    def evaluate_board(self):
        total = 0
        for row in range(ROWS):
             for col in range(COLS):
