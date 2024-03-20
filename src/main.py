@@ -16,46 +16,19 @@ class Main:
         pygame.display.set_caption("Chess")
         self.game = Game()
 
-    def check_game_over(self):
-        game = self.game
-        total_moves = []
-        total_moves.append(self.get_total_moves("white"))
-        print(total_moves)
-        if len(total_moves) == 0:
-            game.display_winner("black")
-            game.set_game_over(True)
-        total_moves = []
-        total_moves.append(self.get_total_moves("black"))
-        print(total_moves)
-        if len(total_moves) == 0:
-            game.display_winner("white")
-            game.set_game_over(True)
-
-    def get_total_moves(self, color):
-        total_moves = []
-        for row in range(ROWS):
-            for col in range(COLS):
-                if (
-                    self.game.board.squares[row][col].has_piece()
-                    and self.game.board.squares[row][col].piece.color == color
-                ):
-                    piece = self.game.board.squares[row][col].piece
-                    total_moves.append(piece.moves)
-        return total_moves
-
     def mainloop(self):
         screen = self.screen
         game = self.game
         dragger = game.dragger
         board = game.board
 
-        while game.over == False:
+        while not game.over:
             # Show methods
             game.show_bg(screen)
             game.show_last_move(screen)
             game.show_moves(screen)
             game.show_hover(screen)
-            game.show_pieces(screen)
+            game.show_pieces(screen) 
 
             if dragger.dragging:
                 dragger.update_blit(screen)  # update blit
@@ -67,13 +40,13 @@ class Main:
                     dragger.update_mouse(event.pos)
                     clicked_row = dragger.mouseY // SQSIZE
                     clicked_col = dragger.mouseX // SQSIZE
+
                     # Determining if clicked square has a piece
                     if board.squares[clicked_row][clicked_col].has_piece():
                         piece = board.squares[clicked_row][clicked_col].piece
 
                         # Valid piece, color, making sure you can only play on your turn
                         if piece.color == game.next_player:
-                            self.check_game_over()
                             board.calc_moves(piece, clicked_row, clicked_col, bool=True)
                             dragger.save_initial(event.pos)
                             dragger.drag_piece(piece)
@@ -137,6 +110,7 @@ class Main:
 
                             # next turn...
                             game.next_turn()
+
 
                     dragger.undrag_piece(piece)
 
