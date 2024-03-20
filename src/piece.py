@@ -33,6 +33,9 @@ class Pawn(Piece):
         self.en_passant = False
         super().__init__("pawn", color, 1.0)
 
+    def check_en_passant(self):
+        if self.en_passanted_already:
+            self.en_passant = False
 
 class Knight(Piece):
     def __init__(self, color):
@@ -56,6 +59,9 @@ class Queen(Piece):
 
 class King(Piece):
     def __init__(self, color):
-        super().__init__("king", color, math.inf)
+        super().__init__("king", color, 10000)
         self.left_rook = None
         self.right_rook = None
+
+ 
+

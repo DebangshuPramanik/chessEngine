@@ -131,17 +131,18 @@ class Board:
             # steps
             steps = 1 if piece.moved else 2
 
-            # vertical moves
-            start = row + piece.dir
-            end = row + (piece.dir * (1 + steps))
-            for possible_move_row in range(start, end, piece.dir):
-                if Square.in_range(possible_move_row):
-                    if self.squares[possible_move_row][col].isEmpty():
-                        # create initial and final move squares
-                        initial = Square(row, col)
-                        final = Square(possible_move_row, col)
-                        # create a new move
-                        move = Move(initial, final)
+            def normal_pawn_moves():
+                # vertical moves
+                start = row + piece.dir
+                end = row + (piece.dir * (1 + steps))
+                for possible_move_row in range(start, end, piece.dir):
+                    if Square.in_range(possible_move_row):
+                        if self.squares[possible_move_row][col].isEmpty():
+                            # create initial and final move squares
+                            initial = Square(row, col)
+                            final = Square(possible_move_row, col)
+                            # create a new move
+                            move = Move(initial, final)
 
                         # check potencial checks
                         if bool:
@@ -152,31 +153,23 @@ class Board:
                             # append new move
                             piece.add_move(move)
                     # blocked
-                    else:
-                        break
+                    else: break
                 # not in range
-                else:
-                    break
+                else: break
 
             # diagonal moves
             possible_move_row = row + piece.dir
-            possible_move_cols = [col - 1, col + 1]
+            possible_move_cols = [col-1, col+1]
             for possible_move_col in possible_move_cols:
                 if Square.in_range(possible_move_row, possible_move_col):
-                    if self.squares[possible_move_row][
-                        possible_move_col
-                    ].has_rival_piece(piece.color):
+                    if self.squares[possible_move_row][possible_move_col].has_rival_piece(piece.color):
                         # create initial and final move squares
                         initial = Square(row, col)
-                        final_piece = self.squares[possible_move_row][
-                            possible_move_col
-                        ].piece
-                        final = Square(
-                            possible_move_row, possible_move_col, final_piece
-                        )
+                        final_piece = self.squares[possible_move_row][possible_move_col].piece
+                        final = Square(possible_move_row, possible_move_col, final_piece)
                         # create a new move
                         move = Move(initial, final)
-
+                        
                         # check potencial checks
                         if bool:
                             if not self.in_check(piece, move):
@@ -187,20 +180,20 @@ class Board:
                             piece.add_move(move)
 
             # en passant moves
-            r = 3 if piece.color == "white" else 4
-            fr = 2 if piece.color == "white" else 5
+            r = 3 if piece.color == 'white' else 4
+            fr = 2 if piece.color == 'white' else 5
             # left en pessant
-            if Square.in_range(col - 1) and row == r:
-                if self.squares[row][col - 1].has_rival_piece(piece.color):
-                    p = self.squares[row][col - 1].piece
+            if Square.in_range(col-1) and row == r:
+                if self.squares[row][col-1].has_rival_piece(piece.color):
+                    p = self.squares[row][col-1].piece
                     if isinstance(p, Pawn):
                         if p.en_passant:
                             # create initial and final move squares
                             initial = Square(row, col)
-                            final = Square(fr, col - 1, p)
+                            final = Square(fr, col-1, p)
                             # create a new move
                             move = Move(initial, final)
-
+                            
                             # check potencial checks
                             if bool:
                                 if not self.in_check(piece, move):
@@ -209,19 +202,19 @@ class Board:
                             else:
                                 # append new move
                                 piece.add_move(move)
-
+            
             # right en pessant
-            if Square.in_range(col + 1) and row == r:
-                if self.squares[row][col + 1].has_rival_piece(piece.color):
-                    p = self.squares[row][col + 1].piece
+            if Square.in_range(col+1) and row == r:
+                if self.squares[row][col+1].has_rival_piece(piece.color):
+                    p = self.squares[row][col+1].piece
                     if isinstance(p, Pawn):
                         if p.en_passant:
                             # create initial and final move squares
                             initial = Square(row, col)
-                            final = Square(fr, col + 1, p)
+                            final = Square(fr, col+1, p)
                             # create a new move
                             move = Move(initial, final)
-
+                            
                             # check potencial checks
                             if bool:
                                 if not self.in_check(piece, move):
@@ -270,8 +263,7 @@ class Board:
                             else:
                                 break
                         else:
-                            # append new move
-                            piece.add_move(move)
+                            break
 
         def straightline_moves(incrs):
             for incr in incrs:
