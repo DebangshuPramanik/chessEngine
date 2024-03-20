@@ -5,6 +5,7 @@ import os
 class Piece:
     def __init__(self, name, color, value, texture=None, texture_rect=None):
         self.name = name
+        self.shorthand = self.name_to_shorthand(name)
         self.color = color
         self.moves = []
         self.moved = False
@@ -14,6 +15,18 @@ class Piece:
         self.texture = texture
         self.set_texture()
         self.set_texture_rect = texture_rect
+
+    def name_to_shorthand(self, name):
+        map_dict = {
+            "knight": "N",
+            "pawn": "P",
+            "bishop": "B",
+            "rook": "R",
+            "queen": "Q",
+            "king": "K"
+        }
+        return map_dict[name]
+        pass
 
     def set_texture(self, size=80):
         self.texture = os.path.join(

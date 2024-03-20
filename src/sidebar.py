@@ -14,7 +14,22 @@ class Sidebar:
     def add_move(self, piece, move):
         move_list.append(move)
 
+    def move_to_pgn(self, piece, move, board):
+        def place_shorthand(final):
+            Square.get_alphacol(final.col) + str(final.row)
+            pass
+        # taking P
+        init, final = move
+        if(board[final.col][final.row].has_piece()):
+            # PxL
+            piece.shorthand + "x" + place_shorthand(final)
+        else:
+            # PL
+            piece.shorthand + place_shorthand(final)
+
     def show_sidebar(screen):
+        # this mainly just needs to draw the move list.
+        # for now, just draw the last 5 moves
         pass
 
     def get_promotion(self, pieces):
