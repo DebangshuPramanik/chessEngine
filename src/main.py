@@ -10,6 +10,7 @@ from sidebar import Sidebar
 # I made a comment for fun.
 # So did I
 
+
 class Main:
     def __init__(self):
         pygame.init()

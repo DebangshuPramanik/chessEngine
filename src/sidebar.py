@@ -18,9 +18,10 @@ class Sidebar:
         def place_shorthand(final):
             Square.get_alphacol(final.col) + str(final.row)
             pass
+
         # taking P
         init, final = move
-        if(board[final.col][final.row].has_piece()):
+        if board[final.col][final.row].has_piece():
             # PxL
             piece.shorthand + "x" + place_shorthand(final)
         else:

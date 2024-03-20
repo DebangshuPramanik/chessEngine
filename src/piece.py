@@ -23,7 +23,7 @@ class Piece:
             "bishop": "B",
             "rook": "R",
             "queen": "Q",
-            "king": "K"
+            "king": "K",
         }
         return map_dict[name]
         pass
