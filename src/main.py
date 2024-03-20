@@ -7,7 +7,7 @@ from square import Square
 from move import Move
 
 # I made a comment for fun.
-
+# So did I
 
 class Main:
     def __init__(self):
