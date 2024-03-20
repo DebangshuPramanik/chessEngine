@@ -14,14 +14,12 @@ from sound import Sound
 class Board:
 
     # rudimentary bot stuff
-    def evaluateBoard(self):
+    def evaluate_board(self):
        total = 0
        for row in range(ROWS):
             for col in range(COLS):
-                if(not self.squares[row][col].has_piece()):
-                   continue
-                else:
-                    total+=self.squares[row][col].piece.value
+                if(self.squares[row][col].has_piece()):
+                        total+=self.squares[row][col].piece.value
        return total
         
 
