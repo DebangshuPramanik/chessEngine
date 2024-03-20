@@ -111,7 +111,7 @@ class Main:
                             # next turn...
                             game.next_turn()
 
-                            print(board.evaluateBoard())
+                            print(board.evaluate_board())
 
                     dragger.undrag_piece(piece)
 
