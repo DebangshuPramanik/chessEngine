@@ -8,7 +8,7 @@ from move import Move
 from sidebar import Sidebar
 
 # I made a comment for fun.
-
+# So did I
 
 class Main:
     def __init__(self):
@@ -115,6 +115,7 @@ class Main:
                             # next turn...
                             game.next_turn()
 
+                            print(board.evaluate_board())
 
                     dragger.undrag_piece(piece)
 
