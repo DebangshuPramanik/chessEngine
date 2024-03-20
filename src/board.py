@@ -21,7 +21,7 @@ class Board:
                 if(not self.squares[row][col].has_piece()):
                    continue
                 else:
-                    total+=self.squares[row][col].piece
+                    total+=self.squares[row][col].piece.value
        return total
         
 
