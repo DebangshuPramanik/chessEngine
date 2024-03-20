@@ -5,12 +5,15 @@ import pygame
 from config import Config
 from const import *
 
+
 class Sidebar:
     def __init__(self, screen):
         self.move_list = []
         self.screen = screen
+
     def add_move(self, piece, move):
         move_list.append(move)
+
     def show_sidebar(screen):
         pass
 
@@ -28,6 +31,7 @@ class Sidebar:
                 icons.append((img, piece.texture_rect))
                 it += 1
             return icons
+
         screen = self.screen
         icons = icons_from_pieces(pieces)
         selected_piece = None
