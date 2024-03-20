@@ -37,6 +37,7 @@ class Pawn(Piece):
         if self.en_passanted_already:
             self.en_passant = False
 
+
 class Knight(Piece):
     def __init__(self, color):
         super().__init__("knight", color, 3.0)
@@ -62,6 +63,3 @@ class King(Piece):
         super().__init__("king", color, 10000)
         self.left_rook = None
         self.right_rook = None
-
- 
-

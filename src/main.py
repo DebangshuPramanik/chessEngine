@@ -28,7 +28,7 @@ class Main:
             game.show_last_move(screen)
             game.show_moves(screen)
             game.show_hover(screen)
-            game.show_pieces(screen) 
+            game.show_pieces(screen)
 
             if dragger.dragging:
                 dragger.update_blit(screen)  # update blit
@@ -110,7 +110,6 @@ class Main:
 
                             # next turn...
                             game.next_turn()
-
 
                     dragger.undrag_piece(piece)
 
