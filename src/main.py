@@ -111,6 +111,8 @@ class Main:
                             # next turn...
                             game.next_turn()
 
+                            print(board.evaluateBoard())
+
                     dragger.undrag_piece(piece)
 
                 # Key Press to change Theme or restart
