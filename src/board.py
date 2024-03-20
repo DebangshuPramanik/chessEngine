@@ -164,19 +164,18 @@ class Board:
                             final = Square(possible_move_row, col)
                             # create a new move
                             move = Move(initial, final)
-
-                        # check potencial checks
-                        if bool:
-                            if not self.in_check(piece, move):
+                            # check potencial checks
+                            if bool:
+                                if not self.in_check(piece, move):
+                                    # append new move
+                                    piece.add_move(move)
+                            else:
                                 # append new move
                                 piece.add_move(move)
-                        else:
-                            # append new move
-                            piece.add_move(move)
-                    # blocked
+                        # blocked
+                        else: break
+                    # not in range
                     else: break
-                # not in range
-                else: break
 
             # diagonal moves
             possible_move_row = row + piece.dir
