@@ -97,6 +97,9 @@ class Main:
 
                         # Valid move?
                         if board.valid_move(dragger.piece, move):
+                            #counter to determine which player's turn it is (remove this and update the FEN notation method in the board file if this is unecessary)
+                            game.board.counter+=1
+
                             # Normal Capture.......
                             captured = board.squares[released_row][
                                 released_col
@@ -117,6 +120,7 @@ class Main:
                             game.next_turn()
 
                             print(board.evaluate_board())
+                            print(board.position_to_FEN())
 
                     dragger.undrag_piece(piece)
 
@@ -139,3 +143,4 @@ class Main:
 
 main = Main()
 main.mainloop()
+# test
