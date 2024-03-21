@@ -12,7 +12,7 @@ class Sidebar:
         self.screen = screen
 
     def add_move(self, piece, move):
-        move_list.append(move)
+        self.move_list.append(move)
 
     def move_to_pgn(self, piece, move, board):
         def place_shorthand(final):
