@@ -15,13 +15,12 @@ class Board:
 
     # rudimentary bot stuff
     def evaluate_board(self):
-       total = 0
-       for row in range(ROWS):
+        total = 0
+        for row in range(ROWS):
             for col in range(COLS):
-                if(self.squares[row][col].has_piece()):
-                        total+=self.squares[row][col].piece.value
-       return total
-        
+                if self.squares[row][col].has_piece():
+                    total += self.squares[row][col].piece.value
+        return total
 
     def __init__(self):
         self.squares = [[0, 0, 0, 0, 0, 0, 0, 0] for col in range(COLS)]
@@ -150,7 +149,6 @@ class Board:
                     for m in p.moves:
                         if isinstance(m.final.piece, King):
                             return True
-
         return False
 
     def calc_moves(self, piece, row, col, bool=True):
@@ -187,7 +185,7 @@ class Board:
                             break
                     # not in range
                     else:
-                        break                
+                        break
                 # diagonal moves
                 possible_move_row = row + piece.dir
                 possible_move_cols = [col - 1, col + 1]
@@ -195,11 +193,11 @@ class Board:
                     if Square.in_range(possible_move_row, possible_move_col):
                         if self.squares[possible_move_row][
                             possible_move_col
-                            ].has_rival_piece(piece.color):
+                        ].has_rival_piece(piece.color):
                             # create initial and final move squares
                             initial = Square(row, col)
                             final_piece = self.squares[possible_move_row][
-                            possible_move_col
+                                possible_move_col
                             ].piece
                             final = Square(
                                 possible_move_row, possible_move_col, final_piece
@@ -217,7 +215,7 @@ class Board:
                                 piece.add_move(move)
 
             # en passant moves
-            def en_passant_moves(direction):  
+            def en_passant_moves(direction):
                 r = 3 if piece.color == "white" else 4
                 fr = 2 if piece.color == "white" else 5
                 if direction == "right":
@@ -243,15 +241,15 @@ class Board:
                                 else:
                                     # append new move
                                     piece.add_move(move)
-                        else: return
+                        else:
+                            return
+
             def all_en_passant_moves():
                 en_passant_moves("right")
                 en_passant_moves("left")
 
             normal_pawn_moves()
             all_en_passant_moves()
-
-            
 
         def knight_moves():
             # 8 possible moves
