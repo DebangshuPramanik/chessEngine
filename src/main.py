@@ -5,9 +5,11 @@ from const import *
 from game import Game
 from square import Square
 from move import Move
+from sidebar import Sidebar
 
 # I made a comment for fun.
 # So did I
+
 
 class Main:
     def __init__(self):
@@ -15,12 +17,14 @@ class Main:
         self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
         pygame.display.set_caption("Chess")
         self.game = Game()
+        self.sidebar = Sidebar(self.screen)
 
     def mainloop(self):
         screen = self.screen
         game = self.game
         dragger = game.dragger
         board = game.board
+        sidebar = self.sidebar
 
         while not game.over:
             # Show methods
@@ -29,6 +33,7 @@ class Main:
             game.show_moves(screen)
             game.show_hover(screen)
             game.show_pieces(screen)
+            sidebar.show_sidebar()
 
             if dragger.dragging:
                 dragger.update_blit(screen)  # update blit
@@ -92,11 +97,14 @@ class Main:
 
                         # Valid move?
                         if board.valid_move(dragger.piece, move):
+                            #counter to determine which player's turn it is (remove this and update the FEN notation method in the board file if this is unecessary)
+                            game.board.counter+=1
+
                             # Normal Capture.......
                             captured = board.squares[released_row][
                                 released_col
                             ].has_piece()
-                            board.move(dragger.piece, move, screen)
+                            board.move(dragger.piece, move, sidebar)
 
                             board.set_true_en_passant(dragger.piece)
 
@@ -112,6 +120,7 @@ class Main:
                             game.next_turn()
 
                             print(board.evaluate_board())
+                            print(board.position_to_FEN())
 
                     dragger.undrag_piece(piece)
 
@@ -134,3 +143,4 @@ class Main:
 
 main = Main()
 main.mainloop()
+# test
