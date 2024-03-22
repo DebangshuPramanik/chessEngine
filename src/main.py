@@ -97,8 +97,8 @@ class Main:
 
                         # Valid move?
                         if board.valid_move(dragger.piece, move):
-                            #counter to determine which player's turn it is (remove this and update the FEN notation method in the board file if this is unecessary)
-                            game.board.counter+=1
+                            # counter to determine which player's turn it is (remove this and update the FEN notation method in the board file if this is unecessary)
+                            game.board.counter += 1
 
                             # Normal Capture.......
                             captured = board.squares[released_row][
