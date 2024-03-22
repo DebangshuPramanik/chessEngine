@@ -2,6 +2,8 @@ import pygame
 import copy
 import os
 
+from math import ceil
+
 from const import *
 from square import Square
 from piece import *
@@ -9,6 +11,7 @@ from move import Move
 from sound import Sound
 
 # Could someone write a short description of this class up here?
+
 
 class Board:
 
@@ -26,8 +29,8 @@ class Board:
         self.last_move = None
         self._create()
         self._add_pieces("white")
-        self._add_pieces("black") 
-        self.counter=0
+        self._add_pieces("black")
+        self.counter = 0
 
     def move(self, piece, move, sidebar=None, testing=False, castling=False):
         initial = move.initial
@@ -519,38 +522,45 @@ class Board:
         # Adding the kings
         self.squares[row_other][4] = Square(row_other, 4, King(color))
 
-    #Position to FEN for future use
+    # Position to FEN for future use
     def position_to_FEN(self):
         # Crappy temporary solution I thought of while waiting for my bus
         map_num = {
-                0:"",
-                1:"1",
-                2:"2",
-                3:"3",
-                4:"4",
-                5:"5",
-                6:"6",
-                7:"7",
-                8:"8"
-            }
+            0: "",
+            1: "1",
+            2: "2",
+            3: "3",
+            4: "4",
+            5: "5",
+            6: "6",
+            7: "7",
+            8: "8",
+        }
         FEN = ""
         for row in range(ROWS):
             count = 0
             for col in range(COLS):
                 # If the square has a piece, append the column number and the piece according to the name_to_shorthand function in piece.py
                 if self.squares[row][col].has_piece():
-                       FEN+=map_num[count]
-                       FEN+=(self.squares[row][col].piece.name_to_shorthand(self.squares[row][col].piece.name, self.squares[row][col].piece.color))
-                       count=0
-                       pieceHere=True
+                    FEN += map_num[count]
+                    FEN += self.squares[row][col].piece.name_to_shorthand(
+                        self.squares[row][col].piece.name,
+                        self.squares[row][col].piece.color,
+                    )
+                    count = 0
+                    pieceHere = True
                 else:
-                    count+=1
+                    count += 1
             if not pieceHere:
-                FEN+= "8"
+                FEN += "8"
             if row != 7:
-                FEN+="/"
-            pieceHere=False
+                FEN += "/"
+            pieceHere = False
 
-        player = "w" if self.counter % 2 == 0 else "b" 
-        FEN+=" "+player
+
+        player = "w" if self.counter % 2 == 0 else "b"
+        FEN += " " + player
+
+        TURN = ceil(self.counter / 2)
+        FEN += " " + str(TURN)
         return FEN
