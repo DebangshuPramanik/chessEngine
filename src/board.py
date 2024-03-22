@@ -2,6 +2,8 @@ import pygame
 import copy
 import os
 
+from math import ceil
+
 from const import *
 from square import Square
 from piece import *
@@ -555,6 +557,10 @@ class Board:
                 FEN += "/"
             pieceHere = False
 
+
         player = "w" if self.counter % 2 == 0 else "b"
         FEN += " " + player
+
+        TURN = ceil(self.counter / 2)
+        FEN += " " + str(TURN)
         return FEN
