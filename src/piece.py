@@ -42,12 +42,7 @@ class Piece:
 class Pawn(Piece):
     def __init__(self, color):
         self.dir = -1 if color == "white" else 1
-        self.en_passant = False
         super().__init__("pawn", color, 1.0)
-
-    def check_en_passant(self):
-        if self.en_passanted_already:
-            self.en_passant = False
 
 
 class Knight(Piece):

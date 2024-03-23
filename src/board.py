@@ -27,6 +27,7 @@ class Board:
     def __init__(self):
         self.squares = [[0, 0, 0, 0, 0, 0, 0, 0] for col in range(COLS)]
         self.last_move = None
+        self.en_passant = None
         self._create()
         self._add_pieces("white")
         self._add_pieces("black")
@@ -45,6 +46,8 @@ class Board:
         # console board move update
         self.squares[initial.row][initial.col].piece = None
         self.squares[final.row][final.col].piece = piece
+        self.en_passant = None
+        # For all moves but 1 type, en_passant is not allowed.
 
         if isinstance(piece, Pawn):
             # en passant capture
@@ -56,6 +59,10 @@ class Board:
                 if not testing:
                     sound = Sound(os.path.join("assets/sounds/capture.wav"))
                     sound.play()
+            elif (
+                not testing and abs(final.row - initial.row) == 2
+            ):  # this can be an elif, cause you wont move 2 squares to a promotion
+                self.en_passant = ((final.row + initial.row) // 2, final.col)
             else:
                 # pawn promotion
                 # don't need to check for castling, because that is not a pawn move
@@ -106,18 +113,6 @@ class Board:
     def castling(self, initial, final):
         return abs(initial.col - final.col) == 2
 
-    def set_true_en_passant(self, piece):
-
-        if not isinstance(piece, Pawn):
-            return
-
-        for row in range(ROWS):
-            for col in range(COLS):
-                if isinstance(self.squares[row][col].piece, Pawn):
-                    self.squares[row][col].piece.en_passant = False
-
-        piece.en_passant = True
-
     def in_check(self, piece, move):
         temp_piece = copy.deepcopy(piece)
         temp_board = copy.deepcopy(self)
@@ -137,6 +132,13 @@ class Board:
         """
         Calculate all the possible (valid) moves of an specific piece on a specific position
         """
+
+        # NB. There was an error w/ piece moves (found w/ en passant) where if
+        # you checked a pieces moves, and then did not move it, the added moves
+        # would remain until you moved the piece.  This allowed en passant (and
+        # other moves) to persist after it should no longer be possible, it had
+        # been checked and availible, but that piece had not been played.
+        piece.clear_moves()
 
         def pawn_moves():
             # steps
@@ -197,41 +199,29 @@ class Board:
                                 piece.add_move(move)
 
             # en passant moves
-            def en_passant_moves(direction):
-                r = 3 if piece.color == "white" else 4
-                fr = 2 if piece.color == "white" else 5
-                if direction == "right":
-                    final_col = col + 1
+            def en_passant_moves():
+                ir = 3 if piece.color == "white" else 4  # ir = initial row
+                if self.en_passant == None:
+                    return
+                # There is a square that can be en passanted to.
+                er, ec = self.en_passant
+                # Are we taking the right color?
+                if not (row == ir):
+                    return  # Our starting row is not right for our color
+                # Yes. Are we diagonal to it?
+                if not (abs(row - er) == 1 and abs(col - ec) == 1):
+                    return
+
+                # check potential checks
+                move = Move(Square(row, col), Square(er, ec))
+                if bool:
+                    if not self.in_check(piece, move):
+                        piece.add_move(move)
                 else:
-                    final_col = col - 1
-                if Square.in_range(final_col) and row == r:
-                    if self.squares[row][final_col].has_rival_piece(piece.color):
-                        p = self.squares[row][final_col].piece
-                        if isinstance(p, Pawn):
-                            if p.en_passant:
-                                # create initial and final move squares
-                                initial = Square(row, col)
-                                final = Square(fr, final_col, p)
-                                # create a new move
-                                move = Move(initial, final)
-
-                                # check potencial checks
-                                if bool:
-                                    if not self.in_check(piece, move):
-                                        # append new move
-                                        piece.add_move(move)
-                                else:
-                                    # append new move
-                                    piece.add_move(move)
-                        else:
-                            return
-
-            def all_en_passant_moves():
-                en_passant_moves("right")
-                en_passant_moves("left")
+                    piece.add_move(move)
 
             normal_pawn_moves()
-            all_en_passant_moves()
+            en_passant_moves()
 
         def knight_moves():
             # 8 possible moves
