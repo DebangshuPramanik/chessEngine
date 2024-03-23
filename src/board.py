@@ -579,7 +579,6 @@ class Board:
 
     def two_kings_on_board(self):
         # Prelude to chesskers: if any king is taken, the game ends
-        num_kings = 0
         all_colors = ["white", "black"]
         colors = []
         for row in range(ROWS):
@@ -587,7 +586,6 @@ class Board:
                 if self.squares[row][col].has_piece():
                     piece = self.squares[row][col].piece
                     if isinstance(piece, King):
-                        num_kings += 1
                         colors.append(piece.color)
         for a_color in all_colors:
             if a_color not in colors:
