@@ -32,6 +32,7 @@ class Board:
         self._add_pieces("white")
         self._add_pieces("black")
         self.counter = 0
+        self.moves = []
 
     def move(self, piece, move, sidebar=None, testing=False, castling=False):
         initial = move.initial
@@ -41,7 +42,7 @@ class Board:
         en_passant_empty = self.squares[final.row][final.col].isEmpty()
 
         if not (testing or castling):
-            sidebar.add_move(piece, move)
+            self.add_move(piece, move)  # note, this adds the piece being taken to move
 
         # console board move update
         self.squares[initial.row][initial.col].piece = None
@@ -260,10 +261,6 @@ class Board:
                             if not self.in_check(piece, move):
                                 # append new move
                                 piece.add_move(move)
-                            else:
-                                break
-                        else:
-                            break
 
         def straightline_moves(incrs):
             for incr in incrs:
@@ -554,3 +551,27 @@ class Board:
         TURN = ceil(self.counter / 2)
         FEN += " " + str(TURN)
         return FEN
+
+    def add_move(self, piece, move):
+        piece_taken = self.squares[move.final.row][move.final.col].piece
+        move.final.piece = piece_taken
+        self.moves.append((piece, move))  # feels hacky
+
+    def move_to_pgn(self, board_move):
+        # TODO: handle castling, and specifying which piece moved when neccessary
+        # (NB. specifying which piece will need to be done in add_move probably)
+        # (it needs the board state when/before the move is done)
+        # board_move should be of the form (piece, move)
+        def place_shorthand(final):
+            return Square.get_alphacol(final.col) + str(final.row)
+
+        piece, move = board_move
+        init = move.initial
+        final = move.final
+        if final.piece != None:
+            return piece.shorthand + "x" + place_shorthand(final)
+        else:
+            return piece.shorthand + place_shorthand(final)
+
+    def moves_to_pgn(self):
+        pass

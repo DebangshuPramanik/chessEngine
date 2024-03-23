@@ -25,7 +25,7 @@ class Piece:
             "queen": "Q",
             "king": "K",
         }
-        return map_dict[name] if color=="white" else map_dict[name].lower()
+        return map_dict[name] if color == "white" else map_dict[name].lower()
 
     def set_texture(self, size=80):
         self.texture = os.path.join(
