@@ -342,9 +342,10 @@ class Board:
                         possible_move_col
                     ].isEmpty_or_rival(piece.color):
                         # create squares of the new move
+                        rival_piece = self.squares[possible_move_row][possible_move_col].piece
                         initial = Square(row, col)
                         final = Square(
-                            possible_move_row, possible_move_col
+                            possible_move_row, possible_move_col, rival_piece
                         )  # piece=piece
                         # create new move
                         move = Move(initial, final)
