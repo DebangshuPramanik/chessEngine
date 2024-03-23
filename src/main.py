@@ -103,8 +103,6 @@ class Main:
                             ].has_piece()
                             board.move(dragger.piece, move, sidebar)
 
-                            board.set_true_en_passant(dragger.piece)
-
                             # Sound
                             game.play_sound(captured)
 

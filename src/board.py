@@ -43,9 +43,8 @@ class Board:
         # console board move update
         self.squares[initial.row][initial.col].piece = None
         self.squares[final.row][final.col].piece = piece
-        if not testing:
-            self.en_passant = None
-            # For all moves but 1 type, en_passant is not allowed.
+        self.en_passant = None
+        # For all moves but 1 type, en_passant is not allowed.
 
         if isinstance(piece, Pawn):
             # en passant capture
@@ -110,18 +109,6 @@ class Board:
 
     def castling(self, initial, final):
         return abs(initial.col - final.col) == 2
-
-    def set_true_en_passant(self, piece):
-
-        if not isinstance(piece, Pawn):
-            return
-
-        for row in range(ROWS):
-            for col in range(COLS):
-                if isinstance(self.squares[row][col].piece, Pawn):
-                    self.squares[row][col].piece.en_passant = False
-
-        piece.en_passant = True
 
     def in_check(self, piece, move):
         temp_piece = copy.deepcopy(piece)
