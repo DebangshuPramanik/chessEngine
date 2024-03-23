@@ -123,7 +123,7 @@ class Board:
                 if temp_board.squares[row][col].has_rival_piece(piece.color):
                     p = temp_board.squares[row][col].piece
                     temp_board.calc_moves(p, row, col, bool=False)
-                    #bool is there to prevent infinite looping between in_check() and calc_moves(), as both methods are called within each other. 
+                    # bool is there to prevent infinite looping between in_check() and calc_moves(), as both methods are called within each other.
                     for m in p.moves:
                         if isinstance(m.final.piece, King):
                             return True
@@ -547,7 +547,6 @@ class Board:
             if row != 7:
                 FEN += "/"
             pieceHere = False
-
 
         player = "w" if self.counter % 2 == 0 else "b"
         FEN += " " + player
