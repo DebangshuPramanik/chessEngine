@@ -10,8 +10,9 @@ from piece import *
 from move import Move
 from sound import Sound
 
-# This class (the Board class) sets up the board as a 2D array of Square objects, some of them have pieces. 
-# This is the class that checks whether there is a check on the board, and this is the class used to evaluate all the positions. 
+# This class (the Board class) sets up the board as a 2D array of Square objects, some of them have pieces.
+# This is the class that checks whether there is a check on the board, and this is the class used to evaluate all the positions.
+
 
 class Board:
 
@@ -341,44 +342,64 @@ class Board:
                 for possible_move in adjs:
                     possible_move_row, possible_move_col = possible_move
 
-                if Square.in_range(possible_move_row, possible_move_col):
-                    if self.squares[possible_move_row][
-                        possible_move_col
-                    ].isEmpty_or_rival(piece.color):
-                        # create squares of the new move
-                        rival_piece = self.squares[possible_move_row][possible_move_col].piece
-                        initial = Square(row, col)
-                        final = Square(
-                            possible_move_row, possible_move_col, rival_piece
-                        )  # piece=piece
-                        # create new move
-                        move = Move(initial, final)
-                        # check potencial checks
-                        if bool:
-                            if (
-                                not self.in_check(piece, move)
-                            ) and final.isEmpty_or_rival(piece.color):
+                    if Square.in_range(possible_move_row, possible_move_col):
+                        if self.squares[possible_move_row][
+                            possible_move_col
+                        ].isEmpty_or_rival(piece.color):
+                            # create squares of the new move
+                            rival_piece = self.squares[possible_move_row][
+                                possible_move_col
+                            ].piece
+                            initial = Square(row, col)
+                            final = Square(
+                                possible_move_row, possible_move_col, rival_piece
+                            )  # piece=piece
+                            # create new move
+                            move = Move(initial, final)
+                            # check potencial checks
+                            if bool:
+                                if (
+                                    not self.in_check(piece, move)
+                                ) and final.isEmpty_or_rival(piece.color):
+                                    # append new move
+                                    piece.add_move(move)
+                            else:
                                 # append new move
                                 piece.add_move(move)
-                        else:
-                            # append new move
-                            piece.add_move(move)
 
-            # castling moves
-            if not piece.moved:
-                # queen castling
-                left_rook = self.squares[row][0].piece
-                if isinstance(left_rook, Rook):
-                    if not left_rook.moved:
-                        for c in range(1, 4):
-                            # castling is not possible because there are pieces in between ?
-                            if self.squares[row][c].has_piece():
-                                break
-
+            def check_castling(direction):
+                # castling moves
+                if not piece.moved:
+                    left_rook = self.squares[row][0].piece
+                    right_rook = self.squares[row][7].piece
+                    if direction == "queenside":
+                        rook = left_rook
+                        start_col = 1  # the start_col and end_col are the columns for which we want to check for pieces between king and rook.
+                        end_col = 4  # Castling should not be valid if there are pieces between them.
+                        king_end_col = 2  # Final column where king will end up if castles queenside is played.
+                        rook_start_col = 0  # Left rook is being moved if castles queenside, from its starting position
+                        rook_end_col = (
+                            king_end_col + 1
+                        )  # Left rook's final position is the square to the right of the castled king.
+                    else:
+                        rook = right_rook
+                        start_col = 5  # the start_col and end_col are the columns for which we want to check for pieces between king and rook.
+                        end_col = 7  # Castling should not be valid if there are pieces between them.
+                        king_end_col = 6  # Final column where king will end up if castles kingside is played.
+                        rook_start_col = 7  # Right rook is being moved if castles kingside, from its starting position
+                        rook_end_col = (
+                            king_end_col - 1
+                        )  # Right rook's final position is the square to the left of the castled king.
+                    if isinstance(rook, Rook):
+                        if not rook.moved:
+                            for c in range(start_col, end_col):
+                                # castling is not possible because there are pieces in between, as checked for by this if statement.
+                                if self.squares[row][c].has_piece():
+                                    break
                                 if c == 3:
-                                    piece.left_rook = rook
+                                    piece.left_rook = rook  # If squares checked for queenside castling are clear, set left rook to left rook of king to allow castling in move()
                                 if c == 6:
-                                    piece.right_rook = rook
+                                    piece.right_rook = rook  # If squares checked for kingside castling are clear, set right rook to right rook of king to allow castling in move()
                                 # rook move
                                 initial = Square(row, rook_start_col)
                                 final = Square(row, rook_end_col)
@@ -403,11 +424,6 @@ class Board:
                                     rook.add_move(moveR)
                                     # append new move king
                                     piece.add_move(moveK)
-            def castling_moves():
-                check_castling("queenside")
-                check_castling("kingside")                            
-            normal_king_moves()
-            castling_moves()                        
 
             def castling_moves():
                 check_castling("queenside")
