@@ -261,6 +261,8 @@ class Board:
                             if not self.in_check(piece, move):
                                 # append new move
                                 piece.add_move(move)
+                        else:
+                            piece.add_move(move)
 
         def straightline_moves(incrs):
             for incr in incrs:
