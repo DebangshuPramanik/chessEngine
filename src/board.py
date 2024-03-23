@@ -409,12 +409,18 @@ class Board:
                                 initial = Square(row, col)
                                 final = Square(row, king_end_col)
                                 moveK = Move(initial, final)
+                                move_direction = -1 if direction == "queenside" else 1
+                                through_move = Move(
+                                    initial, Square(row, col + move_direction)
+                                )
 
                                 # check potencial checks
                                 if bool:
-                                    if not self.in_check(
-                                        piece, moveK
-                                    ) and not self.in_check(rook, moveR):
+                                    if (
+                                        not self.in_check(piece, moveK)
+                                        and not self.in_check(rook, moveR)
+                                        and not self.in_check(piece, through_move)
+                                    ):
                                         # append new move to rook
                                         rook.add_move(moveR)
                                         # append new move to king
@@ -571,7 +577,8 @@ class Board:
     def moves_to_pgn(self):
         pass
 
-    def two_kings_on_board(self): # Prelude to chesskers: if any king is taken, the game ends
+    def two_kings_on_board(self):
+        # Prelude to chesskers: if any king is taken, the game ends
         num_kings = 0
         all_colors = ["white", "black"]
         colors = []
