@@ -34,9 +34,7 @@ class Main:
             game.show_hover(screen)
             game.show_pieces(screen)
             sidebar.show_sidebar()
-
-            if not board.two_kings_on_board():
-                game.over = True
+            game.check_game_over()
 
             if dragger.dragging:
                 dragger.update_blit(screen)  # update blit
