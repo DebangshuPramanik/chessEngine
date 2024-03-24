@@ -150,25 +150,25 @@ class Game:
         pygame.quit()
         sys.exit()
 
-    def check_game_over(self):
-        total_moves = 0
-        colors = ["white", "black"]
-        for row in range(ROWS):
-            for col in range(COLS):
-                if self.board.squares[row][col].has_piece():
-                    piece = self.board.squares[row][col].piece
-                    self.board.calc_moves(piece, row, col, bool=True)
-                    total_moves += len(piece.moves)
-        if total_moves == 0:
-            for row in range(ROWS):
-                for col in range(COLS):
-                    if self.board.squares[row][col].has_piece():
-                        piece = self.board.squares[row][col].piece
-                        if self.board.in_check(piece, piece.last_move):
-                            for color in colors:
-                                if color is not piece.color:
-                                    self.display_winner(color)
-            self.over = True
+    # def check_game_over(self):
+    #     total_moves = 0
+    #     colors = ["white", "black"]
+    #     for row in range(ROWS):
+    #         for col in range(COLS):
+    #             if self.board.squares[row][col].has_piece():
+    #                 piece = self.board.squares[row][col].piece
+    #                 self.board.calc_moves(piece, row, col, bool=True)
+    #                 total_moves += len(piece.moves)
+    #     if total_moves == 0:
+    #         for row in range(ROWS):
+    #             for col in range(COLS):
+    #                 if self.board.squares[row][col].has_piece():
+    #                     piece = self.board.squares[row][col].piece
+    #                     if self.board.in_check(piece, piece.last_move):
+    #                         for color in colors:
+    #                             if color is not piece.color:
+    #                                 self.display_winner(color)
+    #         self.over = True
 
 
     def dispay_winner(self, color):
