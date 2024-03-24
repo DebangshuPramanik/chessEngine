@@ -398,8 +398,10 @@ class Board:
                                     break
                                 if c == 3:
                                     piece.left_rook = rook  # If squares checked for queenside castling are clear, set left rook to left rook of king to allow castling in move()
+                                    rook = piece.left_rook
                                 if c == 6:
                                     piece.right_rook = rook  # If squares checked for kingside castling are clear, set right rook to right rook of king to allow castling in move()
+                                    rook = piece.right_rook
                                 # rook move
                                 initial = Square(row, rook_start_col)
                                 final = Square(row, rook_end_col)
@@ -410,7 +412,7 @@ class Board:
                                 final = Square(row, king_end_col)
                                 moveK = Move(initial, final)
                                 move_direction = -1 if direction == "queenside" else 1
-                                through_move = Move(
+                                through_move = Move(  #For checking the square between the king and its end position: if that square is covered by the opponent, you can't castle. 
                                     initial, Square(row, col + move_direction)
                                 )
 
@@ -420,6 +422,8 @@ class Board:
                                         not self.in_check(piece, moveK)
                                         and not self.in_check(rook, moveR)
                                         and not self.in_check(piece, through_move)
+                                        and self.squares[row][king_end_col].isEmpty() # Checking that the destination castling square for the king is indeed empty. 
+                                        and self.squares[row][rook_end_col].isEmpty() # Checking that the destination castling square for the rook is indeed empty. 
                                     ):
                                         # append new move to rook
                                         rook.add_move(moveR)
