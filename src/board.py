@@ -151,7 +151,7 @@ class Board:
 
     def calc_moves(self, piece, row, col, bool=True):
         """
-        Calculate all the possible (valid) moves of an specific piece on a specific position
+        Calculate all the possible (valid) moves of a specific piece on a specific position
         """
 
         # NB. There was an error w/ piece moves (found w/ en passant) where if
@@ -552,6 +552,7 @@ class Board:
             8: "8",
         }
         FEN = ""
+
         for row in range(ROWS):
             count = 0
             for col in range(COLS):
