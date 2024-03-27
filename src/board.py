@@ -537,6 +537,7 @@ class Board:
             8: "8",
         }
         FEN = ""
+
         for row in range(ROWS):
             count = 0
             for col in range(COLS):
