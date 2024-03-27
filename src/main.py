@@ -35,7 +35,6 @@ class Main:
             game.show_hover(screen)
             game.show_pieces(screen)
             sidebar.show_sidebar()
-            game.check_game_over()
 
             if dragger.dragging:
                 dragger.update_blit(screen)  # update blit
@@ -72,17 +71,17 @@ class Main:
                     if dragger.dragging:
                         dragger.update_mouse(event.pos)
                         # Show methods
-                        game.show_bg(screen)
-                        game.show_last_move(screen)
-                        game.show_moves(screen)
-                        game.show_hover(screen)
-                        game.show_pieces(screen)
-                        dragger.update_blit(screen)
+                        #game.show_bg(screen)
+                        #game.show_last_move(screen)
+                        #game.show_moves(screen)
+                        #game.show_hover(screen)
+                        #game.show_pieces(screen)
+                        #dragger.update_blit(screen)
 
                 # Click Release (letting a piece go)
                 elif event.type == pygame.MOUSEBUTTONUP:
                     if dragger.dragging:
-                        dragger.update_mouse(event.pos)
+                        # dragger.update_mouse(event.pos)
                         released_row = dragger.mouseY // SQSIZE
                         released_col = dragger.mouseX // SQSIZE
 
@@ -123,6 +122,7 @@ class Main:
                             print(board.position_to_FEN())
 
                     dragger.undrag_piece(piece)
+                    game.check_game_over()
 
                 # Key Press to change Theme or restart
                 elif event.type == pygame.KEYDOWN:
