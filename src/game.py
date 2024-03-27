@@ -171,7 +171,7 @@ class Game:
                     piece = board.squares[row][col].piece
                     board.calc_moves(
                         piece, row, col, bool=True
-                    )  # Without a shadow of a doubt, this is the line that causes the lag...
+                    )  # Without a shadow of a doubt, this is the line that causes the lag...if there is any
                     moves = piece.moves
                     if piece.color == "black":
                         total_black_moves += len(moves)
@@ -190,20 +190,23 @@ class Game:
                 for white_last_move in white_last_moves:
                     if board.in_check(black_piece, white_last_move):
                         self.dispay_winner("White")
-                        self.over = True
+                        break
                     else:
                         self.display_stalemate()
-
+                        break
+            self.over = True
+    
         elif total_white_moves == 0:
             for white_piece in white_pieces:
                 for black_last_move in black_last_moves:
                     if board.in_check(white_piece, black_last_move):
                         self.display_winner("Black")
-                        self.over = True
-
+                        break
                     else:
                         self.display_stalemate()
-
+                        break
+            self.over = True
+    
         else:
             total_black_moves = 0
             total_white_moves = 0

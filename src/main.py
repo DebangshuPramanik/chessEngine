@@ -1,5 +1,4 @@
 import pygame
-import sys
 
 from const import *
 from game import Game
@@ -10,7 +9,6 @@ from sidebar import Sidebar
 # I made a comment for fun.
 # So did I
 # Now I commented too!
-
 
 class Main:
     def __init__(self):
