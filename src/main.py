@@ -57,7 +57,9 @@ class Main:
     def mouseup(self, event):
         game = self.game
         screen = self.screen
+        sidebar = self.sidebar
         dragger = game.dragger
+        board = game.board
 
         if dragger.dragging:
             # dragger.update_mouse(event.pos)
