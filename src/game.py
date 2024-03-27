@@ -195,7 +195,7 @@ class Game:
                         self.display_stalemate()
                         break
             self.over = True
-    
+
         elif total_white_moves == 0:
             for white_piece in white_pieces:
                 for black_last_move in black_last_moves:
@@ -206,7 +206,7 @@ class Game:
                         self.display_stalemate()
                         break
             self.over = True
-    
+
         else:
             total_black_moves = 0
             total_white_moves = 0

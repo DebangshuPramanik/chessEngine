@@ -10,6 +10,7 @@ from sidebar import Sidebar
 # So did I
 # Now I commented too!
 
+
 class Main:
     def __init__(self):
         pygame.init()
@@ -63,9 +64,7 @@ class Main:
             released_row = dragger.mouseY // SQSIZE
             released_col = dragger.mouseX // SQSIZE
 
-            if not (
-                released_col in range(0, 8) and released_col in range(0, 8)
-            ):
+            if not (released_col in range(0, 8) and released_col in range(0, 8)):
                 dragger.undrag_piece()
                 return
 
@@ -80,9 +79,7 @@ class Main:
                 game.board.counter += 1
 
                 # Normal Capture.......
-                captured = board.squares[released_row][
-                    released_col
-                ].has_piece()
+                captured = board.squares[released_row][released_col].has_piece()
                 board.move(dragger.piece, move, sidebar)
 
                 # Sound
