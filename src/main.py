@@ -9,6 +9,7 @@ from sidebar import Sidebar
 
 # I made a comment for fun.
 # So did I
+# Now I commented too!
 
 
 class Main:
@@ -34,6 +35,7 @@ class Main:
             game.show_hover(screen)
             game.show_pieces(screen)
             sidebar.show_sidebar()
+            game.check_game_over()
 
             if dragger.dragging:
                 dragger.update_blit(screen)  # update blit
@@ -124,6 +126,8 @@ class Main:
 
                 # Key Press to change Theme or restart
                 elif event.type == pygame.KEYDOWN:
+                    # if event.key == pygame.K_y:
+                    #     board.take_back()  # NOTE: THIS DOES NOT WORK YET!!!!!!!!!! WE NEED TO WORK ON THIS!!!!!!!
                     if event.key == pygame.K_t:
                         game.change_theme()
                     if event.key == pygame.K_r:

@@ -150,27 +150,75 @@ class Game:
         pygame.quit()
         sys.exit()
 
-    # def check_game_over(self):
-    #     total_moves = 0
-    #     colors = ["white", "black"]
-    #     for row in range(ROWS):
-    #         for col in range(COLS):
-    #             if self.board.squares[row][col].has_piece():
-    #                 piece = self.board.squares[row][col].piece
-    #                 self.board.calc_moves(piece, row, col, bool=True)
-    #                 total_moves += len(piece.moves)
-    #     if total_moves == 0:
-    #         for row in range(ROWS):
-    #             for col in range(COLS):
-    #                 if self.board.squares[row][col].has_piece():
-    #                     piece = self.board.squares[row][col].piece
-    #                     if self.board.in_check(piece, piece.last_move):
-    #                         for color in colors:
-    #                             if color is not piece.color:
-    #                                 self.display_winner(color)
-    #         self.over = True
+    def check_game_over(self):
+        # To do: fix stalemate. It ends the game, but doesn't display the message.
+        # Necessary Lists that are traversed to check for checks, and then for stalemate or checkmate, whichever occurs on the board
+        total_black_moves = 0
+        total_white_moves = 0
+        black_pieces = []
+        black_last_moves = []
+        white_pieces = []
+        white_last_moves = []
 
+        # Shorthanding self.board to board
+        board = self.board
+
+        # Traversing through the board, calculating the moves of every piece alive, maybe this can be reduced in length to reduce lag???
+        for row in range(ROWS):
+            for col in range(COLS):
+                # Fills up the initialized lists with all the information it is supposed to contain.
+                if board.squares[row][col].has_piece():
+                    piece = board.squares[row][col].piece
+                    board.calc_moves(
+                        piece, row, col, bool=True
+                    )  # Without a shadow of a doubt, this is the line that causes the lag...
+                    moves = piece.moves
+                    if piece.color == "black":
+                        total_black_moves += len(moves)
+                        black_pieces.append(piece)
+                        if len(moves) >= 1:
+                            black_last_moves.append(moves[-1])
+                    else:
+                        total_white_moves += len(moves)
+                        white_pieces.append(piece)
+                        if len(moves) >= 1:
+                            white_last_moves.append(moves[-1])
+
+        # Use of lists to determine checkmate or stalemate if one side has no moves..
+        if total_black_moves == 0:
+            for black_piece in black_pieces:
+                for white_last_move in white_last_moves:
+                    if board.in_check(black_piece, white_last_move):
+                        self.dispay_winner("White")
+                        self.over = True
+                    else:
+                        self.display_stalemate()
+
+        elif total_white_moves == 0:
+            for white_piece in white_pieces:
+                for black_last_move in black_last_moves:
+                    if board.in_check(white_piece, black_last_move):
+                        self.display_winner("Black")
+                        self.over = True
+
+                    else:
+                        self.display_stalemate()
+
+        else:
+            total_black_moves = 0
+            total_white_moves = 0
+            black_pieces.clear()
+            white_pieces.clear()
+            black_last_moves.clear()
+            white_last_moves.clear()
+
+        # To do: implement 50-move rule. Checkmate and stalemate are coded.
+        # To do: make this method less laggy, or find a way to use more threads.
+        # To do: implement draw by insufficient material
 
     def dispay_winner(self, color):
         self.winner = color
         print(f"{self.winner} has won the game")
+
+    def display_stalemate(self):
+        print("The game is a draw by stalemate!")

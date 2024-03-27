@@ -112,6 +112,24 @@ class Board:
             promotion_sound = Sound(os.path.join("assets/sounds/promote.wav"))
             promotion_sound.play()
 
+    def take_back(self):
+        if (
+            len(self.moves) >= 1
+        ):  # Checking that at least one move has been played, to ensure that undoing a move is possible
+            last_move = self.last_move  # Shorthanding self.last_move to last_move
+            final = last_move.final
+            piece = final.piece  # Storing initial and final squares of last_move
+            initial = last_move.initial
+
+            # console board move update
+            self.squares[final.row][final.col].piece = None
+            self.squares[initial.row][initial.col].piece = piece
+            move = Move(
+                final, initial
+            )  # Undoes last move by reversing initial and final positions.
+            self.move(piece, move)
+            self.moves.remove(last_move)
+
     def castling(self, initial, final):
         return abs(initial.col - final.col) == 2
 
@@ -412,7 +430,7 @@ class Board:
                                 final = Square(row, king_end_col)
                                 moveK = Move(initial, final)
                                 move_direction = -1 if direction == "queenside" else 1
-                                through_move = Move(  #For checking the square between the king and its end position: if that square is covered by the opponent, you can't castle. 
+                                through_move = Move(  # For checking the square between the king and its end position: if that square is covered by the opponent, you can't castle.
                                     initial, Square(row, col + move_direction)
                                 )
 
@@ -422,8 +440,12 @@ class Board:
                                         not self.in_check(piece, moveK)
                                         and not self.in_check(rook, moveR)
                                         and not self.in_check(piece, through_move)
-                                        and self.squares[row][king_end_col].isEmpty() # Checking that the destination castling square for the king is indeed empty. 
-                                        and self.squares[row][rook_end_col].isEmpty() # Checking that the destination castling square for the rook is indeed empty. 
+                                        and self.squares[row][
+                                            king_end_col
+                                        ].isEmpty()  # Checking that the destination castling square for the king is indeed empty.
+                                        and self.squares[row][
+                                            rook_end_col
+                                        ].isEmpty()  # Checking that the destination castling square for the rook is indeed empty.
                                     ):
                                         # append new move to rook
                                         rook.add_move(moveR)
