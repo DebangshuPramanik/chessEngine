@@ -16,7 +16,7 @@ class Sidebar:
 
     def move_to_pgn(self, piece, move, board):
         def place_shorthand(final):
-            Square.get_alphacol(final.col) + str(final.row)
+            move.final.get_alphacol(final.col) + str(final.row)
             pass
 
         # taking P
