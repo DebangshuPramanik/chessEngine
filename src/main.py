@@ -19,7 +19,7 @@ class Main:
         pygame.display.set_caption("Chess")
         self.game = Game()
         self.sidebar = Sidebar(self.screen)
-        self.bot = Bot(self.game)
+        self.bot = Bot(self.game, "white")
 
     def mousedown(self, event):
         game = self.game
