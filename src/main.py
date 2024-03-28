@@ -5,6 +5,7 @@ from game import Game
 from square import Square
 from move import Move
 from sidebar import Sidebar
+from bot import Bot
 
 # I made a comment for fun.
 # So did I
@@ -18,6 +19,7 @@ class Main:
         pygame.display.set_caption("Chess")
         self.game = Game()
         self.sidebar = Sidebar(self.screen)
+        self.bot = Bot(self.game)
 
     def mousedown(self, event):
         game = self.game
@@ -97,6 +99,9 @@ class Main:
 
                 print(board.evaluate_board())
                 print(board.position_to_FEN())
+                
+                print("Current Score: " + str(board.evaluate_board()))
+                print("Score Associated with best move: " + str(self.bot.find_best_move()))
 
         dragger.undrag_piece()
         game.check_game_over()
