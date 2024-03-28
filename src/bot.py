@@ -4,6 +4,7 @@ from const import *
 import copy
 
 
+
 class Bot:
     def __init__(self, game):
         self.game = game

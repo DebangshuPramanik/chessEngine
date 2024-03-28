@@ -39,6 +39,6 @@ class Dragger:
         self.piece = piece
         self.dragging = True
 
-    def undrag_piece(self, piece):
+    def undrag_piece(self):
         self.piece = None
         self.dragging = False
