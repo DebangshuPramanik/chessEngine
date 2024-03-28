@@ -185,39 +185,31 @@ class Game:
                             white_last_moves.append(moves[-1])
 
         # Use of lists to determine checkmate or stalemate if one side has no moves..
+        # moves_bool is a boolean made to store a condition throughout the for loops below: whether or not there are any moves. 
         if total_black_moves == 0:
-            for black_piece in black_pieces:
-                for white_last_move in white_last_moves:
-                    if board.in_check(black_piece, white_last_move):
-                        self.dispay_winner("White")
-                        break
-                    else:
-                        self.display_stalemate()
-                        break
-            self.over = True
-    
+            for a_piece in black_pieces:
+                    if a_piece.name == "king":
+                            black_king = piece
+                            if board.in_check(black_king, board.last_move):
+                                self.dispay_winner("White")
+                            else:
+                                self.display_stalemate()
+            self.over = True    
+
         elif total_white_moves == 0:
-            for white_piece in white_pieces:
-                for black_last_move in black_last_moves:
-                    if board.in_check(white_piece, black_last_move):
-                        self.display_winner("Black")
-                        break
-                    else:
-                        self.display_stalemate()
-                        break
-            self.over = True
-    
-        else:
-            total_black_moves = 0
-            total_white_moves = 0
-            black_pieces.clear()
-            white_pieces.clear()
-            black_last_moves.clear()
-            white_last_moves.clear()
+            for a_piece in white_pieces:
+                    if a_piece.name == "king":
+                            white_king = piece
+                            if board.in_check(white_king, board.last_move):
+                                self.dispay_winner("Black")
+                            else:
+                                self.display_stalemate()
+            self.over = True    
 
         # To do: implement 50-move rule. Checkmate and stalemate are coded.
         # To do: make this method less laggy, or find a way to use more threads.
         # To do: implement draw by insufficient material
+
 
     def dispay_winner(self, color):
         self.winner = color
