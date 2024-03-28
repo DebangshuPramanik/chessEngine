@@ -6,6 +6,7 @@ from game import Game
 from square import Square
 from move import Move
 from sidebar import Sidebar
+from bot import Bot
 
 # I made a comment for fun.
 # So did I
@@ -19,6 +20,7 @@ class Main:
         pygame.display.set_caption("Chess")
         self.game = Game()
         self.sidebar = Sidebar(self.screen)
+        self.bot = Bot(self.game)
 
     def mainloop(self):
         screen = self.screen
@@ -71,12 +73,12 @@ class Main:
                     if dragger.dragging:
                         dragger.update_mouse(event.pos)
                         # Show methods
-                        #game.show_bg(screen)
-                        #game.show_last_move(screen)
-                        #game.show_moves(screen)
-                        #game.show_hover(screen)
-                        #game.show_pieces(screen)
-                        #dragger.update_blit(screen)
+                        # game.show_bg(screen)
+                        # game.show_last_move(screen)
+                        # game.show_moves(screen)
+                        # game.show_hover(screen)
+                        # game.show_pieces(screen)
+                        # dragger.update_blit(screen)
 
                 # Click Release (letting a piece go)
                 elif event.type == pygame.MOUSEBUTTONUP:
@@ -118,7 +120,8 @@ class Main:
                             # next turn...
                             game.next_turn()
 
-                            print(board.evaluate_board())
+                            print("Current Score: " + str(board.evaluate_board()))
+                            print("Score Associated with best move: " + str(self.bot.find_best_move()))
                             print(board.position_to_FEN())
 
                     dragger.undrag_piece(piece)
