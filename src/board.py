@@ -133,7 +133,7 @@ class Board:
     def castling(self, initial, final):
         return abs(initial.col - final.col) == 2
 
-    def in_check(self, piece, move):
+    def in_check(self, piece, move): # Used to determine whether a move will result in the king being taken, and if so, that move is not appended.
         temp_piece = copy.deepcopy(piece)
         temp_board = copy.deepcopy(self)
         temp_board.move(temp_piece, move, testing=True)
@@ -147,6 +147,22 @@ class Board:
                     for m in p.moves:
                         if isinstance(m.final.piece, King):
                             return True
+        return False
+    
+    def check_in_check(self, color): # Checks if a color (white or black) is currently in check, RIGHT NOW, ON THE ORIGINAL GAME BOARD
+        opponent_color = "black" if color == "white" else "white"
+        pieces = []
+        for row in range(ROWS):
+            for col in range(COLS):
+                if self.squares[row][col].has_piece():
+                    piece = self.squares[row][col].piece
+                    if piece.color == opponent_color and not isinstance(piece, King):
+                        pieces.append(piece)
+        for piece in pieces:
+            for m in piece.moves:
+                if m.final.has_rival_piece(opponent_color):
+                    if isinstance(m.final.piece, King):
+                        return True
         return False
 
     def calc_moves(self, piece, row, col, bool=True):
