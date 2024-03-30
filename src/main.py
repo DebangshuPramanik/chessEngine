@@ -80,7 +80,6 @@ class Main:
             # Valid move?
             if board.valid_move(dragger.piece, move):
                 # counter to determine which player's turn it is (remove this and update the FEN notation method in the board file if this is unecessary)
-                game.board.counter += 1
 
                 # Normal Capture.......
                 captured = board.squares[released_row][released_col].has_piece()
@@ -94,14 +93,15 @@ class Main:
                 game.show_last_move(screen)
                 game.show_pieces(screen)
 
+                print(board.evaluate_board())
+
                 # next turn...
                 game.next_turn()
 
-                print(board.evaluate_board())
                 print(board.position_to_FEN())
                 
                 print("Current Score: " + str(board.evaluate_board()))
-                print("Score Associated with best move: " + str(self.bot.find_best_move(board)))
+                #print("Score Associated with best move: " + str(self.bot.find_best_move(board)))
 
         dragger.undrag_piece()
         game.check_game_over()
