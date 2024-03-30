@@ -36,6 +36,7 @@ class Board:
         self.moves = []
 
     def move(self, piece, move, sidebar=None, testing=False, castling=False):
+        self.counter+=1
         initial = move.initial
         final = move.final
 
@@ -129,6 +130,7 @@ class Board:
             )  # Undoes last move by reversing initial and final positions.
             self.move(piece, move)
             self.moves.remove(last_move)
+            self.counter-=1
 
     def castling(self, initial, final):
         return abs(initial.col - final.col) == 2
@@ -555,6 +557,7 @@ class Board:
 
     # Position to FEN for future use
     def position_to_FEN(self):
+        pieceHere = False
         # Crappy temporary solution I thought of while waiting for my bus
         map_num = {
             0: "",
