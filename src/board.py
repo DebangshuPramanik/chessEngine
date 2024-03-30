@@ -227,7 +227,6 @@ class Board:
                             )
                             # create a new move
                             move = Move(initial, final)
-
                             # check potencial checks
                             if bool:
                                 if not self.in_check(piece, move):

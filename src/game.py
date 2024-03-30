@@ -190,9 +190,9 @@ class Game:
                 self.display_stalemate
             self.over = True
 
-        # To do: implement 50-move rule. Checkmate and stalemate are coded.
-        # To do: make this method less laggy, or find a way to use more threads.
-        # To do: implement draw by insufficient material
+        # Implementation of draw by 50 move rule (if no piece is taken or if no pawn is pushed for 50 moves, it is a draw)
+        # Implementation of draw by repetition (This one will be very hard guys)
+        # Implementation of 
 
 
     def dispay_winner(self, color):
