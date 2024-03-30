@@ -151,7 +151,6 @@ class Game:
         sys.exit()
 
     def check_game_over(self):
-        # To do: fix stalemate. It ends the game, but doesn't display the message.
         # Necessary Lists that are traversed to check for checks, and then for stalemate or checkmate, whichever occurs on the board
         total_black_moves = 0
         total_white_moves = 0
@@ -175,7 +174,6 @@ class Game:
                         total_white_moves += len(moves)
 
         # Use of lists to determine checkmate or stalemate if one side has no moves..
-        # moves_bool is a boolean made to store a condition throughout the for loops below: whether or not there are any moves. 
         if total_black_moves == 0:
             if board.check_in_check("black"):
                 self.dispay_winner("White")
@@ -190,9 +188,20 @@ class Game:
                 self.display_stalemate
             self.over = True
 
-        # Implementation of draw by 50 move rule (if no piece is taken or if no pawn is pushed for 50 moves, it is a draw)
+        # Implementation of draw by 50 move rule (if no piece is taken or if no pawn is pushed for 50 moves (100 total turns), it is a draw)
+        all_moves_are_pawn_or_capture = True
+        if board.turn_counter >= 100:
+            for i in range(board.turn_counter-100, board.turn_counter + 1, 1):
+                if not board.played_moves[i].is_pawn_move_or_capture():
+                    all_moves_are_pawn_or_capture = False
+                    return
+                else:
+                    if i == board.turn_counter and all_moves_are_pawn_or_capture:
+                        self.display_draw_by_fifty_move_rule()
+
+
         # Implementation of draw by repetition (This one will be very hard guys)
-        # Implementation of 
+        # Implementation of draw by insufficient material: This one will also be pretty hard :(  
 
 
     def dispay_winner(self, color):
@@ -201,3 +210,6 @@ class Game:
 
     def display_stalemate(self):
         print("The game is a draw by stalemate!")
+
+    def display_draw_by_fifty_move_rule(self):
+        print("This game is a draw by the 50-move rule: no piece was taken nor was any pawn moved for 50 moves!")

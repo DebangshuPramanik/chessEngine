@@ -32,8 +32,10 @@ class Board:
         self._create()
         self._add_pieces("white")
         self._add_pieces("black")
-        self.counter = 0
+        self.counter = 0  # Used for FEN
         self.moves = []
+        self.played_moves = []
+        self.turn_counter = 0 # Used for counting the total number of turns played on the board. 
 
     def move(self, piece, move, sidebar=None, testing=False, castling=False):
         initial = move.initial
@@ -89,6 +91,11 @@ class Board:
 
         # set last move
         self.last_move = move
+
+        # add the last move to the list of played_moves
+        self.played_moves.append(self.last_move)
+
+        self.turn_counter += 1
 
     def valid_move(self, piece, move):
         return move in piece.moves
@@ -156,7 +163,7 @@ class Board:
             for col in range(COLS):
                 if self.squares[row][col].has_piece():
                     piece = self.squares[row][col].piece
-                    if piece.color == opponent_color and not isinstance(piece, King):
+                    if piece.color == opponent_color:
                         pieces.append(piece)
         for piece in pieces:
             for m in piece.moves:
@@ -193,6 +200,7 @@ class Board:
                             final = Square(possible_move_row, col)
                             # create a new move
                             move = Move(initial, final)
+                            move.set_pawn_move(True)
                             # check potencial checks
                             if bool:
                                 if not self.in_check(piece, move):
@@ -225,6 +233,7 @@ class Board:
                             )
                             # create a new move
                             move = Move(initial, final)
+                            move.set_pawn_move_and_capture(True)
                             # check potencial checks
                             if bool:
                                 if not self.in_check(piece, move):
@@ -250,6 +259,7 @@ class Board:
 
                 # check potential checks
                 move = Move(Square(row, col), Square(er, ec))
+                move.set_pawn_move_and_capture(True)
                 if bool:
                     if not self.in_check(piece, move):
                         piece.add_move(move)
@@ -289,7 +299,8 @@ class Board:
                         )
                         # create new move
                         move = Move(initial, final)
-
+                        if isinstance(final_piece, Piece):
+                            move.set_capture(True)
                         # check potencial checks
                         if bool:
                             if not self.in_check(piece, move):
@@ -316,7 +327,8 @@ class Board:
                         )
                         # create a possible new move
                         move = Move(initial, final)
-
+                        if isinstance(final_piece, Piece):
+                            move.set_capture(True)
                         # empty = continue looping
                         if self.squares[possible_move_row][possible_move_col].isEmpty():
                             # check potencial checks
