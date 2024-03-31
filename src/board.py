@@ -32,10 +32,10 @@ class Board:
         self._create()
         self._add_pieces("white")
         self._add_pieces("black")
-        self.counter = 0  # Used for FEN
+        self.counter = 0  # Used for FEN and for counting the total number of turns played on the board. 
         self.moves = []
         self.played_moves = []
-        self.turn_counter = 0 # Used for counting the total number of turns played on the board. 
+        self.turn_counter = 0 # Used 
 
     def move(self, piece, move, sidebar=None, testing=False, castling=False):
         self.counter+=1

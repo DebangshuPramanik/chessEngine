@@ -190,13 +190,15 @@ class Game:
 
         # Implementation of draw by 50 move rule (if no piece is taken or if no pawn is pushed for 50 moves (100 total turns), it is a draw)
         all_moves_are_pawn_or_capture = True
-        if board.turn_counter >= 100:
-            for i in range(board.turn_counter-100, board.turn_counter + 1, 1):
-                if not board.played_moves[i].is_pawn_move_or_capture():
+        print(board.counter)
+        if board.counter >= 100:
+            for i in range(board.counter-100, board.counter + 1, 1):
+                if not board.played_moves[i].pawn_move_or_capture():
                     all_moves_are_pawn_or_capture = False
+                    print("turn restarted")
                     return
                 else:
-                    if i == board.turn_counter and all_moves_are_pawn_or_capture:
+                    if i == board.counter and all_moves_are_pawn_or_capture:
                         self.display_draw_by_fifty_move_rule()
 
 
