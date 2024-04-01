@@ -3,8 +3,6 @@ from const import *
 
 import copy
 
-
-
 class Bot:
     def __init__(self, game, player):
         self.game = game

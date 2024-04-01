@@ -35,7 +35,6 @@ class Board:
         self.counter = 0  # Used for FEN and for counting the total number of turns played on the board. 
         self.moves = []
         self.played_moves = []
-        self.turn_counter = 0 # Used 
 
     def move(self, piece, move, sidebar=None, testing=False, castling=False):
         self.counter+=1
@@ -95,8 +94,6 @@ class Board:
 
         # add the last move to the list of played_moves
         self.played_moves.append(self.last_move)
-
-        self.turn_counter += 1
 
     def valid_move(self, piece, move):
         return move in piece.moves
