@@ -101,7 +101,7 @@ class Main:
                 print(board.position_to_FEN())
                 
                 print("Current Score: " + str(board.evaluate_board()))
-                print("Score Associated with best move: " + str(self.bot.find_best_move(board)))
+                # print("Score Associated with best move: " + str(self.bot.find_best_move(board)))]
 
         dragger.undrag_piece()
         game.check_game_over()
