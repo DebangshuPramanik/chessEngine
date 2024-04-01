@@ -654,11 +654,19 @@ class Board:
         # (it needs the board state when/before the move is done)
         # board_move should be of the form (piece, move)
         def place_shorthand(final):
-            return Square.get_alphacol(final.col) + str(final.row + 1)
+            return Square.get_alphacol(final.col) + str(8 - final.row)
 
         piece, move, s = board_move
         init = move.initial
         final = move.final
+
+        if isinstance(piece, King):
+            if self.castling(init, final):
+                if init.col - final.col > 0:
+                    return "O-O-O"
+                else:
+                    return "O-O"
+
         piece_full_shorthand = ""
         if s["col"]:
             piece_full_shorthand += Square.get_alphacol(init.col)
