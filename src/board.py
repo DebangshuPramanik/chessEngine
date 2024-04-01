@@ -330,7 +330,7 @@ class Board:
                             move.set_capture(True)
                         # empty = continue looping
                         if self.squares[possible_move_row][possible_move_col].isEmpty():
-                            # check potencial checks
+                            # check potential checks
                             if bool:
                                 if not self.in_check(piece, move):
                                     # append new move
