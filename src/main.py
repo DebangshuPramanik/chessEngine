@@ -112,13 +112,9 @@ class Main:
                 game.next_turn()
 
                 print(board.position_to_FEN())
-                
+
                 print("Current Score: " + str(board.evaluate_board()))
-<<<<<<< HEAD
-                #print("Score Associated with best move: " + str(self.bot.find_best_move(board)))
-=======
                 # print("Score Associated with best move: " + str(self.bot.find_best_move(board)))]
->>>>>>> c7fdbfe37724077ca30b0ddc26a834f0d1b6d190
 
         dragger.undrag_piece()
         game.check_game_over()
@@ -174,8 +170,7 @@ class Main:
                         dragger = game.dragger
                         board = game.board
                         self.bot_playing = True if self.bot_index % 2 == 0 else False
-                        self.bot_index+=1
-
+                        self.bot_index += 1
 
                 # Quit Application
                 elif event.type == pygame.QUIT:
