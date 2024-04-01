@@ -19,7 +19,10 @@ class Main:
         pygame.display.set_caption("Chess")
         self.game = Game()
         self.sidebar = Sidebar(self.screen)
-        self.bot = Bot(self.game, "white")
+        self.bot = Bot(self.game, "black")
+
+        self.bot_playing = False
+        self.bot_index = 0
 
     def mousedown(self, event):
         game = self.game
@@ -79,11 +82,21 @@ class Main:
 
             # Valid move?
             if board.valid_move(dragger.piece, move):
-                # counter to determine which player's turn it is (remove this and update the FEN notation method in the board file if this is unecessary)
 
                 # Normal Capture.......
-                captured = board.squares[released_row][released_col].has_piece()
-                board.move(dragger.piece, move, sidebar)
+                if not self.bot_playing:
+                    captured = board.squares[released_row][released_col].has_piece()
+                    board.move(dragger.piece, move, sidebar)
+                else:
+                    if game.next_player != self.bot.player:
+                        captured = board.squares[released_row][released_col].has_piece()
+                        board.move(dragger.piece, move, sidebar)
+                        print(self.bot.player)
+                    else:
+                        print("test")
+                        captured = board.squares[released_row][released_col].has_piece()
+                        best_move = self.bot.find_best_move(board)
+                        board.move(best_move[1], best_move[0], sidebar)
 
                 # Sound
                 game.play_sound(captured)
@@ -101,7 +114,7 @@ class Main:
                 print(board.position_to_FEN())
                 
                 print("Current Score: " + str(board.evaluate_board()))
-                print("Score Associated with best move: " + str(self.bot.find_best_move(board)))
+                #print("Score Associated with best move: " + str(self.bot.find_best_move(board)))
 
         dragger.undrag_piece()
         game.check_game_over()
@@ -150,6 +163,15 @@ class Main:
                         game = self.game
                         dragger = game.dragger
                         board = game.board
+                    # toggles whether you're playing against the bot
+                    elif event.key == pygame.K_b:
+                        game.reset()
+                        game = self.game
+                        dragger = game.dragger
+                        board = game.board
+                        self.bot_playing = True if self.bot_index % 2 == 0 else False
+                        self.bot_index+=1
+
 
                 # Quit Application
                 elif event.type == pygame.QUIT:
