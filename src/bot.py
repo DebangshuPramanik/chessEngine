@@ -3,6 +3,7 @@ from const import *
 
 import copy
 
+
 class Bot:
     def __init__(self, game, player):
         self.game = game
@@ -20,7 +21,7 @@ class Bot:
     def find_best_move(self, board, depth=2):
         # TODO: implement recursion to find the best move
 
-        player_shorthand = {0:"white", 1:"black"}
+        player_shorthand = {0: "white", 1: "black"}
         player_mod = 1 if self.game.board.counter % 2 == 0 else -1
 
         temp_board = copy.deepcopy(board)
@@ -31,18 +32,21 @@ class Bot:
         max = -999999999999999999999999999
         for row in range(ROWS):
             for col in range(COLS):
-                if temp_board.squares[row][col].has_team_piece(player_shorthand[(self.game.board.counter % 2)]):
-                    temp_board.calc_moves(
-                        temp_board.squares[row][col].piece, row, col)
+                if temp_board.squares[row][col].has_team_piece(
+                    player_shorthand[(self.game.board.counter % 2)]
+                ):
+                    temp_board.calc_moves(temp_board.squares[row][col].piece, row, col)
                     for move in temp_board.squares[row][col].piece.moves:
-                       # if(depth >  0):
-                       #     temp = copy.deepcopy(temp_board)
-                       #    temp.move(temp.squares[row][col].piece, move, testing=True, sidebar=None)
-                       #    self.find_best_move(temp, depth=(depth-1))
-                        evaluated_move = self.evaluate_move(temp_board, move, temp_board.squares[row][col].piece)
-                        if player_mod*evaluated_move > max:
-                            max = player_mod*evaluated_move
+                        # if(depth >  0):
+                        #     temp = copy.deepcopy(temp_board)
+                        #    temp.move(temp.squares[row][col].piece, move, testing=True, sidebar=None)
+                        #    self.find_best_move(temp, depth=(depth-1))
+                        evaluated_move = self.evaluate_move(
+                            temp_board, move, temp_board.squares[row][col].piece
+                        )
+                        if player_mod * evaluated_move > max:
+                            max = player_mod * evaluated_move
                             best_move = move
                             best_piece = temp_board.squares[row][col].piece
-                        
+
         return [best_move, best_piece]

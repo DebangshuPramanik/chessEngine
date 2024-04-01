@@ -91,9 +91,7 @@ class Main:
                     if game.next_player != self.bot.player:
                         captured = board.squares[released_row][released_col].has_piece()
                         board.move(dragger.piece, move, sidebar)
-                        print(self.bot.player)
                     else:
-                        print("test")
                         captured = board.squares[released_row][released_col].has_piece()
                         best_move = self.bot.find_best_move(board)
                         board.move(best_move[1], best_move[0], sidebar)
@@ -112,9 +110,9 @@ class Main:
                 game.next_turn()
 
                 print(board.position_to_FEN())
-                
+
                 print("Current Score: " + str(board.evaluate_board()))
-                #print("Score Associated with best move: " + str(self.bot.find_best_move(board)))
+                
                 # print("Score Associated with best move: " + str(self.bot.find_best_move(board)))]
 
         dragger.undrag_piece()
@@ -171,8 +169,7 @@ class Main:
                         dragger = game.dragger
                         board = game.board
                         self.bot_playing = True if self.bot_index % 2 == 0 else False
-                        self.bot_index+=1
-
+                        self.bot_index += 1
 
                 # Quit Application
                 elif event.type == pygame.QUIT:

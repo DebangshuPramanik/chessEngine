@@ -32,12 +32,11 @@ class Board:
         self._create()
         self._add_pieces("white")
         self._add_pieces("black")
-        self.counter = 0  # Used for FEN and for counting the total number of turns played on the board. 
+        self.counter = 0  # Used for FEN and for counting the total number of turns played on the board.
         self.moves = []
         self.played_moves = []
 
     def move(self, piece, move, sidebar=None, testing=False, castling=False):
-        self.counter+=1
         initial = move.initial
         final = move.final
 
@@ -46,7 +45,7 @@ class Board:
 
         if not (testing or castling):
             self.add_move(piece, move)  # note, this adds the piece being taken to move
-
+            self.counter+=1
         # console board move update
         self.squares[initial.row][initial.col].piece = None
         self.squares[final.row][final.col].piece = piece
@@ -134,12 +133,14 @@ class Board:
             )  # Undoes last move by reversing initial and final positions.
             self.move(piece, move)
             self.moves.remove(last_move)
-            self.counter-=1
+            self.counter -= 1
 
     def castling(self, initial, final):
         return abs(initial.col - final.col) == 2
 
-    def in_check(self, piece, move): # Used to determine whether a move will result in the king being taken, and if so, that move is not appended.
+    def in_check(
+        self, piece, move
+    ):  # Used to determine whether a move will result in the king being taken, and if so, that move is not appended.
         temp_piece = copy.deepcopy(piece)
         temp_board = copy.deepcopy(self)
         temp_board.move(temp_piece, move, testing=True)
@@ -154,8 +155,10 @@ class Board:
                         if isinstance(m.final.piece, King):
                             return True
         return False
-    
-    def check_in_check(self, color): # Checks if a color (white or black) is currently in check, RIGHT NOW, ON THE ORIGINAL GAME BOARD
+
+    def check_in_check(
+        self, color
+    ):  # Checks if a color (white or black) is currently in check, RIGHT NOW, ON THE ORIGINAL GAME BOARD
         opponent_color = "black" if color == "white" else "white"
         pieces = []
         for row in range(ROWS):
