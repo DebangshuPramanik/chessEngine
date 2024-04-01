@@ -91,9 +91,7 @@ class Main:
                     if game.next_player != self.bot.player:
                         captured = board.squares[released_row][released_col].has_piece()
                         board.move(dragger.piece, move, sidebar)
-                        print(self.bot.player)
                     else:
-                        print("test")
                         captured = board.squares[released_row][released_col].has_piece()
                         best_move = self.bot.find_best_move(board)
                         board.move(best_move[1], best_move[0], sidebar)

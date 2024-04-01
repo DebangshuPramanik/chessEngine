@@ -37,7 +37,6 @@ class Board:
         self.played_moves = []
 
     def move(self, piece, move, sidebar=None, testing=False, castling=False):
-        self.counter += 1
         initial = move.initial
         final = move.final
 
@@ -46,7 +45,7 @@ class Board:
 
         if not (testing or castling):
             self.add_move(piece, move)  # note, this adds the piece being taken to move
-
+            self.counter+=1
         # console board move update
         self.squares[initial.row][initial.col].piece = None
         self.squares[final.row][final.col].piece = piece
