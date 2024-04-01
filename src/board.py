@@ -607,10 +607,43 @@ class Board:
         FEN += " " + str(TURN)
         return FEN
 
+    def others_can_do(self, piece, end):
+        ret = []
+        for row in range(ROWS):
+            for col in range(COLS):
+                if self.squares[row][col].has_piece():
+                    p = self.squares[row][col].piece
+                    if type(piece) == type(p) and piece != p:
+                        self.calc_moves(p, row, col)
+                        for m in p.moves:
+                            if m.final == end:
+                                ret.append(((row, col), p))
+        return ret
+
     def add_move(self, piece, move):
         piece_taken = self.squares[move.final.row][move.final.col].piece
         move.final.piece = piece_taken
-        self.moves.append((piece, move))  # feels hacky
+        others = self.others_can_do(piece, move.final)
+        same_row = False
+        same_col = False
+        do_row = False
+        do_col = False
+        print(others)
+        if others:
+            for o in others:
+                orow, ocol = o[0]
+                if orow == move.initial.row:
+                    same_row = True
+                if ocol == move.initial.col:
+                    same_col = True
+
+            do_col = not same_col
+            do_row = same_col
+            if same_col and same_row:
+                do_col = True
+        specifiers = {"row": do_row, "col": do_col}
+        print(specifiers)
+        self.moves.append((piece, move, specifiers))  # feels hacky
 
     def move_to_pgn(self, board_move):
         # TODO: handle castling, and specifying which piece moved when neccessary
@@ -618,15 +651,21 @@ class Board:
         # (it needs the board state when/before the move is done)
         # board_move should be of the form (piece, move)
         def place_shorthand(final):
-            return Square.get_alphacol(final.col) + str(final.row)
+            return Square.get_alphacol(final.col) + str(final.row + 1)
 
-        piece, move = board_move
+        piece, move, s = board_move
         init = move.initial
         final = move.final
+        piece_full_shorthand = ""
+        if s["col"]:
+            piece_full_shorthand += Square.get_alphacol(init.col)
+        if s["row"]:
+            piece_full_shorthand += str(init.row)
+        piece_full_shorthand += piece.shorthand
         if final.piece != None:
-            return piece.shorthand + "x" + place_shorthand(final)
+            return piece_full_shorthand + "x" + place_shorthand(final)
         else:
-            return piece.shorthand + place_shorthand(final)
+            return piece_full_shorthand + place_shorthand(final)
 
     def moves_to_pgn(self):
         pass
