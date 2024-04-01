@@ -192,7 +192,7 @@ class Game:
         all_moves_are_pawn_or_capture = True
         print(board.counter)
         if board.counter >= 100:
-            for i in range(board.counter-100, board.counter + 1, 1):
+            for i in range(board.counter - 100, board.counter + 1, 1):
                 if not board.played_moves[i].pawn_move_or_capture():
                     all_moves_are_pawn_or_capture = False
                     print("turn restarted")
@@ -201,10 +201,8 @@ class Game:
                     if i == board.counter and all_moves_are_pawn_or_capture:
                         self.display_draw_by_fifty_move_rule()
 
-
         # Implementation of draw by repetition (This one will be very hard guys)
-        # Implementation of draw by insufficient material: This one will also be pretty hard :(  
-
+        # Implementation of draw by insufficient material: This one will also be pretty hard :(
 
     def dispay_winner(self, color):
         self.winner = color
@@ -214,4 +212,6 @@ class Game:
         print("The game is a draw by stalemate!")
 
     def display_draw_by_fifty_move_rule(self):
-        print("This game is a draw by the 50-move rule: no piece was taken nor was any pawn moved for 50 moves!")
+        print(
+            "This game is a draw by the 50-move rule: no piece was taken nor was any pawn moved for 50 moves!"
+        )
