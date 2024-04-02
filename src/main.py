@@ -6,6 +6,7 @@ from square import Square
 from move import Move
 from sidebar import Sidebar
 from bot import Bot
+from number_board import NumberBoard
 
 # I made a comment for fun.
 # So did I
@@ -80,6 +81,7 @@ class Main:
             final = Square(released_row, released_col)
             move = Move(initial, final)
 
+            print(NumberBoard(board).squares)
             # Valid move?
             if board.valid_move(dragger.piece, move):
 
@@ -104,16 +106,16 @@ class Main:
                 game.show_last_move(screen)
                 game.show_pieces(screen)
 
-                print(board.evaluate_board())
+                #print(board.evaluate_board())
 
                 # next turn...
                 game.next_turn()
 
-                print(board.position_to_FEN())
-                print(board.move_to_pgn(board.moves[-1]))
+                #print(board.position_to_FEN())
+                #print(board.move_to_pgn(board.moves[-1]))
 
-                print("Current Score: " + str(board.evaluate_board()))
-                
+                #print("Current Score: " + str(board.evaluate_board()))
+
                 # print("Score Associated with best move: " + str(self.bot.find_best_move(board)))]
 
         dragger.undrag_piece()
