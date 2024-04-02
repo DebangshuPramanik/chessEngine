@@ -176,14 +176,14 @@ class Game:
         # Use of lists to determine checkmate or stalemate if one side has no moves..
         if total_black_moves == 0:
             if board.check_in_check("black"):
-                self.dispay_winner("White")
+                self.display_winner("White")
             else:
                 self.display_stalemate()
             self.over = True
 
         elif total_white_moves == 0:
             if board.check_in_check("white"):
-                self.dispay_winner("Black")
+                self.display_winner("Black")
             else:
                 self.display_stalemate
             self.over = True
@@ -204,7 +204,7 @@ class Game:
         # Implementation of draw by repetition (This one will be very hard guys)
         # Implementation of draw by insufficient material: This one will also be pretty hard :(
 
-    def dispay_winner(self, color):
+    def display_winner(self, color):
         self.winner = color
         print(f"{self.winner} has won the game")
 

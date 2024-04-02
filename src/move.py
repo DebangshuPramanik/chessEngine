@@ -7,7 +7,7 @@ class Move:
         self.is_a_capture = is_a_capture
         self.is_a_pawn_move = is_a_pawn_move
 
-    def __eq__(self, other):
+    def __eq__(self, other): 
         return self.initial == other.initial and self.final == other.final
 
     def is_it_pawn_move(self):
