@@ -649,10 +649,6 @@ class Board:
         self.moves.append((piece, move, specifiers))  # feels hacky
 
     def move_to_pgn(self, board_move):
-        # TODO: handle castling, and specifying which piece moved when neccessary
-        # (NB. specifying which piece will need to be done in add_move probably)
-        # (it needs the board state when/before the move is done)
-        # board_move should be of the form (piece, move)
         def place_shorthand(final):
             return Square.get_alphacol(final.col) + str(8 - final.row)
 
