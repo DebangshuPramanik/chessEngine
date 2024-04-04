@@ -709,3 +709,34 @@ class Board:
             if a_color not in colors:
                 return False
         return True
+
+    def accumulate_pieces(self, fun):
+        # note: fun must always return a list
+        acc = []
+        for row in self.squares:
+            for square in row:
+                if square.has_piece():
+                    acc.extend(fun(square.piece))
+        return acc
+    def map_pieces(self, fun):
+        acc = []
+        for row in self.squares:
+            for square in row:
+                if square.has_piece():
+                    acc.append(fun(square.piece))
+        return acc
+    def accumulate_piece_coords(self, fun):
+        # note, fun must always return a list
+        acc = []
+        for row in self.squares:
+            for square in row:
+                if square.has_piece():
+                    acc.extend(fun(square.piece, square.row, square.col))
+        return acc
+    def calc_color_moves(self, color):
+        def get_moves(piece, row, column):
+            if(piece.color != color):
+                return []
+            self.calc_moves(piece, row, column)
+            return [(piece, move) for move in piece.moves]
+        return self.accumulate_piece_coords(get_moves)
