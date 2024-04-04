@@ -312,6 +312,22 @@ class Board:
                             piece.add_move(move)
 
         def straightline_moves(incrs):
+            def check_ib_moves(piece, move): #checks in-between moves for a piece from it's starting square to its final square
+                initial = move.initial
+                final = move.final
+
+                vertical_distance = initial.col - final.col
+                horizontal_distance = initial.row - final.row
+
+                if piece.isinstance(Rook):
+                    pass
+                if piece.isinstance(Bishop):
+                    pass
+                if piece.isinstance(Queen):
+                    pass
+                # Finish scanning all squares for team pieces before allowing that move. 
+
+
             for incr in incrs:
                 row_incr, col_incr = incr
                 possible_move_row = row + row_incr
@@ -329,6 +345,8 @@ class Board:
                         )
                         # create a possible new move
                         move = Move(initial, final)
+                        # generate in-between moves and make sure pieces can't "jump".
+
                         if isinstance(final_piece, Piece):
                             move.set_capture(True)
                         # empty = continue looping
@@ -348,14 +366,14 @@ class Board:
                         ].has_rival_piece(piece.color):
                             # check potencial checks
                             if bool:
-                                if not self.in_check(piece, move):
+                                 if not self.in_check(piece, move):
                                     # append new move
                                     piece.add_move(move)
                                     break
                             else:
                                 # append new move
                                 piece.add_move(move)
-                                break
+                                break   
 
                         # has team piece = break
                         elif self.squares[possible_move_row][

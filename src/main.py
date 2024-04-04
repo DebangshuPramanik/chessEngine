@@ -84,8 +84,17 @@ class Main:
             if board.valid_move(dragger.piece, move):
 
                 # Normal Capture.......
-                captured = board.squares[released_row][released_col].has_piece()
-                board.move(dragger.piece, move, sidebar)
+                if not self.bot_playing:
+                    captured = board.squares[released_row][released_col].has_piece()
+                    board.move(dragger.piece, move, sidebar)
+                else:
+                    if game.next_player != self.bot.player:
+                        captured = board.squares[released_row][released_col].has_piece()
+                        board.move(dragger.piece, move, sidebar)
+                    else:
+                        captured = board.squares[released_row][released_col].has_piece()
+                        best_move = self.bot.find_best_move(board)
+                        board.move(best_move[1], best_move[0], sidebar)
 
                 # Sound
                 game.play_sound(captured)
@@ -99,20 +108,13 @@ class Main:
 
                 # next turn...
                 game.next_turn()
-                if self.bot_playing: 
-                    best_move = self.bot.find_best_move(board)
-                    captured = board.squares[released_row][released_col].has_piece()
-                    if best_move[1] != None:
-                        board.move(best_move[1], best_move[0], sidebar)
-                        game.next_turn()
-
 
                 print(board.position_to_FEN())
                 print(board.move_to_pgn(board.moves[-1]))
 
                 print("Current Score: " + str(board.evaluate_board()))
                 
-                #print("Best move: " + board.move_to_pgn(self.bot.find_best_move(board)[0]))
+                # print("Score Associated with best move: " + str(self.bot.find_best_move(board)))]
 
         dragger.undrag_piece()
         game.check_game_over()
