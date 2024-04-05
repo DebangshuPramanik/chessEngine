@@ -168,7 +168,7 @@ class NumberBoard:
             diff = fc - ic
             if abs(diff) == 2:  # king moved 2(sideways). must be a castle
                 rc = 0 if diff < 0 else 7  # rook column
-                self.move((rc, ir), (abs(fc - ic // 2), ir))
+                self._tuple_move((ir, rc), (ir, abs(fc - ic // 2)))
                 # rook goes to avg of where king was/is
         elif abs(p) == 4:  # Rook
             if (ic == 0 or ic == 7) and ir == PST[color(p)]:  #
