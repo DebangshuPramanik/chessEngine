@@ -283,12 +283,14 @@ class NumberBoard:
             if not self.castle_moved[pcolor][1]:
                 if (
                     not self.castle_moved[pcolor][0]
+                    and self.in_board((row, col - 2)) # should not come up in an actual game, but useful for testing
                     and self.at((row, col - 1)) == 0
                     and self.at((row, col - 2)) == 0
                 ):
                     possible_ends.append((row, col - 2))
                 if (
                     not self.castle_moved[pcolor][2]
+                    and self.in_board((row, col + 2)) # should not come up in an actual game, but useful for testing
                     and self.at((row, col + 1)) == 0
                     and self.at((row, col + 2)) == 0
                 ):
