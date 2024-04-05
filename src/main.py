@@ -84,20 +84,20 @@ class Main:
             if board.valid_move(dragger.piece, move):
 
                 # Normal Capture.......
-                if not self.bot_playing:
-                    captured = board.squares[released_row][released_col].has_piece()
-                    board.move(dragger.piece, move, sidebar)
-                else:
-                    if game.next_player != self.bot.player:
-                        captured = board.squares[released_row][released_col].has_piece()
-                        board.move(dragger.piece, move, sidebar)
-                    else:
-                        captured = board.squares[released_row][released_col].has_piece()
-                        best_move = self.bot.find_best_move(board)
-                        board.move(best_move[1], best_move[0], sidebar)
+                captured = board.squares[released_row][released_col].has_piece()
+                board.move(dragger.piece, move, sidebar)
 
                 # Sound
                 game.play_sound(captured)
+                
+                # if the bot is playing, make it's move and then move on
+                if self.bot_playing:
+                    best_move,best_piece = self.bot.find_best_move(board)
+                    captured=board.squares[best_move.final.row][best_move.final.col].has_piece()
+                    board.move(best_piece, best_move, sidebar)
+
+                    game.play_sound(captured)
+                    game.next_turn()
 
                 # draw/show methods
                 game.show_bg(screen)
