@@ -313,7 +313,7 @@ class Board:
 
         def straightline_moves(incrs):
 
-            def check_in_between_move_squares(piece, move): # Necessary for some discovered checks where pieces could jump enemy pieces to block without this function...
+            def check_in_between_move_squares(move): # Necessary for some discovered checks where pieces could jump enemy pieces to block without this function...
                 if isinstance(piece, Bishop) or isinstance(piece, Rook) or isinstance(piece, Queen):
                     initial_row = move.initial.row
                     initial_col = move.initial.col
@@ -352,7 +352,7 @@ class Board:
                         if self.squares[row][col].has_piece():
                             piece = self.squares[row][col].piece
                             for move in piece.moves:
-                                    check_in_between_move_squares(piece, move)
+                                    check_in_between_move_squares(move)
 
             for incr in incrs:
                 row_incr, col_incr = incr
