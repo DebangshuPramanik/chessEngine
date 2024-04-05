@@ -2,6 +2,67 @@ from const import *
 from move import Move
 import copy
 
+from dataclasses import dataclass
+
+# TODO utils class with useful methods like int->string for rows and columns
+
+@dataclass
+class Move:
+    start: tuple = None
+    end: tuple
+    promotion: int = None
+
+    @classmethod
+    def end(cls, end):
+        return cls(end=end)
+
+    def with_start(self, start):
+        return Move(start=start, end=self.end, promotion=self.promotion)
+
+    def __str__(self):
+        return self.simple_str()
+
+    def simple_str(self):
+        """
+        Displays move using simple notation
+        r1c1->r2c2=promotion
+        """
+
+        def to_an(square):
+            rows = ["8", "7", "6", "5", "4", "3", "2", "1"]
+            cols = ["a", "b", "c", "d", "e", "f", "g", "h"]
+            r, c = square
+            return cols[c] + rows[r]
+
+        def to_piece(piece):
+            return [None, None, "N", "B", "R", "Q", "K"][piece]
+
+        return (
+            to_an(self.start)
+            + "->"
+            + to_an(self.end)
+            + ("=" + to_piece(self.promotion) if self.promotion else "")
+        )
+        pass
+
+    @classmethod
+    def from_string(cls, string):
+        def parse_an(string):
+            row_dict = {
+                "8": 0, "7": 1, "6": 2, "5": 3,
+                "4": 4, "3": 5, "2": 6, "1": 7
+            }
+            col_dict = {
+                "a": 0, "b": 1, "c": 2, "d": 3,
+                "e": 4, "f": 5, "g": 6, "h": 7,
+            }
+            return (row_dict[string[1]], col_dict[string[0]])
+        parts = string.split("=")
+        start, end = [parse_an(s) for s in parts[0].split("->")]
+        promotion = parts[1] if len(parts) == 2 else None
+        return Move(start, end, promotion)
+
+
 BLACK_START = 0
 WHITE_START = 7
 PST = [None, WHITE_START, BLACK_START]  # Piece STart
@@ -10,7 +71,7 @@ PST = [None, WHITE_START, BLACK_START]  # Piece STart
 def color(piece):
     if piece == 0:
         return 0
-    piece // abs(piece)
+    return piece // abs(piece)
 
 
 class NumberBoard:
@@ -38,6 +99,7 @@ class NumberBoard:
         nb.en_passant = copy.deepcopy(self.en_passant)
         nb.white_castle_moved = self.white_castle_moved[:]
         nb.black_castle_moved = self.black_castle_moved[:]
+        nb.castle_moved = [None, nb.white_castle_moved, nb.black_castle_moved]
         return nb
 
     def evaluate_board(self):
@@ -60,8 +122,12 @@ class NumberBoard:
         # end is a (row, col)
         moved_piece = self.at(start)
         self.put(end, moved_piece)
+        self.put(start, 0)
 
-    def move(self, start, end, promote=None):
+    def move(self, move):
+        return self._tuple_move(move.start, move.end, move.promotion)
+
+    def _tuple_move(self, start, end, promotion=None):
         # p is the piece being moved
         # ep is the current en_passant square, when this move was made
         # ir, ic, fr & fc are the initial and final rows and columns
@@ -72,8 +138,6 @@ class NumberBoard:
         self.en_passant = None
         assert p != 0
         self._move(start, end)
-        if promote:  # sanity check
-            assert promote in range(2, 6)
 
         if abs(p) == 1:  # Pawn
             diff = fc - ic
@@ -86,7 +150,7 @@ class NumberBoard:
             else:
                 pr = [None, 0, 7]  # promotion rows
                 if fr == pr[color(p)]:
-                    self.put(end, promote * color(p))
+                    self.put(end, promotion * color(p))
                     # Promote must be positive if it exists (see above assert)
         elif abs(p) == 6:  # King
             self.castle_moved[color(p)][1] = True
@@ -103,10 +167,10 @@ class NumberBoard:
         row, col = square
         return 0 <= row < 8 and 0 <= col < 8
 
-    def places_in_board(self, moves):
-        return [m for m in moves if self.in_board(m)]
+    def places_in_board(self, places):
+        return [p for p in places if self.in_board(p)]
 
-    def calc_moves(self, square):
+    def calc_moves_no_check(self, square):
         def color(piece):
             if piece == 0:
                 return 0
@@ -119,29 +183,45 @@ class NumberBoard:
         pcolor = color(self.at(square))
 
         def pawn():
-            print("Pawn")
+            def promotion_moves(move):
+                pfr = [None, 0, 7]
+                r, c = move
+                if r == pfr[pcolor]:
+                    return [Move(end=(r, c), promotion=p) for p in [2, 3, 4, 5]]
+                return [Move.end((r, c))]
+
             pawn_ranks = [None, 6, 1]
-            moves = []
+            ends = []
             # row+1, ?row+2, (col+-1, row+1)
             d = -pcolor
             m = (row + d, col)
-            if self.at(m) == 0:
-                moves.append(m)
+            if self.in_board(m) and self.at(m) == 0:
+                ends.append(m)
                 m = (row + (d * 2), col)
                 if row == pawn_ranks[pcolor]:
                     if self.at(m) == 0:
-                        moves.append(m)
+                        ends.append(m)
             m = (row + d, col + 1)
-            if color(self.at(m)) == -pcolor or m == self.en_passant:
-                moves.append(m)
+            if (
+                self.in_board(m)
+                and color(self.at(m)) == -pcolor
+                or m == self.en_passant
+            ):
+                ends.append(m)
             m = (row + d, col - 1)
-            if color(self.at(m)) == -pcolor or m == self.en_passant:
-                moves.append(m)
+            if (
+                self.in_board(m)
+                and color(self.at(m)) == -pcolor
+                or m == self.en_passant
+            ):
+                ends.append(m)
 
-            return [move for move in moves if self.in_board(move)]
+            ends = [end for end in ends if self.in_board(end)]
+            moves = [promotion_moves(end) for end in ends]
+            return [move for ms in moves for move in ms]
 
         def knight():
-            possible_moves = [
+            possible_ends = [
                 (row + 2, col + 1),
                 (row + 2, col - 1),
                 (row - 2, col - 1),
@@ -151,8 +231,8 @@ class NumberBoard:
                 (row - 1, col - 2),
                 (row - 1, col + 2),
             ]
-            possible_moves = self.places_in_board(possible_moves)
-            return [m for m in possible_moves if color(self.at(m)) != pcolor]
+            possible_ends = self.places_in_board(possible_ends)
+            return [Move.end(e) for e in possible_ends if color(self.at(e)) != pcolor]
 
         def bishop():
             moves = []
@@ -174,9 +254,10 @@ class NumberBoard:
             moves = []
             moves.extend(rook())
             moves.extend(bishop())
+            return moves
 
         def king():
-            possible_moves = [
+            possible_ends = [
                 (row + 1, col - 1),
                 (row + 1, col + 0),
                 (row + 1, col + 1),
@@ -187,25 +268,25 @@ class NumberBoard:
                 (row - 1, col + 1),
             ]
 
-            possible_moves = self.places_in_board(possible_moves)
+            possible_ends = self.places_in_board(possible_ends)
             if not self.castle_moved[pcolor][1]:
                 if (
-                    not self.castle_moven[pcolor][0]
+                    not self.castle_moved[pcolor][0]
                     and self.at((row, col - 1)) == 0
                     and self.at((row, col - 2)) == 0
                 ):
-                    possible_moves.append((row, col - 2))
+                    possible_ends.append((row, col - 2))
                 if (
-                    not self.castle_moven[pcolor][2]
+                    not self.castle_moved[pcolor][2]
                     and self.at((row, col + 1)) == 0
                     and self.at((row, col + 2)) == 0
                 ):
-                    possible_moves.append((row, col + 2))
+                    possible_ends.append((row, col + 2))
 
-            return [m for m in possible_moves if (self.at(m)) != pcolor]
+            return [Move.end(e) for e in possible_ends if (color(self.at(e)) != pcolor)]
 
         def straight_line_moves(direction):
-            moves = []
+            ends = []
             drow, dcol = direction
             mrow, mcol = row, col
             mrow += drow
@@ -214,21 +295,78 @@ class NumberBoard:
                 p = self.at((mrow, mcol))
 
                 if color(p) == 0:
-                    moves.append((mrow, mcol))
+                    ends.append((mrow, mcol))
                 elif color(p) == pcolor:
                     break
                 elif -1 * color(p) == pcolor:  # p is rival color
-                    moves.append((mrow, mcol))
+                    ends.append((mrow, mcol))
                     break
                 mrow += drow
                 mcol += dcol
-            return moves
+            return [Move.end(e) for e in ends]
 
         funcs = [lambda: [], pawn, knight, bishop, rook, queen, king]
 
         return [
-            m for m in funcs[abs(self.at(square))]() if not self.in_check(square, m)
-        ]
+            m.with_start(square) for m in funcs[abs(self.at(square))]()
+        ]  # if not self.in_check(square, m)
+        # ]
 
-    def in_check(self, start, end):
+    def calc_moves(self, square):
+        moves = self.calc_moves_no_check(square)
+        return [m for m in moves if not self.in_check(m)]
+
+    def in_check(self, move):
+        # TODO fix
+        nb = self.copy()
+        nb.move(move)
+        for row in range(ROWS):
+            for col in range(COLS):
+                moves = nb.calc_moves_no_check((row, col))
+                for move in moves:
+                    p = self.at(move.end)
+                    if abs(p) == abs(6):
+                        return True
         return False
+
+    def print(self, guides=False):
+        def to_ascii(piece):
+            return [".", "P", "N", "B", "R", "Q", "K", "k", "q", "r", "b", "n", "p"][
+                piece
+            ]
+        rows = ["8", "7", "6", "5", "4", "3", "2", "1"]
+        cols_header = "  a b c d e f g h\n +----------------"
+
+        y = 0
+        if guides:
+            print(cols_header)
+        for row in self.squares:
+            if guides: print(rows[y], end="|")
+            for piece in row:
+                print(to_ascii(piece), end=" ")
+            print("")
+            y += 1
+
+    def from_string(self, string):
+        counter = 0
+        d = {
+            ".": 0,
+            "P": 1,
+            "N": 2,
+            "B": 3,
+            "R": 4,
+            "Q": 5,
+            "K": 6,
+            "k": -6,
+            "q": -5,
+            "r": -4,
+            "b": -3,
+            "n": -2,
+            "p": -1,
+        }
+        for token in string.split():
+            x = counter % 8
+            y = counter // 8
+            self.squares[y][x] = d[token]
+            counter += 1
+
