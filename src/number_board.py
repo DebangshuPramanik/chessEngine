@@ -57,9 +57,20 @@ class Move:
                 "e": 4, "f": 5, "g": 6, "h": 7,
             }
             return (row_dict[string[1]], col_dict[string[0]])
+        def from_ascii(piece):
+            piece_dict = {
+                "N": 2,
+                "B": 3,
+                "R": 4,
+                "Q": 5
+            }
+            return piece_dict[piece]
         parts = string.split("=")
-        start, end = [parse_an(s) for s in parts[0].split("->")]
-        promotion = parts[1] if len(parts) == 2 else None
+        coords =  [parse_an(s) for s in parts[0].split("->")]
+        if len(coords) != 2:
+            print("Error, wrong format. Try again")
+        start, end = coords
+        promotion = from_ascii(parts[1]) if len(parts) == 2 else None
         return Move(start, end, promotion)
 
 
