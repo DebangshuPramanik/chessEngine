@@ -17,9 +17,11 @@ class Bot:
         return temp_board.evaluate_board()
 
     # loops through the board and evaluates each possible move given a depth
-    # currently it's depth=1 so I'll change this later
     def find_best_move(self, board, depth=2):
         # TODO: implement recursion to find the best move
+        score=0
+        if depth == 0:
+            return board.evaluate_board()
 
         player_shorthand = {0: "white", 1: "black"}
         player_mod = 1 if self.game.board.counter % 2 == 0 else -1
@@ -37,16 +39,15 @@ class Bot:
                 ):
                     temp_board.calc_moves(temp_board.squares[row][col].piece, row, col)
                     for move in temp_board.squares[row][col].piece.moves:
-                        # if(depth >  0):
-                        #     temp = copy.deepcopy(temp_board)
-                        #    temp.move(temp.squares[row][col].piece, move, testing=True, sidebar=None)
-                        #    self.find_best_move(temp, depth=(depth-1))
-                        evaluated_move = self.evaluate_move(
-                            temp_board, move, temp_board.squares[row][col].piece
-                        )
-                        if player_mod * evaluated_move > max:
-                            max = player_mod * evaluated_move
-                            best_move = move
-                            best_piece = temp_board.squares[row][col].piece
+                        temp_board.move(piece
+                        score = self.find_best_move(temp_board, depth=(depth-1))
+                        #m,p = evaluated_move
 
-        return [best_move, best_piece]
+                        #score = evalute_move(temp_board, m, p)
+
+                        if player_mod * score > max:
+                            max = player_mod * score
+                            best_move = m
+                            best_piece = p
+
+        return evaluated_move
