@@ -383,3 +383,11 @@ class NumberBoard:
             self.squares[y][x] = d[token]
             counter += 1
 
+    def calc_color_moves(self, pcolor):
+        moves = []
+        for row in range(ROWS):
+            for col in range(COLS):
+                p = self.at((row, col))
+                if color(p) == pcolor:
+                    moves.extend(self.calc_moves((row, col)))
+        return moves
