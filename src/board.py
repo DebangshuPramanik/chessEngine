@@ -382,9 +382,11 @@ class Board:
                                 if not self.in_check(piece, move):
                                     # append new move
                                     piece.add_move(move)
+                                    actual_validating_moves()
                             else:
                                 # append new move
                                 piece.add_move(move)
+                                actual_validating_moves()
 
                         # has enemy piece = add move + break
                         elif self.squares[possible_move_row][
@@ -395,16 +397,19 @@ class Board:
                                  if not self.in_check(piece, move):
                                     # append new move
                                     piece.add_move(move)
+                                    actual_validating_moves()
                                     break
                             else:
                                 # append new move
                                 piece.add_move(move)
+                                actual_validating_moves()
                                 break   
-                            actual_validating_moves()
+                            
                         # has team piece = break
                         elif self.squares[possible_move_row][
                             possible_move_col
                         ].has_team_piece(piece.color):
+                            actual_validating_moves()
                             break
 
                     # not in range

@@ -39,7 +39,7 @@ class Bot:
                 ):
                     temp_board.calc_moves(temp_board.squares[row][col].piece, row, col)
                     for move in temp_board.squares[row][col].piece.moves:
-                        temp_board.move(piece
+                        temp_board.move(piece, )
                         score = self.find_best_move(temp_board, depth=(depth-1))
                         #m,p = evaluated_move
 
