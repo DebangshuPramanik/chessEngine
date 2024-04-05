@@ -6,6 +6,7 @@ from dataclasses import dataclass
 
 # TODO utils class with useful methods like int->string for rows and columns
 
+
 @dataclass
 class Move:
     start: tuple = None
@@ -48,25 +49,25 @@ class Move:
     @classmethod
     def from_string(cls, string):
         def parse_an(string):
-            row_dict = {
-                "8": 0, "7": 1, "6": 2, "5": 3,
-                "4": 4, "3": 5, "2": 6, "1": 7
-            }
+            row_dict = {"8": 0, "7": 1, "6": 2, "5": 3, "4": 4, "3": 5, "2": 6, "1": 7}
             col_dict = {
-                "a": 0, "b": 1, "c": 2, "d": 3,
-                "e": 4, "f": 5, "g": 6, "h": 7,
+                "a": 0,
+                "b": 1,
+                "c": 2,
+                "d": 3,
+                "e": 4,
+                "f": 5,
+                "g": 6,
+                "h": 7,
             }
             return (row_dict[string[1]], col_dict[string[0]])
+
         def from_ascii(piece):
-            piece_dict = {
-                "N": 2,
-                "B": 3,
-                "R": 4,
-                "Q": 5
-            }
+            piece_dict = {"N": 2, "B": 3, "R": 4, "Q": 5}
             return piece_dict[piece]
+
         parts = string.split("=")
-        coords =  [parse_an(s) for s in parts[0].split("->")]
+        coords = [parse_an(s) for s in parts[0].split("->")]
         if len(coords) != 2:
             print("Error, wrong format. Try again")
         start, end = coords
@@ -283,14 +284,18 @@ class NumberBoard:
             if not self.castle_moved[pcolor][1]:
                 if (
                     not self.castle_moved[pcolor][0]
-                    and self.in_board((row, col - 2)) # should not come up in an actual game, but useful for testing
+                    and self.in_board(
+                        (row, col - 2)
+                    )  # should not come up in an actual game, but useful for testing
                     and self.at((row, col - 1)) == 0
                     and self.at((row, col - 2)) == 0
                 ):
                     possible_ends.append((row, col - 2))
                 if (
                     not self.castle_moved[pcolor][2]
-                    and self.in_board((row, col + 2)) # should not come up in an actual game, but useful for testing
+                    and self.in_board(
+                        (row, col + 2)
+                    )  # should not come up in an actual game, but useful for testing
                     and self.at((row, col + 1)) == 0
                     and self.at((row, col + 2)) == 0
                 ):
@@ -347,6 +352,7 @@ class NumberBoard:
             return [".", "P", "N", "B", "R", "Q", "K", "k", "q", "r", "b", "n", "p"][
                 piece
             ]
+
         rows = ["8", "7", "6", "5", "4", "3", "2", "1"]
         cols_header = "  a b c d e f g h\n +----------------"
 
@@ -354,7 +360,8 @@ class NumberBoard:
         if guides:
             print(cols_header)
         for row in self.squares:
-            if guides: print(rows[y], end="|")
+            if guides:
+                print(rows[y], end="|")
             for piece in row:
                 print(to_ascii(piece), end=" ")
             print("")
