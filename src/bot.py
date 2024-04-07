@@ -32,16 +32,14 @@ class Bot:
         for tup in temp_board.calc_color_moves(player_shorthand[temp_board.counter % 2]): 
             piece,move = tup
             temp_board.move(piece, move, testing=True)
-            score = self.mini_max(temp_board, depth=(depth-1))
+            score = -self.mini_max(temp_board, depth=(depth-1))
 
             if player_mod * score > maxi:
-                maxi = player_mod * score
-                self.best_move = move
-                self.best_piece = piece
+                maxi = score
 
         return maxi
 
-    def find_best_move(self, board, depth=2):
+    def find_best_move(self, board, depth=1):
         a = self.mini_max(board, depth)
         print(a)
         return (self.best_move, self.best_piece)

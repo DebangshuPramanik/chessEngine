@@ -95,8 +95,9 @@ class Game:
     def show_last_move(self, surface):
         theme = self.config.theme
         if self.board.last_move:
-            initial = self.board.last_move.initial
-            final = self.board.last_move.final
+            lmove,lpiece=self.board.last_move
+            initial = lmove.initial
+            final = lmove.final
 
             for pos in [initial, final]:
                 # color

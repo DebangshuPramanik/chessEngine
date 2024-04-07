@@ -64,7 +64,7 @@ class Board:
                     sound.play()
             elif (
                 not testing and abs(final.row - initial.row) == 2
-            ):  # this can be an elif, cause you wont move 2 squares to a promotion
+            ):  # this can be an elif, because you wont move 2 squares to a promotion
                 self.en_passant = ((final.row + initial.row) // 2, final.col)
             else:
                 # pawn promotion
@@ -89,7 +89,7 @@ class Board:
         piece.clear_moves()
 
         # set last move
-        self.last_move = move
+        self.last_move = (move, piece)
 
         # add the last move to the list of played_moves
         self.played_moves.append(self.last_move)
@@ -120,10 +120,14 @@ class Board:
         if (
             len(self.moves) >= 1
         ):  # Checking that at least one move has been played, to ensure that undoing a move is possible
-            last_move = self.last_move  # Shorthanding self.last_move to last_move
+            (last_move,last_piece) = self.last_move  # Shorthanding self.last_move to last_move
             final = last_move.final
-            piece = final.piece  # Storing initial and final squares of last_move
+            piece = last_piece  # Storing initial and final squares of last_move
             initial = last_move.initial
+            captured_piece = None
+
+            if final.piece:
+                captured_piece = last_move.final.piece        
 
             # console board move update
             self.squares[final.row][final.col].piece = None
@@ -131,9 +135,20 @@ class Board:
             move = Move(
                 final, initial
             )  # Undoes last move by reversing initial and final positions.
-            self.move(piece, move)
-            self.moves.remove(last_move)
+            self.move(piece, move, testing=True)
+            self.moves.pop()
             self.counter -= 1
+            
+            #this was the only thing I could think of for checking if a piece has moved already
+            piece.moved = False
+            for tup in self.moves:
+                p,m,s = tup
+                if piece == p:
+                    piece.moved = True
+                    break
+
+            # put captured piece on final square
+            self.squares[final.row][final.col].piece = captured_piece
 
     def castling(self, initial, final):
         return abs(initial.col - final.col) == 2
