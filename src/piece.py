@@ -9,6 +9,7 @@ class Piece:
         self.color = color
         self.moves = []
         self.moved = False
+        self.addable_moves = True
 
         value_sign = 1 if color == "white" else -1
         self.value = value * value_sign
@@ -32,11 +33,18 @@ class Piece:
             f"assets/images/imgs-{size}px/{self.color}_{self.name}.png"
         )
 
-    def add_move(self, move):
-        self.moves.append(move)
-
     def clear_moves(self):
         self.moves = []
+
+    def set_addable_moves(self, bool):
+        self.addable_moves = bool
+
+    def moves_can_be_added(self):
+        return self.addable_moves
+
+    def add_move(self, move):
+        if self.moves_can_be_added():
+            self.moves.append(move)
 
 
 class Pawn(Piece):

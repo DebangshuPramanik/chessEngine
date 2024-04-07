@@ -25,14 +25,16 @@ class Bot:
         player_mod = 1 if board.counter % 2 == 0 else -1
 
         if depth == 0:
-            return player_mod*board.evaluate_board()
+            return player_mod * board.evaluate_board()
 
         temp_board = copy.deepcopy(board)
         maxi = -999999999999999999999999999
-        for tup in temp_board.calc_color_moves(player_shorthand[temp_board.counter % 2]): 
-            piece,move = tup
+        for tup in temp_board.calc_color_moves(
+            player_shorthand[temp_board.counter % 2]
+        ):
+            piece, move = tup
             temp_board.move(piece, move, testing=True)
-            score = self.mini_max(temp_board, depth=(depth-1))
+            score = self.mini_max(temp_board, depth=(depth - 1))
 
             if player_mod * score > maxi:
                 maxi = player_mod * score
