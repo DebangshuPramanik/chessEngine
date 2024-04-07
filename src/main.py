@@ -97,9 +97,12 @@ class Main:
                         best_move.final.col
                     ].has_piece()
                     board.move(best_piece, best_move, sidebar)
+                    best_move,best_piece = self.bot.find_best_move(board)
+                    #captured=board.squares[best_move.final.row][best_move.final.col].has_piece()
+                    #board.move(best_piece, best_move, sidebar)
 
-                    game.play_sound(captured)
-                    game.next_turn()
+                    #game.play_sound(captured)
+                    #game.next_turn()
 
                 # draw/show methods
                 game.show_bg(screen)
@@ -156,8 +159,9 @@ class Main:
 
                 # Key Press to change Theme or restart
                 elif event.type == pygame.KEYDOWN:
-                    # if event.key == pygame.K_y:
-                    #     board.take_back()  # NOTE: THIS DOES NOT WORK YET!!!!!!!!!! WE NEED TO WORK ON THIS!!!!!!!
+                    if event.key == pygame.K_y:
+                        board.take_back()
+                        game.next_turn()
                     if event.key == pygame.K_t:
                         game.change_theme()
                     elif event.key == pygame.K_r:
