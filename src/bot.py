@@ -28,7 +28,6 @@ class Bot:
             return player_mod*board.evaluate_board()
 
         temp_board = copy.deepcopy(board)
-
         maxi = -999999999999999999999999999
         for tup in temp_board.calc_color_moves(player_shorthand[temp_board.counter % 2]): 
             piece,move = tup
