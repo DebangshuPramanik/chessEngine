@@ -25,8 +25,11 @@ class Board:
                     total += self.squares[row][col].piece.value
         return total
 
+
+
     def __init__(self):
         self.squares = [[0, 0, 0, 0, 0, 0, 0, 0] for col in range(COLS)]
+        self.number_squares = None
         self.last_move = None
         self.en_passant = None
         self._create()
