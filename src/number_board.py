@@ -335,7 +335,7 @@ class NumberBoard:
         return [m for m in moves if not self.in_check(m)]
 
     def in_check(self, move):
-        # TODO fix
+        # TODO fix (This might be fixed)
         nb = self.copy()
         nb.move(move)
         for row in range(ROWS):
