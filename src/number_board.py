@@ -1,6 +1,7 @@
 from const import *
 from move import Move
 import copy
+from piece import *
 
 from dataclasses import dataclass
 
@@ -88,14 +89,28 @@ def color(piece):
 
 class NumberBoard:
     def __init__(self, board=None):
-        if board:
-            self.squares = self.from_board(board)
         self.en_passant = None  # MUST BE: a tuple of (row, col)
         self.white_castle_moved = [False, False, False]
         # Rook, King, Rook
         self.black_castle_moved = [False, False, False]
         self.castle_moved = [None, self.white_castle_moved, self.black_castle_moved]
         self.move_number = 0
+        if board:
+            self.squares = self.from_board(board)
+            self.black_castle_moved = self.castles_from_board(board, 0)
+            self.white_castle_moved = self.castles_from_board(board, 7)
+            self.castle_moved = [None, self.white_castle_moved, self.black_castle_moved]
+
+    def castles_from_board(self, board, row):
+        rl = board.at((row, 0))
+        rr = board.at((row, 7))
+        k = board.at((row, 4))
+        mvd = [
+            rl.has_piece() and isinstance(rl.piece, Rook) and not rl.piece.moved,
+            k.has_piece() and isinstance(k.piece, King) and not k.piece.moved,
+            rr.has_piece() and isinstance(rr.piece, Rook) and not rr.piece.moved,
+        ]
+        return mvd
 
     def from_board(self, board):
         number_board = [[0, 0, 0, 0, 0, 0, 0, 0] for col in range(COLS)]
@@ -328,14 +343,14 @@ class NumberBoard:
         return [
             m.with_start(square) for m in funcs[abs(self.at(square))]()
         ]  # if not self.in_check(square, m)
-        # ]
 
     def calc_moves(self, square):
+        # The moves returned here
         moves = self.calc_moves_no_check(square)
-        return [m for m in moves if not self.in_check(m)]
+        pcolor = color(self.at(square))
+        return [m for m in moves if (not self.in_check(m, pcolor))]
 
-    def in_check(self, move):
-        # TODO fix (This might be fixed)
+    def in_check(self, move, color):
         nb = self.copy()
         nb.move(move)
         for row in range(ROWS):
@@ -343,7 +358,7 @@ class NumberBoard:
                 moves = nb.calc_moves_no_check((row, col))
                 for move in moves:
                     p = self.at(move.end)
-                    if abs(p) == abs(6):
+                    if p == 6 * color:
                         return True
         return False
 

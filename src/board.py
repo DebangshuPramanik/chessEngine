@@ -9,6 +9,7 @@ from square import Square
 from piece import *
 from move import Move
 from sound import Sound
+from number_board import NumberBoard
 
 # This class (the Board class) sets up the board as a 2D array of Square objects, some of them have pieces.
 # This is the class that checks whether there is a check on the board, and this is the class used to evaluate all the positions.
@@ -24,8 +25,6 @@ class Board:
                 if self.squares[row][col].has_piece():
                     total += self.squares[row][col].piece.value
         return total
-
-
 
     def __init__(self):
         self.squares = [[0, 0, 0, 0, 0, 0, 0, 0] for col in range(COLS)]
@@ -123,14 +122,16 @@ class Board:
         if (
             len(self.moves) >= 1
         ):  # Checking that at least one move has been played, to ensure that undoing a move is possible
-            (last_move,last_piece) = self.last_move  # Shorthanding self.last_move to last_move
+            (last_move, last_piece) = (
+                self.last_move
+            )  # Shorthanding self.last_move to last_move
             final = last_move.final
             piece = last_piece  # Storing initial and final squares of last_move
             initial = last_move.initial
             captured_piece = None
 
             if final.piece:
-                captured_piece = last_move.final.piece        
+                captured_piece = last_move.final.piece
 
             # console board move update
             self.squares[final.row][final.col].piece = None
@@ -141,11 +142,11 @@ class Board:
             self.move(piece, move, testing=True)
             self.moves.pop()
             self.counter -= 1
-            
-            #this was the only thing I could think of for checking if a piece has moved already
+
+            # this was the only thing I could think of for checking if a piece has moved already
             piece.moved = False
             for tup in self.moves:
-                p,m,s = tup
+                p, m, s = tup
                 if piece == p:
                     piece.moved = True
                     break
@@ -623,6 +624,30 @@ class Board:
 
         elif isinstance(piece, King):
             king_moves()
+
+    def at(self, loc):
+        row, col = loc
+        return self.squares[row][col]
+
+    def calc_moves_with_numbers(self, piece, row, col, bool=False):
+        # Bool does nothing
+        # TODO fix error with improperly generating castling because of castle moves.
+        loc = (row, col)
+        nb = NumberBoard(self)
+        ms = nb.calc_moves(loc)
+
+        def cnmbm(m):  # convert number board to board move
+            sq = self.at(m.start)
+            eq = self.at(m.end)
+            return Move(sq, eq)
+
+        Ms = [cnmbm(m) for m in ms]
+        for M in Ms:
+            if M.final.has_piece():
+                M.set_capture(True)
+            if isinstance(M.initial.piece, Pawn):
+                M.set_pawn_move(True)
+        piece.moves = Ms
 
     def _create(self):
         for row in range(ROWS):
