@@ -357,7 +357,7 @@ class NumberBoard:
             for col in range(COLS):
                 moves = nb.calc_moves_no_check((row, col))
                 for move in moves:
-                    p = self.at(move.end)
+                    p = nb.at(move.end)
                     if p == 6 * color:
                         return True
         return False
