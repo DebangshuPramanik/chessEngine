@@ -36,6 +36,15 @@ class Board:
         self.moves = []
         self.played_moves = []
 
+    def get_pieces_on_board(self, color):
+        pieces = []
+        for row in range(ROWS):
+            for col in range(COLS):
+                if self.squares[row][col].has_piece():
+                    if self.squares[row][col].piece.color == color:
+                        pieces.append(self.squares[row][col].piece)
+        return pieces
+
     def move(self, piece, move, sidebar=None, testing=False, castling=False):
         initial = move.initial
         final = move.final
@@ -174,20 +183,12 @@ class Board:
     def check_in_between_move_squares(
         self, piece, move
     ):  # Necessary for some discovered checks where pieces could jump over enemy pieces to block check without this function...
-        piece.set_addable_moves(True)
-
-        def check_for_interference(move):
+        def there_is_interference(move):
             r = move.final.row
             c = move.final.col
-            if self.squares[r][c].has_piece():
-                return True
-            return False
+            return self.squares[r][c].has_piece()
 
-        if (
-            isinstance(piece, Bishop)
-            or isinstance(piece, Rook)
-            or isinstance(piece, Queen)
-        ) and (len(piece.moves) > 0):
+        if (len(piece.moves) > 0):
             initial_row = move.initial.row
             initial_col = move.initial.col
 
@@ -212,29 +213,32 @@ class Board:
             if (col_step != 0) and (row_step != 0):
                 for r in range(initial_row + row_step, final_row, row_step):
                     c = initial_col + col_step
-                    ib_move_final = Square(r, c)
+                    ib_move_final = self.squares[r][c]
                     ib_move = Move(move.initial, ib_move_final)
-                    if check_for_interference(ib_move):
+                    if there_is_interference(ib_move):
                         if move in piece.moves:
                             piece.moves.remove(move)
+                            piece.set_addable_moves(False)
                     c += col_step
             # Checks vertical (rook style UP AND DOWN the board!)
             elif col_step != 0:
                 for c in range(initial_col + col_step, final_col, col_step):
-                    ib_move_final = Square(initial_row, c)
+                    ib_move_final = self.squares[initial_row][c]
                     ib_move = Move(move.initial, ib_move_final)
-                    if check_for_interference(ib_move):
+                    if there_is_interference(ib_move):
                         if move in piece.moves:
                             piece.moves.remove(move)
+                            piece.set_addable_moves(False)
 
             # Checks horizontal (rook style LEFT AND RIGHT on the Board!)
             else:
                 for r in range(initial_row, final_row + row_step, row_step):
-                    ib_move_final = Square(r, initial_col)
+                    ib_move_final = self.squares[r][initial_col]
                     ib_move = Move(move.initial, ib_move_final)
-                    if check_for_interference(ib_move):
+                    if there_is_interference(ib_move):
                         if move in piece.moves:
                             piece.moves.remove(move)
+                            piece.set_addable_moves(False)
 
     def check_in_check(
         self, color
@@ -423,7 +427,12 @@ class Board:
                             else:
                                 # append new moves
                                 piece.add_move(move)
-
+                        elif self.squares[possible_move_row][possible_move_col].isEmpty() and self.check_in_check(piece.color):
+                            pieces = self.get_pieces_on_board(piece.color)
+                            for a_piece in pieces:
+                                for m in a_piece.moves:
+                                    # generate in-between moves and make sure pieces can't "jump".
+                                    self.check_in_between_move_squares(a_piece, m)
                         # has enemy piece = add move + break
                         elif self.squares[possible_move_row][
                             possible_move_col
@@ -444,10 +453,6 @@ class Board:
                             possible_move_col
                         ].has_team_piece(piece.color):
                             break
-                        for move in piece.moves:
-                            if self.check_in_check(piece.color):
-                                # generate in-between moves and make sure pieces can't "jump".
-                                self.check_in_between_move_squares(piece, move)
                     # not in range
                     else:
                         break
@@ -548,7 +553,7 @@ class Board:
                                     initial, Square(row, col + move_direction)
                                 )
 
-                                # check potencial checks
+                                # check potential checks
                                 if bool:
                                     if (
                                         not self.in_check(piece, moveK)
@@ -571,10 +576,12 @@ class Board:
                                     # append new move king
                                     piece.add_move(moveK)
 
+            # Getting all of the castling moves if they exist. 
             def castling_moves():
                 check_castling("queenside")
                 check_castling("kingside")
 
+            # Calling the functions to implement king_moves() rather than just create it. 
             normal_king_moves()
             castling_moves()
 
