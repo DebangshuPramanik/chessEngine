@@ -90,29 +90,28 @@ def color(piece):
 class NumberBoard:
     def __init__(self, board=None):
         self.en_passant = None  # MUST BE: a tuple of (row, col)
-        self.white_castle_moved = [False, False, False]
-        # Rook, King, Rook
-        self.black_castle_moved = [False, False, False]
-        self.castle_moved = [None, self.white_castle_moved, self.black_castle_moved]
+        self.white_castleable = [True, True]
+        self.black_castleable = [True, True]
+        self.castleable = [None, self.white_castleable, self.black_castleable]
         self.move_number = 0
         if board:
             self.move_number = board.counter
             self.squares = self.from_board(board)
             self.en_passant = board.en_passant
-            self.black_castle_moved = self.castles_from_board(board, 0)
-            self.white_castle_moved = self.castles_from_board(board, 7)
-            self.castle_moved = [None, self.white_castle_moved, self.black_castle_moved]
+            self.white_castleable = self.castleable_from_board(board, 7)
+            self.black_castleable = self.castleable_from_board(board, 0)
+            self.castleable = [None, self.white_castleable, self.black_castleable]
 
-    def castles_from_board(self, board, row):
+    def castleable_from_board(self, board, row):
+        def unmoved_piece(cls, sq):
+            return sq.has_piece() and isinstance(sq.piece, cls) and not sq.piece.moved
+
         rl = board.at((row, 0))
         rr = board.at((row, 7))
         k = board.at((row, 4))
-        mvd = [
-            rl.has_piece() and isinstance(rl.piece, Rook) and not rl.piece.moved,
-            k.has_piece() and isinstance(k.piece, King) and not k.piece.moved,
-            rr.has_piece() and isinstance(rr.piece, Rook) and not rr.piece.moved,
-        ]
-        return mvd
+        if not (unmoved_piece(King, k)):
+            return [False, False]  # king spot does not fufill king not moved reqs
+        return [unmoved_piece(Rook, rl), unmoved_piece(Rook, rr)]
 
     def from_board(self, board):
         number_board = [[0, 0, 0, 0, 0, 0, 0, 0] for col in range(COLS)]
@@ -126,9 +125,9 @@ class NumberBoard:
         nb = NumberBoard()
         nb.squares = [row[:] for row in self.squares]
         nb.en_passant = copy.deepcopy(self.en_passant)
-        nb.white_castle_moved = self.white_castle_moved[:]
-        nb.black_castle_moved = self.black_castle_moved[:]
-        nb.castle_moved = [None, nb.white_castle_moved, nb.black_castle_moved]
+        nb.white_castleable = self.white_castleable[:]
+        nb.black_castleable = self.black_castleable[:]
+        nb.castleable = [None, nb.white_castleable, nb.black_castleable]
         return nb
 
     def evaluate_board(self):
@@ -182,7 +181,7 @@ class NumberBoard:
                     self.put(end, promotion * color(p))
                     # Promote must be positive if it exists (see above assert)
         elif abs(p) == 6:  # King
-            self.castle_moved[color(p)][1] = True
+            self.castleable[color(p)] = [False, False]
             diff = fc - ic
             if abs(diff) == 2:  # king moved 2(sideways). must be a castle
                 rc = 0 if diff < 0 else 7  # rook column
@@ -190,7 +189,7 @@ class NumberBoard:
                 # rook goes to avg of where king was/is
         elif abs(p) == 4:  # Rook
             if (ic == 0 or ic == 7) and ir == PST[color(p)]:  #
-                self.castle_moved[color(p)][(0 if ic == 0 else 2)] = True
+                self.castleable[color(p)][(0 if ic == 0 else 1)] = False
 
     def in_board(self, square):
         row, col = square
@@ -298,25 +297,25 @@ class NumberBoard:
             ]
 
             possible_ends = self.places_in_board(possible_ends)
-            if not self.castle_moved[pcolor][1]:
-                if (
-                    not self.castle_moved[pcolor][0]
-                    and self.in_board(
-                        (row, col - 2)
-                    )  # should not come up in an actual game, but useful for testing
-                    and self.at((row, col - 1)) == 0
-                    and self.at((row, col - 2)) == 0
-                ):
-                    possible_ends.append((row, col - 2))
-                if (
-                    not self.castle_moved[pcolor][2]
-                    and self.in_board(
-                        (row, col + 2)
-                    )  # should not come up in an actual game, but useful for testing
-                    and self.at((row, col + 1)) == 0
-                    and self.at((row, col + 2)) == 0
-                ):
-                    possible_ends.append((row, col + 2))
+
+            if (
+                self.castleable[pcolor][0]
+                and self.in_board(
+                    (row, col - 2)
+                )  # should not come up in an actual game, but useful for testing
+                and self.at((row, col - 1)) == 0
+                and self.at((row, col - 2)) == 0
+            ):
+                possible_ends.append((row, col - 2))
+            if (
+                self.castleable[pcolor][1]
+                and self.in_board(
+                    (row, col + 2)
+                )  # should not come up in an actual game, but useful for testing
+                and self.at((row, col + 1)) == 0
+                and self.at((row, col + 2)) == 0
+            ):
+                possible_ends.append((row, col + 2))
 
             return [Move.end(e) for e in possible_ends if (color(self.at(e)) != pcolor)]
 
