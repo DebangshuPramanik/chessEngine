@@ -96,7 +96,9 @@ class NumberBoard:
         self.castle_moved = [None, self.white_castle_moved, self.black_castle_moved]
         self.move_number = 0
         if board:
+            self.move_number = board.counter
             self.squares = self.from_board(board)
+            self.en_passant = board.en_passant
             self.black_castle_moved = self.castles_from_board(board, 0)
             self.white_castle_moved = self.castles_from_board(board, 7)
             self.castle_moved = [None, self.white_castle_moved, self.black_castle_moved]
