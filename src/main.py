@@ -82,7 +82,6 @@ class Main:
             final = Square(released_row, released_col)
             move = Move(initial, final)
 
-            print(NumberBoard(board).squares)
             # Valid move?
             if board.valid_move(dragger.piece, move):
 
