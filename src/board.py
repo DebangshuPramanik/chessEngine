@@ -846,3 +846,7 @@ class Board:
             return [(piece, move) for move in piece.moves]
 
         return self.accumulate_piece_coords(get_moves)
+    def calc_fifty_move_rule(self):
+        if len(self.played_moves) > 50:
+            for i in range(50):
+                pass
