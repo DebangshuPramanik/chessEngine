@@ -89,8 +89,15 @@ class Board:
             if self.castling(initial, final) and not testing:
                 castling_sound = Sound(os.path.join("assets/sounds/castle.wav"))
                 diff = final.col - initial.col
-                rook = piece.left_rook if (diff < 0) else piece.right_rook
-                self.move(rook, rook.moves[-1], castling=True)
+                left_rook = self.squares[final.row][0].piece
+                right_rook = self.squares[final.row][7].piece
+                rook = left_rook if (diff < 0) else right_rook
+                rook_start_col = 0 if (diff < 0) else 7
+                rook_move = Move(
+                    self.at((final.row, rook_start_col)),
+                    self.at((final.row, (final.col + initial.col) // 2))
+                    )
+                self.move(rook, rook_move, castling=True)
                 castling_sound.play()
 
         # move
@@ -262,7 +269,7 @@ class Board:
                         return True
         return False
 
-    def calc_moves(self, piece, row, col, bool=True):
+    def calc_moves_old(self, piece, row, col, bool=True):
         """
         Calculate all the possible (valid) moves of a specific piece on a specific position
         """
@@ -636,9 +643,8 @@ class Board:
         row, col = loc
         return self.squares[row][col]
 
-    def calc_moves_with_numbers(self, piece, row, col, bool=False):
+    def calc_moves(self, piece, row, col, bool=False):
         # Bool does nothing
-        # TODO fix error with improperly generating castling because of castle moves.
         loc = (row, col)
         nb = NumberBoard(self)
         ms = nb.calc_moves(loc)
