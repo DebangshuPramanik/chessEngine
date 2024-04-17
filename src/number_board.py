@@ -76,6 +76,27 @@ class Move:
         return Move(start, end, promotion)
 
 
+@dataclass
+class HistoryMove:
+    start: tuple
+    end: tuple
+    moving: int
+    taking: int
+    color: int
+    old_en_passant: tuple
+    old_white_castleable: [bool]
+    old_black_castleable: [bool]
+
+    @classmethod
+    def fromMoveOn(cls, move, nb):
+        return cls(
+            move.start, move.end,
+            nb.at(move.start), nb.at(move.end),
+            color(nb.at(move.start)),
+            nb.en_passant,
+            nb.white_castleable[:], nb.black_castleable[:]
+        )
+
 BLACK_START = 0
 WHITE_START = 7
 PST = [None, WHITE_START, BLACK_START]  # Piece STart
@@ -94,6 +115,7 @@ class NumberBoard:
         self.black_castleable = [True, True]
         self.castleable = [None, self.white_castleable, self.black_castleable]
         self.move_number = 0
+        self.move_list = []
         if board:
             self.move_number = board.counter
             self.squares = self.from_board(board)
@@ -153,6 +175,8 @@ class NumberBoard:
         self.put(start, 0)
 
     def move(self, move):
+        hist_move = HistoryMove.fromMoveOn(move, self)
+        self.move_list.append(hist_move)
         return self._tuple_move(move.start, move.end, move.promotion)
 
     def _tuple_move(self, start, end, promotion=None):
@@ -414,3 +438,34 @@ class NumberBoard:
                 if color(p) == pcolor:
                     moves.extend(self.calc_moves((row, col)))
         return moves
+
+    def draw_by_insufficient_material():
+        def side_insufficient_material(c, ps):
+            cps = [p for p in ps if color(p) == c and abs(p) != 6]
+            # Color has more than 2 non-king pieces
+            if(len(cps) > 2): return False
+            # Color has 2 knights
+            if(len(cps) == 2 and all(abs(p) == 2 for p in cps)): return True
+            # Color has 2 pieces, both of which are not knights
+            if(len(cps) == 2): return False
+            p = cps[0] # only one piece
+            if(abs(p) == 2 or abs(p) == 3): return True # Bishop or knight
+            # Color has one piece (non-king), which is not a bishop or a knight
+            return False
+        # no pawns
+        ps = [p for row in self.squares for p in row if p != 0]
+        if (any(abs(p) == 1 for p in ps)): return False # Pawns
+        if (len(ps) >= 5): return False # At least 5 pieces on the board
+            # (There is a possible forced mate)
+            # If one side has a king and 2 knights, the other side has a king and one piece
+        # each colors pieces, excluding kings
+        return side_insufficient_material(1, ps) and side_insufficient_material(-1, ps)
+
+    def take_back(self):
+        lm = self.move_list.pop()
+        self.put(lm.start, lm.moving)
+        self.put(lm.end, lm.taking)
+        self.en_passant = lm.old_en_passant
+        self.white_castleable = lm.old_white_castleable[:]
+        self.black_castleable = lm.old_black_castleable[:]
+        self.castleable = [None, self.white_castleable, self.black_castleable]
