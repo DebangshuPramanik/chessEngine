@@ -6,13 +6,10 @@ from square import Square
 from move import Move
 from sidebar import Sidebar
 from bot import Bot
-from number_board import NumberBoard
 
 # I made a comment for fun.
 # So did I
 # Now I commented too!
-# Checking calcmoves
-
 
 class Main:
     def __init__(self):
@@ -42,7 +39,7 @@ class Main:
 
             # Valid piece, color, making sure you can only play on your turn
             if piece.color == game.next_player:
-                board.calc_moves(piece, clicked_row, clicked_col, bool=True)
+                board.calc_moves(piece, clicked_row, clicked_col)
                 dragger.save_initial(event.pos)
                 dragger.drag_piece(piece)
                 # Show methods
