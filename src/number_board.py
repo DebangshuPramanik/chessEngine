@@ -446,6 +446,7 @@ class NumberBoard:
     def draw_by_insufficient_material(self):
         def side_insufficient_material(c, ps):
             cps = [p for p in ps if color(p) == c and abs(p) != 6]
+            if len(cps) == 0: return True
             # Color has more than 2 non-king pieces
             if len(cps) > 2:
                 return False

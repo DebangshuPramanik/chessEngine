@@ -6,6 +6,7 @@ from const import *
 from dragger import Dragger
 from config import Config
 from square import Square
+from number_board import NumberBoard
 
 
 class Game:
@@ -204,6 +205,10 @@ class Game:
 
         # Implementation of draw by repetition (This one will be very hard guys)
         # Implementation of draw by insufficient material: This one will also be pretty hard :(
+        nb = NumberBoard(board)
+        if nb.draw_by_insufficient_material():
+            self.over = True
+
 
     def display_winner(self, color):
         self.winner = color
