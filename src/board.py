@@ -752,6 +752,10 @@ class Board:
     def add_move(self, piece, move):
         piece_taken = self.squares[move.final.row][move.final.col].piece
         move.final.piece = piece_taken
+        if isinstance(piece, Pawn):
+            move.set_pawn_move(True)
+        if move.final.piece:
+            move.set_capture(True)
         others = self.others_can_do(piece, move.final)
         same_row = False
         same_col = False
