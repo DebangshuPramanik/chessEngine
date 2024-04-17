@@ -194,7 +194,7 @@ class Game:
         if board.counter >= 100:
             for i in range(board.counter - 100, board.counter + 1):
                 if board.moves[i][1].pawn_move_or_capture():
-                    print("turn restarted")
+                    print("50 move rule count restarted")
                     return
                 if i == board.counter:
                     self.display_draw_by_fifty_move_rule()

@@ -84,8 +84,8 @@ class HistoryMove:
     taking: int
     color: int
     old_en_passant: tuple
-    old_white_castleable: [bool]
-    old_black_castleable: [bool]
+    old_white_castleable: list[bool]
+    old_black_castleable: list[bool]
 
     @classmethod
     def fromMoveOn(cls, move, nb):
@@ -439,7 +439,7 @@ class NumberBoard:
                     moves.extend(self.calc_moves((row, col)))
         return moves
 
-    def draw_by_insufficient_material():
+    def draw_by_insufficient_material(self):
         def side_insufficient_material(c, ps):
             cps = [p for p in ps if color(p) == c and abs(p) != 6]
             # Color has more than 2 non-king pieces
