@@ -4,6 +4,7 @@ from number_board import *
 # board = Board()
 nb = NumberBoard(Board())
 
+
 def interactive_test():
     print(
         """
