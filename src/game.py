@@ -166,7 +166,7 @@ class Game:
                 if board.squares[row][col].has_piece():
                     piece = board.squares[row][col].piece
                     board.calc_moves(
-                        piece, row, col, bool=True
+                        piece, row, col
                     )  # Without a shadow of a doubt, this is the line that causes the lag...if there is any
                     moves = piece.moves
                     if piece.color == "black":
@@ -190,17 +190,17 @@ class Game:
             self.over = True
 
         # Implementation of draw by 50 move rule (if no piece is taken or if no pawn is pushed for 50 moves (100 total turns), it is a draw)
-        all_moves_are_pawn_or_capture = True
         print(board.counter)
         if board.counter >= 100:
-            for i in range(board.counter - 100, board.counter + 1, 1):
-                if not board.played_moves[i].pawn_move_or_capture():
-                    all_moves_are_pawn_or_capture = False
+            for i in range(board.counter - 100, board.counter + 1):
+                if board.moves[i][1].pawn_move_or_capture():
                     print("turn restarted")
                     return
-                else:
-                    if i == board.counter and all_moves_are_pawn_or_capture:
-                        self.display_draw_by_fifty_move_rule()
+                if i == board.counter:
+                    self.display_draw_by_fifty_move_rule()
+                    self.over = True
+                return
+               
 
         # Implementation of draw by repetition (This one will be very hard guys)
         # Implementation of draw by insufficient material: This one will also be pretty hard :(
