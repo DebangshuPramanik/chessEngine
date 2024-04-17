@@ -175,7 +175,7 @@ class NumberBoard:
         self.put(start, 0)
 
     def move(self, move):
-        hist_move = HistoryMove.fromMoveOn(move, board)
+        hist_move = HistoryMove.fromMoveOn(move, self)
         self.move_list.append(hist_move)
         return self._tuple_move(move.start, move.end, move.promotion)
 
@@ -438,7 +438,6 @@ class NumberBoard:
                 if color(p) == pcolor:
                     moves.extend(self.calc_moves((row, col)))
         return moves
-
 
     def draw_by_insufficient_material():
         def side_insufficient_material(c, ps):
