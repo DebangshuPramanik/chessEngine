@@ -84,7 +84,7 @@ class HistoryMove:
     taking: int
     color: int
     old_en_passant: tuple
-    old_white_castleabse: [bool]
+    old_white_castleable: [bool]
     old_black_castleable: [bool]
 
     @classmethod
@@ -460,3 +460,12 @@ class NumberBoard:
             # If one side has a king and 2 knights, the other side has a king and one piece
         # each colors pieces, excluding kings
         return side_insufficient_material(1, ps) and side_insufficient_material(-1, ps)
+
+    def take_back(self):
+        lm = self.move_list.pop()
+        self.put(lm.start, lm.moving)
+        self.put(lm.end, lm.taking)
+        self.en_passant = lm.old_en_passant
+        self.white_castleable = lm.old_white_castleable[:]
+        self.black_castleable = lm.old_black_castleable[:]
+        self.castleable = [None, self.white_castleable, self.black_castleable]

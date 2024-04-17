@@ -14,8 +14,6 @@ def interactive_test():
     There is no checking for valid moves. (but promotion will only work if going to the last row)
     """
     )
-
-    print(Move.from_string("a7->a8=Q"))
     nb = NumberBoard(Board())
 
     while True:
@@ -24,17 +22,21 @@ def interactive_test():
         nb.move(m)
 
 
-nb.from_string(
-    """
-r n b q k b n r
-. p p p . p p p
-. . . . . . . .
-p . . . p . . .
-. . B . P . . .
-. . . . . . . .
-P P P P . P P P
-R N B Q K . N R
-"""
-)
-print(nb.at((4, 2)))
-print(nb.calc_moves((4, 2)))
+# nb.from_string(
+#     """
+# r n b q k b n r
+# . p p p . p p p
+# . . . . . . . .
+# p . . . p . . .
+# . . B . P . . .
+# . . . . . . . .
+# P P P P . P P P
+# R N B Q K . N R
+# """
+# )
+
+nb.print()
+nb.move(Move.from_string("a2->a4"))
+nb.print()
+nb.take_back()
+nb.print()
