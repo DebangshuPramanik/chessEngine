@@ -90,12 +90,16 @@ class HistoryMove:
     @classmethod
     def fromMoveOn(cls, move, nb):
         return cls(
-            move.start, move.end,
-            nb.at(move.start), nb.at(move.end),
+            move.start,
+            move.end,
+            nb.at(move.start),
+            nb.at(move.end),
             color(nb.at(move.start)),
             nb.en_passant,
-            nb.white_castleable[:], nb.black_castleable[:]
+            nb.white_castleable[:],
+            nb.black_castleable[:],
         )
+
 
 BLACK_START = 0
 WHITE_START = 7
@@ -443,21 +447,28 @@ class NumberBoard:
         def side_insufficient_material(c, ps):
             cps = [p for p in ps if color(p) == c and abs(p) != 6]
             # Color has more than 2 non-king pieces
-            if(len(cps) > 2): return False
+            if len(cps) > 2:
+                return False
             # Color has 2 knights
-            if(len(cps) == 2 and all(abs(p) == 2 for p in cps)): return True
+            if len(cps) == 2 and all(abs(p) == 2 for p in cps):
+                return True
             # Color has 2 pieces, both of which are not knights
-            if(len(cps) == 2): return False
-            p = cps[0] # only one piece
-            if(abs(p) == 2 or abs(p) == 3): return True # Bishop or knight
+            if len(cps) == 2:
+                return False
+            p = cps[0]  # only one piece
+            if abs(p) == 2 or abs(p) == 3:
+                return True  # Bishop or knight
             # Color has one piece (non-king), which is not a bishop or a knight
             return False
+
         # no pawns
         ps = [p for row in self.squares for p in row if p != 0]
-        if (any(abs(p) == 1 for p in ps)): return False # Pawns
-        if (len(ps) >= 5): return False # At least 5 pieces on the board
-            # (There is a possible forced mate)
-            # If one side has a king and 2 knights, the other side has a king and one piece
+        if any(abs(p) == 1 for p in ps):
+            return False  # Pawns
+        if len(ps) >= 5:
+            return False  # At least 5 pieces on the board
+        # (There is a possible forced mate)
+        # If one side has a king and 2 knights, the other side has a king and one piece
         # each colors pieces, excluding kings
         return side_insufficient_material(1, ps) and side_insufficient_material(-1, ps)
 
