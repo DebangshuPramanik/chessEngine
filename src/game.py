@@ -95,7 +95,7 @@ class Game:
     def show_last_move(self, surface):
         theme = self.config.theme
         if self.board.last_move:
-            lmove,lpiece=self.board.last_move
+            lmove, lpiece = self.board.last_move
             initial = lmove.initial
             final = lmove.final
 
@@ -190,17 +190,17 @@ class Game:
             self.over = True
 
         # Implementation of draw by 50 move rule (if no piece is taken or if no pawn is pushed for 50 moves (100 total turns), it is a draw)
-        print(board.counter)
-        if board.counter >= 100:
-            for i in range(board.counter - 100, board.counter + 1):
-                if board.moves[i][1].pawn_move_or_capture():
-                    print("50 move rule count restarted")
-                    return
-                if i == board.counter:
-                    self.display_draw_by_fifty_move_rule()
+        if (
+            board.counter >= 100
+        ):  # 50 move rule is physically impossible if less than 50 moves have been played by each side, and the counter increments for every white and black move.
+            for i in range(board.counter - 100, board.counter):
+                if board.moves[i][
+                    1
+                ].pawn_move_or_capture():  # breaking if any of the last 50 moves are pawn moves or captures
+                    break
+                if i == board.counter - 1:
+                    self.display_draw_by_fifty_move_rule()  # if ALL of the last 50 moves are NOT pawn moves or captures, the game ends in a draw by 50 move rule.
                     self.over = True
-                return
-               
 
         # Implementation of draw by repetition (This one will be very hard guys)
         # Implementation of draw by insufficient material: This one will also be pretty hard :(
