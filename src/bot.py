@@ -11,13 +11,6 @@ class Bot:
         self.best_piece = None
         self.best_move = None
 
-    # creates a copy of the board, makes a move on that copy and evaluates the board too
-    def evaluate_move(self, board, move, piece, castling=False):
-        temp_board = copy.deepcopy(board)
-        temp_board.move(piece, move, testing=True, castling=castling)
-
-        return temp_board.evaluate_board()
-
     # loops through the board and evaluates each possible move given a depth
     def mini_max(self, board, depth):
         best_move = None
