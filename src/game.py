@@ -186,7 +186,7 @@ class Game:
             if board.check_in_check("white"):
                 self.display_winner("Black")
             else:
-                self.display_stalemate
+                self.display_stalemate()
             self.over = True
 
         # Implementation of draw by 50 move rule (if no piece is taken or if no pawn is pushed for 50 moves (100 total turns), it is a draw)
