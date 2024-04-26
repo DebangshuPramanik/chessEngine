@@ -36,8 +36,34 @@ def interactive_test():
 # """
 # )
 
+
+
+nb.from_string(
+    """
+. . . . . . . .
+. . . K . . . .
+. . . . . . . .
+. . . . . . . .
+. n n . . . . .
+. . . . . . . .
+. k . . . . . .
+. . . . . . . .
+"""
+)
 nb.print()
-nb.move(Move.from_string("a2->a4"))
+print(nb.draw_by_insufficient_material())
+
+nb.from_string(
+    """
+. . . . . . . .
+. . . K . . . .
+. . . . P . . .
+. . . . . . . .
+. n n . . . . .
+. . . . . . . .
+. k . . . . . .
+. . . . . . . .
+"""
+)
 nb.print()
-nb.take_back()
-nb.print()
+print(nb.draw_by_insufficient_material())
