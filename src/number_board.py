@@ -132,9 +132,9 @@ class NumberBoard:
         def unmoved_piece(cls, sq):
             return sq.has_piece() and isinstance(sq.piece, cls) and not sq.piece.moved
 
-        rl = board.at((row, 0))
-        rr = board.at((row, 7))
-        k = board.at((row, 4))
+        rl = board.at((row, 0))  # left rook
+        rr = board.at((row, 7))  # right rook
+        k = board.at((row, 4))  # king
         if not (unmoved_piece(King, k)):
             return [False, False]  # king spot does not fufill king not moved reqs
         return [unmoved_piece(Rook, rl), unmoved_piece(Rook, rr)]

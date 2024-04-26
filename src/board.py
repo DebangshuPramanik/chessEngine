@@ -1,4 +1,3 @@
-import pygame
 import copy
 import os
 
@@ -64,7 +63,6 @@ class Board:
         self.en_passant = None
         # For all moves but 1 type, en_passant is not allowed.
 
-
         if isinstance(piece, Pawn):
             # en passant capture
             diff = final.col - initial.col
@@ -97,8 +95,8 @@ class Board:
                 rook_start_col = 0 if (diff < 0) else 7
                 rook_move = Move(
                     self.at((final.row, rook_start_col)),
-                    self.at((final.row, (final.col + initial.col) // 2))
-                    )
+                    self.at((final.row, (final.col + initial.col) // 2)),
+                )
                 self.move(rook, rook_move, castling=True)
                 castling_sound.play()
 
@@ -198,7 +196,7 @@ class Board:
             c = move.final.col
             return self.squares[r][c].has_piece()
 
-        if (len(piece.moves) > 0):
+        if len(piece.moves) > 0:
             initial_row = move.initial.row
             initial_col = move.initial.col
 
@@ -274,9 +272,9 @@ class Board:
 
     def calc_moves(self, piece, row, col):
         # Bool does nothing
-        loc = (row, col)
-        nb = NumberBoard(self)
-        ms = nb.calc_moves(loc)
+        loc = (row, col)  # location
+        nb = NumberBoard(self)  # Creation of number board
+        ms = nb.calc_moves(loc)  # generated moves list.
 
         def cnmbm(m):  # convert number board to board move
             sq = self.at(m.start)
