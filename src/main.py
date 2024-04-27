@@ -101,7 +101,7 @@ class Main:
                     captured = board.squares[best_move.final.row][
                         best_move.final.col
                     ].has_piece()
-                    board.move(best_piece, best_move, sidebar)
+                    board.move(piece, best_move, sidebar)
                     best_move = self.bot.find_best_move(board)
                     # captured=board.squares[best_move.final.row][best_move.final.col].has_piece()
                     # board.move(best_piece, best_move, sidebar)
