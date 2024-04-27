@@ -227,6 +227,7 @@ class NumberBoard:
         return [p for p in places if self.in_board(p)]
 
     def calc_moves_no_check(self, square):
+        # NOT ALLOWED TO CALL IN_CHECK
         def color(piece):
             if piece == 0:
                 return 0
@@ -373,20 +374,38 @@ class NumberBoard:
             m.with_start(square) for m in funcs[abs(self.at(square))]()
         ]  # if not self.in_check(square, m)
 
+    def valid_castle_move(self, move, color):
+        # not in check, not moving through check
+        sr, sc = move.start
+        er, ec = move.end
+        halfway_move = Move(move.start, (sr, (sc + ec) // 2))
+        return ( not self.in_check(color)
+              and not self.move_in_check(halfway_move, color)
+            )
+    def valid_move(self, move, color):
+        pt = abs(self.at(move.start))
+        if (pt == 6 and abs(move.start[1] - move.end[1]) == 2):
+            return (not self.move_in_check(move, color) and self.valid_castle_move(move, color))
+        return (not self.move_in_check(move, color))
+
     def calc_moves(self, square):
         # The moves returned here
         moves = self.calc_moves_no_check(square)
         pcolor = color(self.at(square))
-        return [m for m in moves if (not self.in_check(m, pcolor))]
+        # do the king castling thing.
+        return [m for m in moves if (self.valid_move(m, pcolor))]
 
-    def in_check(self, move, color):
+    def move_in_check(self, move, color):
         nb = self.copy()
         nb.move(move)
+        return nb.in_check(color)
+
+    def in_check(self, color):
         for row in range(ROWS):
             for col in range(COLS):
-                moves = nb.calc_moves_no_check((row, col))
+                moves = self.calc_moves_no_check((row, col))
                 for move in moves:
-                    p = nb.at(move.end)
+                    p = self.at(move.end)
                     if p == 6 * color:
                         return True
         return False
@@ -446,6 +465,7 @@ class NumberBoard:
     def draw_by_insufficient_material(self):
         def side_insufficient_material(c, ps):
             cps = [p for p in ps if color(p) == c and abs(p) != 6]
+            if len(cps) == 0: return True
             # Color has more than 2 non-king pieces
             if len(cps) > 2:
                 return False
