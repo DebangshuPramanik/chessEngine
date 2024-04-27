@@ -115,10 +115,6 @@ class Board:
         # set last move
         self.last_move = (move, piece)
 
-        # This area is for storing the current position of the board upon the move
-        current_FEN = self.position_to_FEN()
-        current_pos = current_FEN.split()[0]
-        self.positions.append(current_pos)
 
     def valid_move(self, piece, move):
         return move in piece.moves
