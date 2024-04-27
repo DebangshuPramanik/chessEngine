@@ -463,6 +463,23 @@ class NumberBoard:
         return moves
 
     def draw_by_insufficient_material(self):
+        def all_light_square_bishops(c):
+            def sq_color(x, y):
+                # ((x + y) % 2) gets the color as a 0 or a 1, but I want that as a -1 or a +1
+                return 1 if ((x + y) % 2) else -1 # 0 as False, everything else as true
+            cps = [p for p in ps if color(p) == c and abs(p) != 6]
+            if (all(abs(p) == 3 for p in cps)):
+                # (assume cs is colors is already there is a matrix, and c is the color is already there)
+                # bs =. (3=|).*(c=*)/ board
+                # ,(bs * cs)
+                # */ (= {.) -.&0 bs
+                # returns 1 if all bishops on same color
+                colors = [sq_color(x, y) for x in range(8) for y in range(8)] # generate a list of colors in the board, -1 is one color, 1 is the other
+                bishops = [(color(p) == c and abs(p) == 3) for row in self.squares for p in row] # bishop mask
+                bishop_colors = [b*c for b,c in zip(bishops,colors)] # multiply color by bishop mask
+                bishops_list = [p for p in bishop_colors if p != 0] # get only the bishops
+                if all(bishops_list[0] == p for p in bishops_list): return True # return true if they all are the same
+            return False
         def side_insufficient_material(c, ps):
             cps = [p for p in ps if color(p) == c and abs(p) != 6]
             if len(cps) == 0: return True
@@ -473,6 +490,10 @@ class NumberBoard:
             if len(cps) == 2 and all(abs(p) == 2 for p in cps):
                 return True
             # Color has 2 pieces, both of which are not knights
+            # Color has 2 bishops, both of which are the same color
+            if all(abs(p) == 3 for p in cps) and len(cps) == 2:
+                if all_light_square_bishops(c): return True
+            # Color has 2 pieces, both of which aren't knights, and both of which are not bishops on the same color
             if len(cps) == 2:
                 return False
             p = cps[0]  # only one piece
@@ -485,6 +506,8 @@ class NumberBoard:
         ps = [p for row in self.squares for p in row if p != 0]
         if any(abs(p) == 1 for p in ps):
             return False  # Pawns
+        if all_light_square_bishops(1) and all(abs(p) == 6 for p in ps if color(p) == -1): return True
+        if all_light_square_bishops(-1) and all(abs(p) == 6 for p in ps if color(p) == 1): return True
         if len(ps) >= 5:
             return False  # At least 5 pieces on the board
         # (There is a possible forced mate)

@@ -19,7 +19,7 @@ class Main:
         pygame.display.set_caption("Chess")
         self.game = Game()
         self.sidebar = Sidebar(self.screen)
-        self.bot = Bot(self.game, "black")
+        self.bot = Bot("black")
 
         self.bot_playing = False
         self.bot_index = 0
