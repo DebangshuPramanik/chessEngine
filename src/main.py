@@ -19,7 +19,7 @@ class Main:
         pygame.display.set_caption("Chess")
         self.game = Game()
         self.sidebar = Sidebar(self.screen)
-        self.bot = Bot("black")
+        self.bot = Bot(self.game, "black")
 
         self.bot_playing = False
         self.bot_index = 0
@@ -86,8 +86,7 @@ class Main:
 
                 # Normal Capture.......
                 captured = board.squares[released_row][released_col].has_piece()
-                if(captured):
-                    move.set_capture(True)
+                move.set_capture(True)
                 piece = dragger.piece
                 if isinstance(piece, Pawn):
                     move.set_pawn_move(True)
@@ -98,12 +97,12 @@ class Main:
 
                 # if the bot is playing, make it's move and then move on
                 if self.bot_playing:
-                    best_move = self.bot.find_best_move(board)
+                    best_move, best_piece = self.bot.find_best_move(board)
                     captured = board.squares[best_move.final.row][
                         best_move.final.col
                     ].has_piece()
-                    board.move(piece, best_move, sidebar)
-                    best_move = self.bot.find_best_move(board)
+                    board.move(best_piece, best_move, sidebar)
+                    best_move, best_piece = self.bot.find_best_move(board)
                     # captured=board.squares[best_move.final.row][best_move.final.col].has_piece()
                     # board.move(best_piece, best_move, sidebar)
 
