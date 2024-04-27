@@ -102,9 +102,9 @@ class Board:
                 )
                 self.move(rook, rook_move, castling=True)
                 castling_sound.play()
-        if move.is_pawn_move_or_capture():
+        if move.pawn_move_or_capture():
             self.positions.clear()
-        self.positions.add(self.position_to_FEN.split()[0])
+        self.positions.append(self.position_to_FEN.split()[0])
 
         # move
         piece.moved = True

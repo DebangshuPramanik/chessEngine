@@ -204,7 +204,7 @@ class Game:
                     self.over = True
 
         # Implementation of draw by repetition (This one will be very hard guys)
-        positions = self.board.positions
+        print(self.board.positions)
         
         # Implementation of draw by insufficient material: This one will also be pretty hard :(
         nb = NumberBoard(board)
