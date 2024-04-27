@@ -6,7 +6,7 @@ from square import Square
 from move import Move
 from sidebar import Sidebar
 from bot import Bot
-
+from piece import *
 # I made a comment for fun.
 # So did I
 # Now I commented too!
@@ -80,11 +80,16 @@ class Main:
             final = Square(released_row, released_col)
             move = Move(initial, final)
 
+
             # Valid move?
             if board.valid_move(dragger.piece, move):
 
                 # Normal Capture.......
                 captured = board.squares[released_row][released_col].has_piece()
+                move.set_capture(True)
+                piece = dragger.piece
+                if isinstance(piece, Pawn):
+                    move.set_pawn_move(True)
                 board.move(dragger.piece, move, sidebar)
 
                 # Sound

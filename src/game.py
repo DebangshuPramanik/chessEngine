@@ -203,6 +203,8 @@ class Game:
                     self.over = True
 
         # Implementation of draw by repetition (This one will be very hard guys)
+        positions = self.board.positions
+        
         # Implementation of draw by insufficient material: This one will also be pretty hard :(
 
     def display_winner(self, color):

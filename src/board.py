@@ -36,6 +36,7 @@ class Board:
         self.counter = 0  # Used for FEN and for counting the total number of turns played on the board.
         self.moves = []
         self.played_moves = []
+        self.positions = [] # Used to store positions to check for repetition
 
     def get_pieces_on_board(self, color):
         pieces = []
@@ -55,6 +56,8 @@ class Board:
 
         if not (testing or castling):
             self.add_move(piece, move)  # note, this adds the piece being taken to move
+
+            # Updating the move count and adding the last made move to the moves list. 
             self.counter += 1
             self.last_move = self.moves[-1]
         # console board move update
@@ -99,6 +102,9 @@ class Board:
                 )
                 self.move(rook, rook_move, castling=True)
                 castling_sound.play()
+        if move.is_pawn_move_or_capture():
+            self.positions.clear()
+        self.positions.add(self.position_to_FEN.split()[0])
 
         # move
         piece.moved = True
@@ -108,6 +114,11 @@ class Board:
 
         # set last move
         self.last_move = (move, piece)
+
+        # This area is for storing the current position of the board upon the move
+        current_FEN = self.position_to_FEN()
+        current_pos = current_FEN.split()[0]
+        self.positions.append(current_pos)
 
     def valid_move(self, piece, move):
         return move in piece.moves
@@ -361,7 +372,9 @@ class Board:
 
         TURN = ceil(self.counter / 2)
         FEN += " " + str(TURN)
+
         return FEN
+    
 
     def others_can_do(self, piece, end):
         ret = []
