@@ -86,7 +86,8 @@ class Main:
 
                 # Normal Capture.......
                 captured = board.squares[released_row][released_col].has_piece()
-                move.set_capture(True)
+                if(captured):
+                    move.set_capture(True)
                 piece = dragger.piece
                 if isinstance(piece, Pawn):
                     move.set_pawn_move(True)
