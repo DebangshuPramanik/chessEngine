@@ -37,6 +37,7 @@ class Board:
         self.moves = []
         self.played_moves = []
         self.positions = [] # Used to store positions to check for repetition
+        self.positions.append(self.position_to_FEN().split(" ")[0])
 
     def get_pieces_on_board(self, color):
         pieces = []
