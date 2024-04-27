@@ -205,12 +205,21 @@ class Game:
 
         # Implementation of draw by repetition (This one will be very hard guys)
         print(self.board.positions)
-        
+        if (self.drawn_by_repetition(board)):
+            print("Drawn by repetition")
+            self.over = True
         # Implementation of draw by insufficient material: This one will also be pretty hard :(
         nb = NumberBoard(board)
         if nb.draw_by_insufficient_material():
             self.over = True
 
+    def drawn_by_repetition(self, board):
+        for pos in board.positions:
+            counter = 0
+            for other_pos in board.positions:
+                if(other_pos == pos): counter += 1
+            if counter >= 3: return True
+        return False
 
     def display_winner(self, color):
         self.winner = color
