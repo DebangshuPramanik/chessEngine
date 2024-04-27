@@ -67,3 +67,36 @@ nb.from_string(
 )
 nb.print()
 print(nb.draw_by_insufficient_material())
+
+nb.from_string(
+    """
+. . . . . . . .
+. . . K . . . .
+. . . . . . . .
+. . . . . . . .
+. b b . . . . .
+. . . . . . . .
+. k . . . . . .
+. . . . . . . .
+"""
+)
+nb.print()
+print(nb.draw_by_insufficient_material())
+
+nb.from_string(
+    """
+. . . . . b . .
+. . . K b b . .
+. . . b . . . .
+. . b . . . . .
+. b . . . . . .
+. . . . . . . .
+. k . . . . . .
+. . . . . . . .
+"""
+)
+nb.print()
+print(nb.draw_by_insufficient_material())
+
+nbb = NumberBoard(Board())
+nbb.print()
