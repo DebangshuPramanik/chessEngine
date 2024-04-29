@@ -278,18 +278,18 @@ class Board:
         row, col = loc
         return self.squares[row][col]
 
+    def convert_nb_move_to_b_move(self, m):  # convert number board to board move
+        sq = self.at(m.start)
+        eq = self.at(m.end)
+        return Move(sq, eq)
+
     def calc_moves(self, piece, row, col):
         # Bool does nothing
         loc = (row, col)  # location
         nb = NumberBoard(self)  # Creation of number board
         ms = nb.calc_moves(loc)  # generated moves list.
 
-        def cnmbm(m):  # convert number board to board move
-            sq = self.at(m.start)
-            eq = self.at(m.end)
-            return Move(sq, eq)
-
-        Ms = [cnmbm(m) for m in ms]
+        Ms = [self.convert_nb_move_to_b_move(m) for m in ms]
         for M in Ms:
             if M.final.has_piece():
                 M.set_capture(True)
