@@ -9,31 +9,48 @@ import copy
 class Bot:
     def __init__(self, player):
         self.player = player
+        self.current_best_move = None
         
     # loops through the board and evaluates each possible move given a depth
     def mini_max(self, board, depth):
+        maxi = -99999999999999999999
         best_move = None
         player_mod = 1 if board.move_number % 2 == 0 else -1
 
-        if depth == 0:
-            return [player_mod * board.evaluate_board()]
+        if depth == 1: 
+            bmove = None
+            tboard = board.copy()
+            for move in tboard.calc_color_moves(
+            player_mod
+            ):
+                tboard.move(move)
+
+                score = player_mod*board.evaluate_board()
+
+                if score > maxi:
+                    maxi = score
+                    bmove = move
+                tboard.take_back()
+            
+            return [maxi, best_move]
 
         temp_board = board.copy()
-        maxi = player_mod * 999999999999999999999999999
         for move in temp_board.calc_color_moves(
             player_mod
         ):
             temp_board.move(move)
             score = -self.mini_max(temp_board, depth=(depth - 1))[0]
 
-            if player_mod * score > maxi:
+            if score > maxi:
                 maxi = score
                 best_move = move
+                print(best_move)
             
             temp_board.take_back()
                 
 
         return [maxi, best_move]
+
 
     def tbm(self, nb ,m):  # convert a number board move to a board move
         sq = nb.at(m.start)

@@ -100,7 +100,7 @@ class Main:
                 if self.bot_playing:
                     best_move = self.bot.find_best_move(board)
                     captured = board.squares[best_move.final.row][best_move.final.col].has_piece()
-                    best_piece = best_move.final.piece
+                    best_piece = best_move.initial.piece
 
                     board.move(best_piece, best_move, sidebar)
 
