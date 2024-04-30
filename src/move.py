@@ -1,8 +1,8 @@
 class Move:
     def __init__(
-        self, initital, final, is_a_capture=False, is_a_pawn_move=False
+        self, initial, final, is_a_capture=False, is_a_pawn_move=False
     ):  # initial and final are squares
-        self.initial = initital
+        self.initial = initial
         self.final = final
         self.is_a_capture = is_a_capture
         self.is_a_pawn_move = is_a_pawn_move

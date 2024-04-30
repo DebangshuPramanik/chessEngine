@@ -1,5 +1,7 @@
-from game import Game
 from const import *
+from number_board import NumberBoard
+from number_board import Move as NMove
+from move import *
 
 import copy
 
@@ -11,16 +13,15 @@ class Bot:
     # loops through the board and evaluates each possible move given a depth
     def mini_max(self, board, depth):
         best_move = None
-        player_shorthand = {0: "white", 1: "black"}
-        player_mod = 1 if board.counter % 2 == 0 else -1
+        player_mod = 1 if board.move_number % 2 == 0 else -1
 
         if depth == 0:
-            return player_mod * board.evaluate_board()
+            return [player_mod * board.evaluate_board()]
 
         temp_board = board.copy()
-        maxi = -999999999999999999999999999
+        maxi = player_mod * 999999999999999999999999999
         for move in temp_board.calc_color_moves(
-            player_shorthand[temp_board.counter % 2]
+            player_mod
         ):
             temp_board.move(move)
             score = -self.mini_max(temp_board, depth=(depth - 1))[0]
@@ -28,10 +29,18 @@ class Bot:
             if player_mod * score > maxi:
                 maxi = score
                 best_move = move
+            
+            temp_board.take_back()
                 
 
         return [maxi, best_move]
 
-    def find_best_move(self, board, depth=1):
-        l = self.mini_max(board, depth)
-        return l[1]
+    def tbm(self, nb ,m):  # convert a number board move to a board move
+        sq = nb.at(m.start)
+        eq = nb.at(m.end)
+        return Move(sq, eq)
+
+    def find_best_move(self, board, depth=3):
+        nb = NumberBoard(board=board)
+        l = self.mini_max(nb, depth)
+        return self.tbm(board, l[1])
