@@ -98,17 +98,14 @@ class Main:
 
                 # if the bot is playing, make it's move and then move on
                 if self.bot_playing:
-                    best_move, best_piece = self.bot.find_best_move(board)
-                    captured = board.squares[best_move.final.row][
-                        best_move.final.col
-                    ].has_piece()
-                    board.move(best_piece, best_move, sidebar)
-                    best_move, best_piece = self.bot.find_best_move(board)
-                    # captured=board.squares[best_move.final.row][best_move.final.col].has_piece()
-                    # board.move(best_piece, best_move, sidebar)
+                    best_move = self.bot.find_best_move(board)
+                    captured = board.squares[best_move.final.row][best_move.final.col].has_piece()
+                    best_piece = best_move.initial.piece
 
-                    # game.play_sound(captured)
-                    # game.next_turn()
+                    board.move(best_piece, best_move, sidebar)
+
+                    game.play_sound(captured)
+                    game.next_turn()
 
                 # draw/show methods
                 game.show_bg(screen)
