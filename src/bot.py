@@ -1,8 +1,6 @@
 from const import *
 from number_board import NumberBoard
-from number_board import Move as NMove
-from move import *
-
+from move import Move
 
 class Bot:
     def __init__(self, player):
