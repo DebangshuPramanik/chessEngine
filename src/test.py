@@ -1,5 +1,6 @@
 from board import Board
 from number_board import *
+from other_bot import *
 
 # board = Board()
 nb = NumberBoard(Board())
@@ -100,3 +101,16 @@ print(nb.draw_by_insufficient_material())
 
 nbb = NumberBoard(Board())
 nbb.print()
+
+
+
+s = """
+r n b q k b . r
+p p p p p p p p
+. . . . . . . .
+. . . . . . . .
+. . . . n . . .
+. . . B . . . .
+P P P P . P P P
+R N B Q K . N R
+"""
