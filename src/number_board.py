@@ -157,10 +157,11 @@ class NumberBoard:
         return nb
 
     def evaluate_board(self):
+        val_map=[0,1,3,3,5,9,10000]
         total = 0
         for cols in self.squares:
             for piece in cols:
-                total += piece
+                total += color(piece)*val_map[abs(piece)]
         return total
 
     def at(self, square):
