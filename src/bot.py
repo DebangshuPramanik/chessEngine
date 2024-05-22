@@ -1,4 +1,6 @@
 from const import *
+from number_board import NumberBoard
+from move import Move
 
 class Bot:
     def __init__(self, player):
