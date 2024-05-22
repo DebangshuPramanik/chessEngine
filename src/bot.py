@@ -1,8 +1,4 @@
-from game import Game
 from const import *
-
-import copy
-
 
 class Bot:
     def __init__(self, player):
