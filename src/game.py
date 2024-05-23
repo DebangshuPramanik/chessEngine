@@ -1,5 +1,6 @@
 import pygame
 import sys
+import time
 
 from board import Board
 from const import *
@@ -7,7 +8,6 @@ from dragger import Dragger
 from config import Config
 from square import Square
 from number_board import NumberBoard
-
 
 class Game:
     def __init__(self):
@@ -148,7 +148,15 @@ class Game:
     def reset(self):
         self.__init__()
 
-    def end_the_game(self):
+    def end_the_game(self, surface):
+        rect = (
+            self.hovered_sqr.col * SQSIZE,
+            self.hovered_sqr.row * SQSIZE,
+            SQSIZE,
+            SQSIZE,
+            )
+        pygame.draw().rect(surface, self.winner, rect, width=2)
+        time.sleep(40)
         pygame.quit()
         sys.exit()
 
