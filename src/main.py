@@ -7,6 +7,7 @@ from move import Move
 from sidebar import Sidebar
 from bot import Bot
 from piece import *
+from other_bot import find_best_move
 # I made a comment for fun.
 # So did I
 # Now I commented too!
@@ -98,7 +99,7 @@ class Main:
 
                 # if the bot is playing, make it's move and then move on
                 if self.bot_playing:
-                    best_move = self.bot.find_best_move(board)
+                    best_move = find_best_move(board)
                     captured = board.squares[best_move.final.row][best_move.final.col].has_piece()
                     best_piece = best_move.initial.piece
 

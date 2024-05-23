@@ -26,7 +26,8 @@ def ab(board, depth, white):
                 tb = board.copy()
                 tb.move(move)
                 val = min(val, alphabeta(tb, depth-1, alpha, beta, True))
-                if val < alpha: break
+                if val < alpha:
+                    break
                 beta = min(beta, val)
             return val
     return alphabeta(board, depth, float('-inf'), float('inf'), white)
@@ -35,7 +36,12 @@ def eval_move(state):
     board, move = state
     tb = board.copy()
     tb.move(move)
-    return (move, ab(tb, 1, False))
+    val = ab(tb, 3, True)
+    print(move)
+    tb.print()
+    print(val)
+    print("---")
+    return (move, val)
 
 def find_best_move(board):
     nb = NumberBoard(board)
