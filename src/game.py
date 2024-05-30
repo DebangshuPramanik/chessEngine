@@ -9,6 +9,7 @@ from config import Config
 from square import Square
 from number_board import NumberBoard
 
+
 class Game:
     def __init__(self):
         self.board = Board()
@@ -154,8 +155,12 @@ class Game:
             self.hovered_sqr.row * SQSIZE,
             SQSIZE,
             SQSIZE,
-            )
-        pygame.draw().rect(surface, self.winner, rect, width=2)
+        )
+        if self.winner == None:
+            pygame.display.set_caption("The game is a draw")
+        else:
+            pygame.display.set_caption(self.winner + "has won the game.")
+        pygame.draw.rect(surface)
         time.sleep(40)
         pygame.quit()
         sys.exit()
@@ -213,7 +218,7 @@ class Game:
 
         # Implementation of draw by repetition (This one will be very hard guys)
         print(self.board.positions)
-        if (self.drawn_by_repetition(board)):
+        if self.drawn_by_repetition(board):
             print("Drawn by repetition")
             self.over = True
         # Implementation of draw by insufficient material: This one will also be pretty hard :(
@@ -225,8 +230,10 @@ class Game:
         for pos in board.positions:
             counter = 0
             for other_pos in board.positions:
-                if(other_pos == pos): counter += 1
-            if counter >= 3: return True
+                if other_pos == pos:
+                    counter += 1
+            if counter >= 3:
+                return True
         return False
 
     def display_winner(self, color):

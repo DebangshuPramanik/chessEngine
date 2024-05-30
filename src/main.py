@@ -8,6 +8,7 @@ from sidebar import Sidebar
 from bot import Bot
 from piece import *
 from other_bot import find_best_move
+
 # I made a comment for fun.
 # So did I
 # Now I commented too!
@@ -81,7 +82,6 @@ class Main:
             final = Square(released_row, released_col)
             move = Move(initial, final)
 
-
             # Valid move?
             if board.valid_move(dragger.piece, move):
 
@@ -100,7 +100,9 @@ class Main:
                 # if the bot is playing, make it's move and then move on
                 if self.bot_playing:
                     best_move = find_best_move(board)
-                    captured = board.squares[best_move.final.row][best_move.final.col].has_piece()
+                    captured = board.squares[best_move.final.row][
+                        best_move.final.col
+                    ].has_piece()
                     best_piece = best_move.initial.piece
 
                     board.move(best_piece, best_move, sidebar)
@@ -189,6 +191,6 @@ class Main:
         game.end_the_game()
 
 
+# Creation of a main object before running the game's main loop (the game itself).
 main = Main()
 main.mainloop()
-# test

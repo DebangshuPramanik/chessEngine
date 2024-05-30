@@ -16,14 +16,138 @@ from number_board import NumberBoard
 
 class Board:
 
-    # rudimentary bot stuff
+    # Evaluate function which returns a number: A high positive number means white is winning,
+    # a high absolute value negative number means black is winning, and the closer this eval is to a 0, the more even the position is)
     def evaluate_board(self):
-        total = 0
-        for row in range(ROWS):
-            for col in range(COLS):
-                if self.squares[row][col].has_piece():
-                    total += self.squares[row][col].piece.value
-        return total
+        total_eval = 0
+
+        # Evaluates the intrinsic value of a Pawn based on its position and squares controlled.
+        def pawn_eval(row, col, piece, c=1 if piece.color == "white" else -1):
+            moves = self.calc_moves(piece, row, col)
+            eval = piece.value * c
+            increment = 0.001 * len(moves) * c
+            eval += increment
+            if not (col == 0 or col == 7):
+                eval += 0.2 * increment * c
+            rr = (
+                row if c == -1 else 8 - row
+            )  # rr represents how far the pawn of a color is advanced, this gets rid of dependencies of
+            # the board's row the pawn is on and on the color of the pawn.
+            if rr <= 1:  # Some advantage if pawn is not too far advanced
+                eval += 0.001 * c
+            elif (
+                rr < 3
+            ):  # Advantage if pawn is advanced one square, but not too much advantage as this is not much space
+                eval += 0.002 * c
+            elif (
+                rr < 4
+            ):  # Advantage if pawn is adanced two squares : maximized center control and no overstretching of pawns
+                eval += 0.005 * c
+            elif (
+                rr < 6
+            ):  # Advantage if pawn is advanced more than two squares but less than 4 squares, less than central adv.
+                eval += 0.003 * c
+            else:  # Advantage if pawn is about to promote to a piece: it is soo close...
+                eval += 0.008 * c
+            return eval
+
+        # Evaluates the intrinsic value of a Knight based on its position and squares controlled.
+        def knight_eval(row, col, piece, c=1 if piece.color == "white" else -1):
+            moves = self.calc_moves(piece, row, col)
+            eval = piece.value * c
+            increment = 0.003 * len(moves) * c
+            eval += increment
+            if (
+                col == 0 or col == 7 or row == 0 or row == 7
+            ):  # decrement if knight is on the rim of a board
+                eval -= 0.008 * c
+            elif (
+                row >= 2 and row <= 6 and col >= 2 and col <= 6
+            ):  # increment if knight is in the central area of the board
+                eval += 0.01 * c
+            else:
+                eval += (
+                    0.001 * c
+                )  # Minimal increment if knight is not centralized or on the rim
+            return eval
+
+        # Evaluates the intrinsic value of a Bishop based on its position and squares controlled.
+        def bishop_eval(row, col, piece, c=1 if piece.color == "white" else -1):
+            moves = self.calc_moves(piece, row, col)
+            eval = piece.value * c
+            increment = 0.004 * 1.005 * len(moves) * c
+            eval += increment
+            if (
+                len(moves) >= 8
+            ):  # Increment if the bishop really is strong and controls a lot of space
+                eval += 0.4 * increment * c
+            if self.two_pieces_of_type_on_board(
+                "bishop", piece.color
+            ):  # Extra advantage if a player has the Bishop pair (2 Bishops)
+                eval += 0.2 * increment * c
+            return eval
+
+        # Evaluates the intrinsic value of a Rook based on its position and squares controlled.
+        def rook_eval(row, col, piece, c=1 if piece.color == "white" else -1):
+            moves = self.calc_moves(piece, row, col)
+            eval = piece.value * c
+            increment = 0.006 * 1.008 * len(moves) * c
+            eval += increment
+            if (
+                len(moves) >= 8
+            ):  # Increment if the rook really is strong and controls a lot of space
+                eval += 0.4 * increment * c
+            if self.two_pieces_of_type_on_board(
+                "bishop", piece.color
+            ):  # Extra advantage if a player has 2 Rooks
+                eval += 0.2 * increment * c
+            return eval
+
+        # Evaluates the intrinsic value of a Queen based on its position and squares controlled.
+        def queen_eval(row, col, piece, c=1 if piece.color == "white" else -1):
+            return (
+                bishop_eval(row, col, piece) + rook_eval(row, col, piece) + c
+            )  # Rook (5) + Bishop (3) + 1 = Queen (9), * Piece (Points)
+            # This works because a queen is literally a rook and bishop in one piece, and worth one more point than a rook and bishop together
+
+        # Evaluates the intrinsic value of a King based on its position and squares controlled.
+        def king_eval(row, col, piece, c=1 if piece.color == "white" else -1):
+            moves = self.calc_moves(piece, row, col)
+            pieces = self.get_pieces_and_locs_on_board()[0]
+            eval = 0  # Not using the large number king eval as that would make things chaotic: kings are not worth any points technically,
+            # they're only given a lot of worth in their value so that the engine knows to protect them as first priority, but in
+            # practicality, they are the weakest piece, whose power grows as pieces gradually come off the board, as shown below
+            if len(pieces) < 5:
+                eval += 2 * c
+            elif len(pieces) < 7:
+                eval += c
+            else:
+                eval += c / 2.0
+            return eval
+
+        # Using get_pieces_and_locs_on_board to get the pieces and their prospective rows and columns all in the form of parallel lists
+        pieces = self.get_pieces_and_locs_on_board()[0]
+        rows_list = self.get_pieces_and_locs_on_board()[1]
+        cols_list = self.get_pieces_and_locs_on_board()[2]
+
+        # Traversing through all pieces on board and calculating how much they are worth using their type and eval methods written above
+        for i in range(len(pieces)):
+            piece = pieces[i]
+            row = rows_list[i]
+            col = cols_list[i]
+            if isinstance(piece, Pawn):
+                total_eval += pawn_eval(row, col, piece)
+            elif isinstance(piece, Knight):
+                total_eval += knight_eval(row, col, piece)
+            elif isinstance(piece, Bishop):
+                total_eval += bishop_eval(row, col, piece)
+            elif isinstance(piece, Rook):
+                total_eval += rook_eval(row, col, piece)
+            elif isinstance(piece, Queen):
+                total_eval += queen_eval(row, col, piece)
+            else:
+                total_eval += king_eval(row, col, piece)
+        return total_eval  # Returns the total eval of the position
 
     def __init__(self):
         self.squares = [[0, 0, 0, 0, 0, 0, 0, 0] for col in range(COLS)]
@@ -36,17 +160,23 @@ class Board:
         self.counter = 0  # Used for FEN and for counting the total number of turns played on the board.
         self.moves = []
         self.played_moves = []
-        self.positions = [] # Used to store positions to check for repetition
+        self.positions = []  # Used to store positions to check for repetition
         self.positions.append(self.position_to_FEN().split(" ")[0])
 
-    def get_pieces_on_board(self, color):
+    def get_pieces_and_locs_on_board(
+        self,
+    ):  # Returns all the pieces of the board and the piece's coordinates in a tuple of lists.
         pieces = []
+        rows_list = []
+        cols_list = []
         for row in range(ROWS):
             for col in range(COLS):
                 if self.squares[row][col].has_piece():
-                    if self.squares[row][col].piece.color == color:
-                        pieces.append(self.squares[row][col].piece)
-        return pieces
+                    pieces.append(self.squares[row][col].piece)
+                    rows_list.append(row)
+                    cols_list.append(col)
+        result = (pieces, rows_list, cols_list)
+        return result
 
     def move(self, piece, move, sidebar=None, testing=False, castling=False):
         initial = move.initial
@@ -58,7 +188,7 @@ class Board:
         if not (testing or castling):
             self.add_move(piece, move)  # note, this adds the piece being taken to move
 
-            # Updating the move count and adding the last made move to the moves list. 
+            # Updating the move count and adding the last made move to the moves list.
             self.counter += 1
             self.last_move = self.moves[-1]
         # console board move update
@@ -115,7 +245,6 @@ class Board:
 
         # set last move
         self.last_move = (move, piece)
-
 
     def valid_move(self, piece, move):
         return move in piece.moves
@@ -371,7 +500,6 @@ class Board:
         FEN += " " + str(TURN)
 
         return FEN
-    
 
     def others_can_do(self, piece, end):
         ret = []
@@ -493,3 +621,13 @@ class Board:
             return [(piece, move) for move in piece.moves]
 
         return self.accumulate_piece_coords(get_moves)
+
+    def two_pieces_of_type_on_board(self, piece, color):
+        counter = 0
+        for row in range(ROWS):
+            for col in range(COLS):
+                if self.squares[row][col].has_piece():
+                    other = self.square[row][col].piece
+                    if other.color == color and other.name == piece:
+                        counter += 1
+        return counter >= 2
