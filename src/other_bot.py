@@ -8,21 +8,32 @@ def tbm(b, nm):
     eq = b.at(nm.end)
     return Move(sq, eq)
 
+
+# Thanks Sebastian Lague
 def ab(board, depth, white):
-    def order_moves(moves, board):
+    def order_moves(moves, board, white):
         # pv : piece value
+        # cv : captured piece value
         for move in moves:
-            pv = board.at(move.start)
+            val_map=[0,1,3,3,5,9,10000]
+
+            pv = val_map[board.at(move.start)]
+            cv = val_map[board.at(move.end)]
+
+            if cv != 0:
+                move.mg = 10*cv - pv
+        sorted(moves, key=lambda move : move.mg)
+            
 
 
     def alphabeta(board, depth, alpha, beta, white):
-        #moves = board.calc_color_moves(1) if white else board.calc_color_moves(-1)
-        #order_moves(moves, board)
         tb = board.copy()
         if depth==0: return board.evaluate_board()
         if white:
+            moves = board.calc_color_moves(1)
+            order_moves(moves, board, white)
             val = float('-inf')
-            for move in board.calc_color_moves(1):
+            for move in moves:
                 tb.move(move)
                 val = max(val, alphabeta(tb, depth-1, alpha, beta, False))
                 if val > beta: break
@@ -30,8 +41,10 @@ def ab(board, depth, white):
                 tb.take_back()
             return val
         else:
+            moves = board.calc_color_moves(-1)
+            order_moves(moves, board, white)
             val = float('inf')
-            for move in board.calc_color_moves(-1):
+            for move in moves:
                 tb.move(move)
                 val = min(val, alphabeta(tb, depth-1, alpha, beta, True))
                 if val < alpha:
