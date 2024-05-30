@@ -13,6 +13,7 @@ class Move:
     start: tuple = None
     end: tuple
     promotion: int = None
+    mg: int = 0
 
     @classmethod
     def end(cls, end):
