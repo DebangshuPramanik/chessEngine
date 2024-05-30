@@ -9,38 +9,48 @@ def tbm(b, nm):
     return Move(sq, eq)
 
 def ab(board, depth, white):
+    def order_moves(moves, board):
+        # pv : piece value
+        for move in moves:
+            pv = board.at(move.start)
+
+
     def alphabeta(board, depth, alpha, beta, white):
+        #moves = board.calc_color_moves(1) if white else board.calc_color_moves(-1)
+        #order_moves(moves, board)
+        tb = board.copy()
         if depth==0: return board.evaluate_board()
         if white:
             val = float('-inf')
             for move in board.calc_color_moves(1):
-                tb = board.copy()
                 tb.move(move)
                 val = max(val, alphabeta(tb, depth-1, alpha, beta, False))
                 if val > beta: break
                 alpha = max(alpha, val)
+                tb.take_back()
             return val
         else:
             val = float('inf')
             for move in board.calc_color_moves(-1):
-                tb = board.copy()
                 tb.move(move)
                 val = min(val, alphabeta(tb, depth-1, alpha, beta, True))
                 if val < alpha:
                     break
                 beta = min(beta, val)
+                tb.take_back()
             return val
     return alphabeta(board, depth, float('-inf'), float('inf'), white)
+
 
 def eval_move(state):
     board, move = state
     tb = board.copy()
     tb.move(move)
-    val = ab(tb, 3, True)
-    print(move)
-    tb.print()
-    print(val)
-    print("---")
+    val = ab(tb, 2, True)
+    #print(move)
+    #tb.print()
+    #print(val)
+    #print("---")
     return (move, val)
 
 def find_best_move(board):
