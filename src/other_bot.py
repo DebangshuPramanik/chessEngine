@@ -59,7 +59,7 @@ def eval_move(state):
     board, move = state
     tb = board.copy()
     tb.move(move)
-    val = ab(tb, 3, True)
+    val = ab(tb, 2, True)
     #print(move)
     #tb.print()
     #print(val)
