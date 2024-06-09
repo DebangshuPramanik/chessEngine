@@ -57,8 +57,7 @@ class Board:
                 return eval
 
         # Evaluates the intrinsic value of a Knight based on its position and squares controlled.
-        def knight_eval(row, col, piece):
-            c=1.0 if piece.color == "white" else -1.0
+        def knight_eval(row, col, piece, c=1 if piece.color == "white" else -1):
             moves = self.calc_moves(piece, row, col)
             eval = piece.value * c
             if moves == None or len(moves) == 0:
@@ -82,8 +81,7 @@ class Board:
                 return eval
 
         # Evaluates the intrinsic value of a Bishop based on its position and squares controlled.
-        def bishop_eval(row, col, piece):
-            c=1.0 if piece.color == "white" else -1.0
+        def bishop_eval(row, col, piece, c=1 if piece.color == "white" else -1):
             moves = self.calc_moves(piece, row, col)
             eval = piece.value * c
             if moves == None or len(moves) == 0:
@@ -103,8 +101,7 @@ class Board:
                 return eval
 
         # Evaluates the intrinsic value of a Rook based on its position and squares controlled.
-        def rook_eval(row, col, piece):
-            c=1.0 if piece.color == "white" else -1.0
+        def rook_eval(row, col, piece, c=1 if piece.color == "white" else -1):
             moves = self.calc_moves(piece, row, col)
             eval = piece.value * c
             if moves == None or len(moves) == 0:
@@ -124,16 +121,15 @@ class Board:
                 return eval
 
         # Evaluates the intrinsic value of a Queen based on its position and squares controlled.
-        def queen_eval(row, col, piece):
-            c=1.0 if piece.color == "white" else -1.0
+        def queen_eval(row, col, piece, c=1 if piece.color == "white" else -1):
             return (
                 bishop_eval(row, col, piece) + rook_eval(row, col, piece) + c
             )  # Rook (5) + Bishop (3) + 1 = Queen (9), * Piece (Points)
             # This works because a queen is literally a rook and bishop in one piece, and worth one more point than a rook and bishop together
 
+
         # Evaluates the intrinsic value of a King based on its position and squares controlled.
-        def king_eval(row, col, piece):
-            c=1.0 if piece.color == "white" else -1.0
+        def king_eval(row, col, piece, c=1 if piece.color == "white" else -1):
             moves = self.calc_moves(piece, row, col)
             pieces = self.get_pieces_and_locs_on_board()[0]
             eval = 0.5  # Not using the large number king eval as that would make things chaotic: kings are not worth any points technically,
