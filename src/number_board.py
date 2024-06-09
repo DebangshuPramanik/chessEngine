@@ -159,24 +159,24 @@ class NumberBoard:
 
     def evaluate_board(self):
         val_map=[0,1,3,3,5,9,10000]
-        def pawn_eval(row, col, piece):
-            c = color(piece)
-            eval = c * val_map[piece]
+        # def pawn_eval(row, col, piece):
+        #     c = color(piece)
+        #     eval = c * val_map[piece]
 
-        eval = {
-            0 : 0,
-            1 : pawn_eval,
-            2 : night_eval,
-            3 : bishop_eval,
-            4 : rook_eval,
-            5 : queen_eval,
-            6 : king_eval
-        }
+        # eval = {
+        #     0 : 0,
+        #     1 : pawn_eval,
+        #     2 : night_eval,
+        #     3 : bishop_eval,
+        #     4 : rook_eval,
+        #     5 : queen_eval,
+        #     6 : king_eval
+        # }
 
         total = 0
         for cols in self.squares:
             for row in cols:
-                total += color(piece)*val_map[piece]
+                total += color(row)*val_map[row]
         return total
 
     def at(self, square):
