@@ -17,6 +17,7 @@ class Piece:
         self.texture = texture
         self.set_texture()
         self.set_texture_rect = texture_rect
+        self.value_sign = value_sign
 
     def name_to_shorthand(self, name, color):
         map_dict = {

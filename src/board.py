@@ -19,147 +19,138 @@ class Board:
     # Evaluate function which returns a number: A high positive number means white is winning,
     # a high absolute value negative number means black is winning, and the closer this eval is to a 0, the more even the position is)
     def evaluate_board(self):
-        total_eval = 0
+        total_eval = 0.0
 
         # Evaluates the intrinsic value of a Pawn based on its position and squares controlled.
         def pawn_eval(row, col, piece):
-            c = 1.0 if piece.color == "white" else -1.0
+            # Initially, the piece is worth the amount of points it has in the game by default
+            eval = piece.value
+            # Shorthanding the value sign of a piece.
+            vs = piece.value_sign
+            # rr measures how many squares the pawn is advanced, it stands for "real row" on the board of the pawn
+            rr = row if piece.value > 0 else 8 - row
+
+            # Getting the moves a piece has (i.e., the squares that it controls)
             moves = self.calc_moves(piece, row, col)
-            eval = piece.value * c
-            if moves == None or len(moves) == 0:
-                return eval - (0.5 * c)
-            else:
-                increment = 0.001 * len(moves) * c
-                eval += increment
-                if not (col == 0 or col == 7):
-                    eval += 0.2 * increment * c
-                rr = (
-                    row if c == -1 else 8 - row
-                )  # rr represents how far the pawn of a color is advanced, this gets rid of dependencies of
-                # the board's row the pawn is on and on the color of the pawn.
-                if rr <= 1:  # Some advantage if pawn is not too far advanced
-                    eval += 0.001 * c
-                elif (
-                    rr < 3
-                ):  # Advantage if pawn is advanced one square, but not too much advantage as this is not much space
-                    eval += 0.002 * c
-                elif (
-                    rr < 4
-                ):  # Advantage if pawn is adanced two squares : maximized center control and no overstretching of pawns
-                    eval += 0.005 * c
-                elif (
-                    rr < 6
-                ):  # Advantage if pawn is advanced more than two squares but less than 4 squares, less than central adv.
-                    eval += 0.003 * c
-                else:  # Advantage if pawn is about to promote to a piece: it is soo close...
-                    eval += 0.008 * c
-                moves.clear()
-                return eval
+            if(moves != None):
+                num_moves = len(moves) # Stores the number of possible moves of the piece in this position. 
+                if num_moves == 0 or num_moves == None:  # Pawn cannot move
+                    eval -= vs * 0.05
+                elif rr < 2:  # Pawn is not advanced.
+                    eval -= vs * 0.08
+                elif rr < 3:  # Pawn is advanced 1 square.
+                    eval += vs * 0.08
+                elif rr < 5:  # Pawn is advanced 2 or 3 squares.
+                    eval += vs * 0.06
+                elif rr < 7:  # Pawn is advanced between 3 squares and 6 sqyares.
+                    eval += vs * 0.03
+                else:  # Pawn is advanced almost to promotion!!!
+                    eval += vs * 0.04
+
+            return eval # Returns the instantaneous positional value of the pawn
 
         # Evaluates the intrinsic value of a Knight based on its position and squares controlled.
         def knight_eval(row, col, piece):
-            c=1 if piece.color == "white" else -1
+            # Initially, the piece is worth the amount of points it has in the game by default
+            eval = piece.value
+            # Shorthanding the value sign of a piece.
+            vs = piece.value_sign
+            # Getting the list of moves a piece has (i.e., the squares that it controls)
             moves = self.calc_moves(piece, row, col)
-            eval = piece.value * c
-            if moves == None or len(moves) == 0:
-                return eval - (0.5 * c)
-            else:
-                increment = 0.003 * len(moves) * c
-                eval += increment
-                if (
-                    col == 0 or col == 7 or row == 0 or row == 7
-                ):  # decrement if knight is on the rim of a board
-                    eval -= 0.008 * c
-                elif (
-                    row >= 2 and row <= 6 and col >= 2 and col <= 6
-                ):  # increment if knight is in the central area of the board
-                    eval += 0.01 * c
+            if(moves != None):
+                num_moves = len(moves) # The length of this list would be its total possible moves. 
+                if(num_moves == 8 and (row >= 2 and row <= 5 and col >= 2 and col <= 5)): # Centralized knight that controls enemy/empty space
+                    eval += vs * 0.1
+                if(self.two_pieces_of_type_on_board("knight", piece.color)): # Knight pair bonus
+                    eval += vs * 0.1
+                if(row >= 2 and row <= 5 and col >= 2 and col <= 5): # Centralized knight
+                    eval += vs * 0.05
+                elif(row == 1 or col == 1 or row == 6 or col == 6): # Edge Knight, but not rim
+                    eval -= vs * 0.04
                 else:
-                    eval += (
-                        0.001 * c
-                    )  # Minimal increment if knight is not centralized or on the rim
-                moves.clear()
-                return eval
+                    eval -= vs * 0.08 # Rim knight, "A knight on the rim is dim"
+
+            return eval # Returns the instantaneous potential value of the knight
 
         # Evaluates the intrinsic value of a Bishop based on its position and squares controlled.
         def bishop_eval(row, col, piece):
-            c=1 if piece.color == "white" else -1
+            # Initially, the piece is worth the amount of points it has in the game by default
+            eval = piece.value
+            # Shorthanding the value sign of a piece.
+            vs = piece.value_sign
+            # Getting the list of moves a piece has (i.e., the squares that it controls)
             moves = self.calc_moves(piece, row, col)
-            eval = piece.value * c
-            if moves == None or len(moves) == 0:
-                return eval - (0.5 * c)
-            else:
-                increment = 0.004 * 1.005 * len(moves) * c
-                eval += increment
-                if (
-                    len(moves) >= 8
-                ):  # Increment if the bishop really is strong and controls a lot of space
-                    eval += 0.4 * increment * c
-                if self.two_pieces_of_type_on_board(
-                    "bishop", piece.color
-                ):  # Extra advantage if a player has the Bishop pair (2 Bishops)
-                    eval += 0.2 * increment * c
-                moves.clear()
-                return eval
+            if(moves != None):
+                num_moves = len(moves)
+                if(self.two_pieces_of_type_on_board("bishop", piece.color)): # Power of Bishop Pair
+                    eval += vs * 0.25
+                if(num_moves > 11): # Bishop has a lot of scope
+                    eval += vs * 0.03
+                elif(num_moves >= 6): # Bishop has a decent amount of scope
+                    eval += vs * 0.2
+                elif(num_moves >= 4): # Bishop has little scope
+                    eval += vs * 0.05
+                else:                  # Bishop has no scope. 
+                    eval -= vs * 0.15
+           
+            return eval
 
         # Evaluates the intrinsic value of a Rook based on its position and squares controlled.
         def rook_eval(row, col, piece):
-            c=1 if piece.color == "white" else -1
+            # Initially, the piece is worth the amount of points it has in the game by default
+            eval = piece.value
+            # Shorthanding the value sign of a piece.
+            vs = piece.value_sign
+            # Getting the list of moves a piece has (i.e., the squares that it controls)
             moves = self.calc_moves(piece, row, col)
-            eval = piece.value * c
-            if moves == None or len(moves) == 0:
-                return eval - (0.5 * c)
-            else:
-                increment = 0.006 * 1.008 * len(moves) * c
-                eval += increment
-                if (
-                    len(moves) >= 8
-                ):  # Increment if the rook really is strong and controls a lot of space
-                    eval += 0.4 * increment * c
-                if self.two_pieces_of_type_on_board(
-                    "bishop", piece.color
-                ):  # Extra advantage if a player has 2 Rooks
-                    eval += 0.2 * increment * c
-                moves.clear()
-                return eval
+            if(moves != None):
+                num_moves = len(moves)
+                if(self.two_pieces_of_type_on_board("rook", piece.color)):
+                    eval += 0.3
+                if(num_moves > 11): # Rook has a lot of scope
+                    eval += vs * 0.03
+                elif(num_moves >= 6): # Rook has a decent amount of scope
+                    eval += vs * 0.2
+                elif(num_moves >= 4): # Rook has little scope
+                    eval += vs * 0.05
+                else:                  # Rook has no scope. 
+                    eval -= vs * 0.15
+            return eval
 
         # Evaluates the intrinsic value of a Queen based on its position and squares controlled.
         def queen_eval(row, col, piece):
-            c=1 if piece.color == "white" else -1
+            vs = piece.value_sign
             return (
-                bishop_eval(row, col, piece) + rook_eval(row, col, piece) + c
+                bishop_eval(row, col, piece) - (6 * vs)
+                + rook_eval(row, col, piece) - (4 * vs)
+                + piece.value_sign
             )  # Rook (5) + Bishop (3) + 1 = Queen (9), * Piece (Points)
             # This works because a queen is literally a rook and bishop in one piece, and worth one more point than a rook and bishop together
 
-
         # Evaluates the intrinsic value of a King based on its position and squares controlled.
         def king_eval(row, col, piece):
-            c=1 if piece.color == "white" else -1
+            eval = 0
             moves = self.calc_moves(piece, row, col)
             pieces = self.get_pieces_and_locs_on_board()[0]
-            eval = 0.5  # Not using the large number king eval as that would make things chaotic: kings are not worth any points technically,
-            # they're only given a lot of worth in their value so that the engine knows to protect them as first priority, but in
-            # practicality, they are the weakest piece, whose power grows as pieces gradually come off the board, as shown below
-            if moves == None or len(moves) == 0:
-                return eval - (0.5 * c)
-            else:
-                if len(pieces) < 5:
-                    eval += 2 * c
-                elif len(pieces) < 7:
-                    eval += c
+            vs = piece.value_sign
+            if (moves != None and pieces != None):
+                increment = 1/len(pieces)
+                if(len(pieces) <= 3):
+                    eval += vs * (increment + 0.3)
+                elif(len(pieces) <= 6):
+                    eval += vs * (increment + 0.1)
                 else:
-                    eval += c / 2.0
-                moves.clear()
-                return eval
+                    eval -= vs * increment
+            return eval
 
         # Using get_pieces_and_locs_on_board to get the pieces and their prospective rows and columns all in the form of parallel lists
-        # These parallel lists are stored in a tuple. 
+        # These parallel lists are stored in a tuple.
         pieces_rows_cols_tuple = self.get_pieces_and_locs_on_board()
         pieces = pieces_rows_cols_tuple[0]
         rows_list = pieces_rows_cols_tuple[1]
         cols_list = pieces_rows_cols_tuple[2]
 
-        # Traversing through all pieces on board and calculating how much they are worth using their type and eval methods written above
+        # Traversing through all pieces on board and calculating how much they are worth using their type, location, and eval methods written above
         for i in range(len(pieces)):
             piece = pieces[i]
             row = rows_list[i]

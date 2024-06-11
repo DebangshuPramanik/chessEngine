@@ -172,15 +172,6 @@ class NumberBoard:
         #     5 : queen_eval,
         #     6 : king_eval
         # }
-        eval = {
-            0 : 0,
-            1 : pawn_eval,
-            2 : night_eval,
-            3 : bishop_eval,
-            4 : rook_eval,
-            5 : queen_eval,
-            6 : king_eval,
-        }
 
         total = 0
         for cols in self.squares:
