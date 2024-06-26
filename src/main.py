@@ -73,7 +73,7 @@ class Main:
             released_row = dragger.mouseY // SQSIZE
             released_col = dragger.mouseX // SQSIZE
 
-            if not (released_col in range(0, 8) and released_col in range(0, 8)):
+            if (not (released_col in range(0, 8) and released_row in range(0, 8))) or (released_col in range(0, 8) and not released_row in range(0, 8)):
                 dragger.undrag_piece()
                 return
 

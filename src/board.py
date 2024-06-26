@@ -23,30 +23,32 @@ class Board:
 
         # Evaluates the intrinsic value of a Pawn based on its position and squares controlled.
         def pawn_eval(row, col, piece):
+            # Getting the moves a piece has (i.e., the squares that it controls)
+            moves = self.calc_moves(piece, row, col)
+
             # Initially, the piece is worth the amount of points it has in the game by default
             eval = piece.value
             # Shorthanding the value sign of a piece.
             vs = piece.value_sign
             # rr measures how many squares the pawn is advanced, it stands for "real row" on the board of the pawn
-            rr = row if piece.value > 0 else 8 - row
-
-            # Getting the moves a piece has (i.e., the squares that it controls)
-            moves = self.calc_moves(piece, row, col)
+            rr = row if piece.color == "black" else 8 - row
+            
             if(moves != None):
                 num_moves = len(moves) # Stores the number of possible moves of the piece in this position. 
+                increment = num_moves * vs
                 if num_moves == 0 or num_moves == None:  # Pawn cannot move
-                    eval -= vs * 0.05
+                    eval -= vs * 0.1 * increment
                 elif rr < 2:  # Pawn is not advanced.
-                    eval -= vs * 0.08
+                    eval -= vs * 0.16 * increment
                 elif rr < 3:  # Pawn is advanced 1 square.
-                    eval += vs * 0.08
+                    eval += vs * 0.16 * increment
                 elif rr < 5:  # Pawn is advanced 2 or 3 squares.
-                    eval += vs * 0.06
-                elif rr < 7:  # Pawn is advanced between 3 squares and 6 sqyares.
-                    eval += vs * 0.03
+                    eval += vs * 0.2 * increment
+                elif rr < 7:  # Pawn is advanced between 3 squares and 6 squares.
+                    eval += vs * 0.1 * increment
                 else:  # Pawn is advanced almost to promotion!!!
-                    eval += vs * 0.04
-
+                    eval += vs * 0.5 * increment
+                moves.clear()
             return eval # Returns the instantaneous positional value of the pawn
 
         # Evaluates the intrinsic value of a Knight based on its position and squares controlled.
@@ -57,19 +59,21 @@ class Board:
             vs = piece.value_sign
             # Getting the list of moves a piece has (i.e., the squares that it controls)
             moves = self.calc_moves(piece, row, col)
+            # rr measures how many squares the knight is advanced, it stands for "real row" on the board of the pawn
+            rr = row if piece.color == "black" else 8 - row
             if(moves != None):
                 num_moves = len(moves) # The length of this list would be its total possible moves. 
-                if(num_moves == 8 and (row >= 2 and row <= 5 and col >= 2 and col <= 5)): # Centralized knight that controls enemy/empty space
-                    eval += vs * 0.1
+                if(num_moves == 8 and (rr >= 2 and rr <= 5 and col >= 2 and col <= 5)): # Centralized knight that controls enemy/empty space
+                    eval += vs * 0.2
                 if(self.two_pieces_of_type_on_board("knight", piece.color)): # Knight pair bonus
+                    eval += vs * 0.2
+                if(rr >= 2 and rr <= 5 and col >= 2 and col <= 5): # Centralized knight
                     eval += vs * 0.1
-                if(row >= 2 and row <= 5 and col >= 2 and col <= 5): # Centralized knight
-                    eval += vs * 0.05
-                elif(row == 1 or col == 1 or row == 6 or col == 6): # Edge Knight, but not rim
-                    eval -= vs * 0.04
+                elif(rr == 1 or col == 1 or rr == 6 or col == 6): # Edge Knight, but not rim
+                    eval -= vs * 0.08
                 else:
-                    eval -= vs * 0.08 # Rim knight, "A knight on the rim is dim"
-
+                    eval -= vs * 0.16 # Rim knight, "A knight on the rim is dim"
+                moves.clear()
             return eval # Returns the instantaneous potential value of the knight
 
         # Evaluates the intrinsic value of a Bishop based on its position and squares controlled.
@@ -92,7 +96,7 @@ class Board:
                     eval += vs * 0.05
                 else:                  # Bishop has no scope. 
                     eval -= vs * 0.15
-           
+                moves.clear()
             return eval
 
         # Evaluates the intrinsic value of a Rook based on its position and squares controlled.
@@ -115,6 +119,7 @@ class Board:
                     eval += vs * 0.05
                 else:                  # Rook has no scope. 
                     eval -= vs * 0.15
+                moves.clear()
             return eval
 
         # Evaluates the intrinsic value of a Queen based on its position and squares controlled.
@@ -123,7 +128,7 @@ class Board:
             return (
                 bishop_eval(row, col, piece) - (6 * vs)
                 + rook_eval(row, col, piece) - (4 * vs)
-                + piece.value_sign
+                + vs
             )  # Rook (5) + Bishop (3) + 1 = Queen (9), * Piece (Points)
             # This works because a queen is literally a rook and bishop in one piece, and worth one more point than a rook and bishop together
 
@@ -141,6 +146,7 @@ class Board:
                     eval += vs * (increment + 0.1)
                 else:
                     eval -= vs * increment
+                moves.clear()
             return eval
 
         # Using get_pieces_and_locs_on_board to get the pieces and their prospective rows and columns all in the form of parallel lists
@@ -338,7 +344,7 @@ class Board:
             for col in range(COLS):
                 if temp_board.squares[row][col].has_rival_piece(piece.color):
                     p = temp_board.squares[row][col].piece
-                    temp_board.calc_moves(p, row, col, bool=False)
+                    temp_board.calc_moves(p, row, col)
                     # bool is there to prevent infinite looping between in_check() and calc_moves(), as both methods are called within each other.
                     for m in p.moves:
                         if isinstance(m.final.piece, King):
@@ -428,7 +434,6 @@ class Board:
         return self.squares[row][col]
 
     def calc_moves(self, piece, row, col):
-        # Bool does nothing
         loc = (row, col)  # location
         nb = NumberBoard(self)  # Creation of number board
         ms = nb.calc_moves(loc)  # generated moves list.
