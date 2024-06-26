@@ -188,7 +188,7 @@ class Main:
                 elif event.type == pygame.QUIT:
                     game.end_the_game()
             pygame.display.update()
-        game.end_the_game()
+        game.end_the_game(screen)
 
 
 # Creation of a main object before running the game's main loop (the game itself).

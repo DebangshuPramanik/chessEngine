@@ -156,11 +156,12 @@ class Game:
             SQSIZE,
             SQSIZE,
         )
+        pygame.draw.rect(surface, (0, 0, 0), rect)
+        pygame.draw.rect(surface, 128, rect)
         if self.winner == None:
             pygame.display.set_caption("The game is a draw")
         else:
-            pygame.display.set_caption(self.winner + "has won the game.")
-        pygame.draw.rect(surface)
+            pygame.display.set_caption(self.winner + " has won the game.")
         time.sleep(40)
         pygame.quit()
         sys.exit()
