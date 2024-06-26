@@ -24,8 +24,6 @@ def ab(board, depth, white):
                 move.mg = 10*cv - pv
         sorted(moves, key=lambda move : move.mg)
             
-
-
     def alphabeta(board, depth, alpha, beta, white):
         tb = board.copy()
         if depth==0: return board.evaluate_board()
