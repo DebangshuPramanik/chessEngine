@@ -2,6 +2,7 @@ from const import *
 from move import Move
 import copy
 from piece import *
+from time import time
 
 from dataclasses import dataclass
 
@@ -303,6 +304,16 @@ class NumberBoard:
             for row in range(0,8):
                 total += eval[abs(self.squares[row][cols])](row, cols, self.squares[row][cols])
         return total
+
+    def testcm(self):
+        number = 1000
+        total = 0
+        for i in range(number):
+            start = time()
+            self.calc_color_moves(len(self.move_list))
+            end = time()
+            total+=(end - start)
+        return total/number
 
     def at(self, square):
         row, col = square
