@@ -198,7 +198,7 @@ class NumberBoard:
                 num_moves = len(moves) # The length of this list would be its total possible moves.
                 if(num_moves == 8 and (row >= 2 and row <= 5 and col >= 2 and col <= 5)): # Centralized knight that controls enemy/empty space
                     val += vs * 0.1
-                if(     len([p for col in board for p in col if p == 2 * color(piece)]) >= 2
+                if(     len([p for col in self.squares for p in col if p == 2 * color(piece)]) >= 2
                         #self.two_pieces_of_type_on_board("knight", piece.color)
                         ): # Knight pair bonus
                     val += vs * 0.1
@@ -220,7 +220,7 @@ class NumberBoard:
             moves = self.calc_moves((row, col))
             if(moves != None):
                 num_moves = len(moves)
-                if( len([p for col in board for p in col if p == 3 * color(piece)]) >= 2
+                if( len([p for col in self.squares for p in col if p == 3 * color(piece)]) >= 2
 
                         #self.two_pieces_of_type_on_board("bishop", piece.color) # Power of Bishop Pair
                         ):
@@ -245,7 +245,7 @@ class NumberBoard:
             moves = self.calc_moves((row, col))
             if(moves != None):
                 num_moves = len(moves)
-                if( len([p for col in board for p in col if p == (4 * color(piece))]) >= 2
+                if( len([p for col in self.squares for p in col if p == (4 * color(piece))]) >= 2
 
                        # self.two_pieces_of_type_on_board("rook", piece.color)
                         ):
@@ -271,7 +271,7 @@ class NumberBoard:
         def king_eval(row, col, piece):
             val = 0
             moves = self.calc_moves((row, col))
-            pieces = [p for col in self.board for row in col if row != 0] # self.get_pieces_and_locs_on_board()[0] list of pieces
+            pieces = [(p for col in self.squares for row in col if row) != 0] # self.get_pieces_and_locs_on_board()[0] list of pieces
             vs = color(piece)
             if (moves != None and pieces != None):
                 increment = 1/len(pieces)
@@ -291,7 +291,7 @@ class NumberBoard:
         eval = {
             0 : (lambda x, y, z: 0),
             1 : pawn_eval,
-            2 : night_eval,
+            2 : knight_eval,
             3 : bishop_eval,
             4 : rook_eval,
             5 : queen_eval,
@@ -301,7 +301,7 @@ class NumberBoard:
         total = 0
         for cols in range(0,8):
             for row in range(0,8):
-                total += eval[color(self.squares[row][col])](row, col, self.squares[row][col])
+                total += eval[abs(self.squares[row][cols])](row, cols, self.squares[row][cols])
         return total
 
     def at(self, square):
