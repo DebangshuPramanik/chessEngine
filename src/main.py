@@ -17,6 +17,10 @@ from other_bot import find_best_move
 class Main:
     def __init__(self):
         pygame.init()
+
+        #Start game screen
+        
+
         self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
         pygame.display.set_caption("Chess")
         self.game = Game()
