@@ -8,6 +8,7 @@ from sidebar import Sidebar
 from bot import Bot
 from piece import *
 from other_bot import find_best_move
+from number_board import NumberBoard
 
 # I made a comment for fun.
 # So did I
@@ -187,6 +188,9 @@ class Main:
                         board = game.board
                         self.bot_playing = True if self.bot_index % 2 == 0 else False
                         self.bot_index += 1
+                    elif event.key == pygame.K_n:
+                        nb = NumberBoard(board=game.board)
+                        print(nb.testcm())
 
                 # Quit Application
                 elif event.type == pygame.QUIT:
