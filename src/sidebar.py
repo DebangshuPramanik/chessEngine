@@ -30,7 +30,8 @@ class Sidebar:
 
     def show_sidebar(screen):
         # this mainly just needs to draw the move list.
-        # for now, just draw the last 5 moves
+        # and just draw the last 5 moves
+        # for now, it only keeps a nice blank space to the right
         pass
 
     def get_promotion(self, pieces):

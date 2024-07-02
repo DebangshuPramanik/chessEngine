@@ -150,22 +150,11 @@ class Game:
         self.__init__()
 
     def end_the_game(self, surface):
-        rect = (
-            self.hovered_sqr.col * SQSIZE,
-            self.hovered_sqr.row * SQSIZE,
-            SQSIZE,
-            SQSIZE,
-        )
-        pygame.draw.rect(surface, (0, 0, 0), rect)
-        pygame.draw.rect(surface, 128, rect)
         if self.winner == None:
             pygame.display.set_caption("The game is a draw")
         else:
             pygame.display.set_caption(self.winner + " has won the game.")
-        time.sleep(40)
-        pygame.quit()
-        sys.exit()
-
+    
     def check_game_over(self):
         # Necessary Lists that are traversed to check for checks, and then for stalemate or checkmate, whichever occurs on the board
         total_black_moves = 0

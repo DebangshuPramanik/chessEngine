@@ -10,6 +10,7 @@ from piece import *
 from other_bot import find_best_move
 from number_board import NumberBoard
 from time import time
+from user_interface import *
 
 # I made a comment for fun.
 # So did I
@@ -19,8 +20,21 @@ from time import time
 class Main:
     def __init__(self):
         pygame.init()
+
+        #Start game screen
+        self.screen = pygame.display.set_mode((WIDTH//4, HEIGHT//4))
+        run_start_screen = True
+
+        while run_start_screen:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    run_start_screen = False
+
+
         self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
         pygame.display.set_caption("Chess")
+
+        # Game initialization
         self.game = Game()
         self.sidebar = Sidebar(self.screen)
         self.bot = Bot("black")
