@@ -9,6 +9,7 @@ from bot import Bot
 from piece import *
 from other_bot import find_best_move
 from number_board import NumberBoard
+from time import time
 from user_interface import *
 
 # I made a comment for fun.
@@ -114,7 +115,10 @@ class Main:
 
                 # if the bot is playing, make it's move and then move on
                 if self.bot_playing:
-                    best_move = find_best_move(board)
+                    start = time()
+                    best_move = find_best_move(board=board)
+                    end = time()
+                    print("found best move in "+str(end-start)+" seconds")
                     captured = board.squares[best_move.final.row][
                         best_move.final.col
                     ].has_piece()
