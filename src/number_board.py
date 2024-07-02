@@ -272,7 +272,7 @@ class NumberBoard:
         def king_eval(row, col, piece):
             val = 0
             moves = self.calc_moves((row, col))
-            pieces = [(p for col in self.squares for row in col if row) != 0] # self.get_pieces_and_locs_on_board()[0] list of pieces
+            pieces = [(p for col in self.squares for p in col if row) != 0] # self.get_pieces_and_locs_on_board()[0] list of pieces
             vs = color(piece)
             if (moves != None and pieces != None):
                 increment = 1/len(pieces)
