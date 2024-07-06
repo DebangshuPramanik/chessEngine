@@ -158,6 +158,14 @@ class NumberBoard:
         nb.castleable = [None, nb.white_castleable, nb.black_castleable]
         return nb
 
+    def sevaluate_board(self):
+        val_map=[0,1,3,3,5,9,10000]
+        total = 0
+        for cols in range(0,8):
+            for row in range(0,8):
+                total += color(self.squares[row][cols])*val_map[abs(self.squares[row][cols])]
+        return total
+
     def evaluate_board(self):
         val_map=[0,1,3,3,5,9,10000]
         # Evaluates the intrinsic value of a Pawn based on its position and squares controlled.
@@ -312,7 +320,7 @@ class NumberBoard:
             start = time()
             self.calc_color_moves(len(self.move_list))
             end = time()
-            total += (end - start)
+            total+=(end - start)
         return total/number
 
     def at(self, square):

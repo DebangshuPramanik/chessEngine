@@ -9,12 +9,27 @@ from piece import *
 from move import Move
 from sound import Sound
 from number_board import NumberBoard
+from time import time
 
 # This class (the Board class) sets up the board as a 2D array of Square objects, some of them have pieces.
 # This is the class that checks whether there is a check on the board, and this is the class used to evaluate all the positions.
 
 
 class Board:
+
+    def __init__(self):
+        self.squares = [[0, 0, 0, 0, 0, 0, 0, 0] for col in range(COLS)]
+        self.number_squares = None
+        self.last_move = None
+        self.en_passant = None
+        self._create()
+        self._add_pieces("white")
+        self._add_pieces("black")
+        self.counter = 0  # Used for FEN and for counting the total number of turns played on the board.
+        self.moves = []
+        self.played_moves = []
+        self.positions = []  # Used to store positions to check for repetition
+        self.positions.append(self.position_to_FEN().split(" ")[0])
 
     # Evaluate function which returns a number: A high positive number means white is winning,
     # a high absolute value negative number means black is winning, and the closer this eval is to a 0, the more even the position is)
@@ -174,20 +189,6 @@ class Board:
             else:
                 total_eval += king_eval(row, col, piece)
         return total_eval  # Returns the total eval of the position
-
-    def __init__(self):
-        self.squares = [[0, 0, 0, 0, 0, 0, 0, 0] for col in range(COLS)]
-        self.number_squares = None
-        self.last_move = None
-        self.en_passant = None
-        self._create()
-        self._add_pieces("white")
-        self._add_pieces("black")
-        self.counter = 0  # Used for FEN and for counting the total number of turns played on the board.
-        self.moves = []
-        self.played_moves = []
-        self.positions = []  # Used to store positions to check for repetition
-        self.positions.append(self.position_to_FEN().split(" ")[0])
 
     def get_pieces_and_locs_on_board(
         self,
@@ -450,6 +451,12 @@ class Board:
             if isinstance(M.initial.piece, Pawn):
                 M.set_pawn_move(True)
         piece.moves = Ms
+    
+    def testcm(self):
+        start = time()
+        self.calc_color_moves("white")
+        end = time()
+        return end-start
 
     def _create(self):
         for row in range(ROWS):

@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
+# TODO: WHY IS THE BOT STILL USING A BOARD'S CALCMOVES IM GOING INSANE:)))))))
 from multiprocessing import Pool
 from number_board import NumberBoard
 from move import *
+from time import time, sleep
 
 def tbm(b, nm):
     sq = b.at(nm.start)
@@ -11,7 +13,7 @@ def tbm(b, nm):
 
 # Thanks Sebastian Lague
 def ab(board, depth, white):
-    def order_moves(moves, board, white):
+    def order_moves(moves, board):
         # pv : piece value
         # cv : captured piece value
         for move in moves:
@@ -22,14 +24,13 @@ def ab(board, depth, white):
 
             if cv != 0:
                 move.mg = 10*cv - pv
-        sorted(moves, key=lambda move : move.mg)
+        return sorted(moves, key=lambda move : move.mg)
             
     def alphabeta(board, depth, alpha, beta, white):
         tb = board.copy()
-        if depth==0: return board.evaluate_board()
+        if depth==0: return board.sevaluate_board()
         if white:
-            moves = board.calc_color_moves(1)
-            order_moves(moves, board, white)
+            moves=order_moves(tb.calc_color_moves(1), tb)
             val = float('-inf')
             for move in moves:
                 tb.move(move)
@@ -39,8 +40,11 @@ def ab(board, depth, white):
                 tb.take_back()
             return val
         else:
-            moves = board.calc_color_moves(-1)
-            order_moves(moves, board, white)
+            start = time()
+            moves = order_moves(tb.calc_color_moves(-1), tb)
+            end = time()
+            #print("Time it takes for calculating and ordering moves: "+str(end-start))
+            #sleep(1)
             val = float('inf')
             for move in moves:
                 tb.move(move)
@@ -50,13 +54,15 @@ def ab(board, depth, white):
                 beta = min(beta, val)
                 tb.take_back()
             return val
-    return alphabeta(board, depth, float('-inf'), float('inf'), white)
+    value = alphabeta(board, depth, float('-inf'), float('inf'), white)
+    return value
 
 
 def eval_move(state):
     board, move = state
     tb = board.copy()
     tb.move(move)
+    # depth at 3
     val = ab(tb, 2, True)
     #print(move)
     #tb.print()
