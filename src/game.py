@@ -1,6 +1,4 @@
 import pygame
-import sys
-import time
 
 from board import Board
 from const import *

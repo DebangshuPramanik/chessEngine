@@ -312,7 +312,7 @@ class NumberBoard:
             start = time()
             self.calc_color_moves(len(self.move_list))
             end = time()
-            total+=(end - start)
+            total += (end - start)
         return total/number
 
     def at(self, square):
