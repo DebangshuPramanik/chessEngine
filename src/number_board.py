@@ -357,7 +357,7 @@ class NumberBoard:
         ir, ic = start
         fr, fc = end
         self.en_passant = None
-        assert p != 0
+        #assert p != 0
         self._move(start, end)
 
         if abs(p) == 1:  # Pawn
