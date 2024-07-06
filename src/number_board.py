@@ -159,7 +159,7 @@ class NumberBoard:
         return nb
 
     def sevaluate_board(self):
-        val_map=[0,1,3,3.1,5,9,10000]
+        val_map=[0,1,3,3,5,9,10000]
         total = 0
         for cols in range(0,8):
             for row in range(0,8):
@@ -318,7 +318,7 @@ class NumberBoard:
         total = 0
         for i in range(number):
             start = time()
-            self.calc_color_moves(len(self.move_list))
+            self.calc_color_moves(1 if len(self.move_list) % 2 == 0 else -1)
             end = time()
             total += (end - start)
         return total/number

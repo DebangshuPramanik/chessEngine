@@ -62,7 +62,6 @@ def eval_move(state):
     board, move = state
     tb = board.copy()
     tb.move(move)
-    # depth at 3
     val = ab(tb, 2, True)
     #print(move)
     #tb.print()

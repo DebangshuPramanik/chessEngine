@@ -128,7 +128,8 @@ class Main:
 
                 # print("Current Score: " + str(board.evaluate_board()))
 
-                print("Current Score: " + str(board.evaluate_board()))
+                nb = NumberBoard(board=game.board)
+                print("Current Score: " + str(nb.sevaluate_board()))
 
         dragger.undrag_piece()
         game.check_game_over()
@@ -180,10 +181,6 @@ class Main:
                         board = game.board
                     # toggles whether you're playing against the bot
                     elif event.key == pygame.K_b:
-                        game.reset()
-                        game = self.game
-                        dragger = game.dragger
-                        board = game.board
                         self.bot_playing = True if self.bot_index % 2 == 0 else False
                         self.bot_index += 1
                     elif event.key == pygame.K_n:
