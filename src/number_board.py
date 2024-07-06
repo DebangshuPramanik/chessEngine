@@ -159,7 +159,7 @@ class NumberBoard:
         return nb
 
     def sevaluate_board(self):
-        val_map=[0,1,3,3,5,9,10000]
+        val_map=[0,1,3,3.1,5,9,10000]
         total = 0
         for cols in range(0,8):
             for row in range(0,8):
@@ -182,15 +182,15 @@ class NumberBoard:
             if(moves != None):
                 num_moves = len(moves) # Stores the number of possible moves of the piece in this position.
                 if num_moves == 0 or num_moves == None:  # Pawn cannot move
-                    val -= vs * 0.05
+                    val -= vs * 0.1
                 elif rr < 2:  # Pawn is not advanced.
-                    val -= vs * 0.08
+                    val -= vs * 0.75
                 elif rr < 3:  # Pawn is advanced 1 square.
                     val += vs * 0.08
                 elif rr < 5:  # Pawn is advanced 2 or 3 squares.
-                    val += vs * 0.06
+                    val += vs * 0.1
                 elif rr < 7:  # Pawn is advanced between 3 squares and 6 sqyares.
-                    val += vs * 0.03
+                    val += vs * 0.65
                 else:  # Pawn is advanced almost to promotion!!!
                     val += vs * 0.04
 
@@ -206,7 +206,7 @@ class NumberBoard:
             if(moves != None):
                 num_moves = len(moves) # The length of this list would be its total possible moves.
                 if(num_moves == 8 and (row >= 2 and row <= 5 and col >= 2 and col <= 5)): # Centralized knight that controls enemy/empty space
-                    val += vs * 0.1
+                    val += vs * 0.75
                 if(     len([p for col in self.squares for p in col if p == 2 * color(piece)]) >= 2
                         #self.two_pieces_of_type_on_board("knight", piece.color)
                         ): # Knight pair bonus
@@ -216,7 +216,7 @@ class NumberBoard:
                 elif(row == 1 or col == 1 or row == 6 or col == 6): # Edge Knight, but not rim
                     val -= vs * 0.04
                 else:
-                    val -= vs * 0.08 # Rim knight, "A knight on the rim is dim"
+                    val -= vs * 0.1 # Rim knight, "A knight on the rim is dim"
 
             return val # Returns the instantaneous potential value of the knight
 
@@ -231,8 +231,8 @@ class NumberBoard:
                 num_moves = len(moves)
                 if( len([p for col in self.squares for p in col if p == 3 * color(piece)]) >= 2
 
-                        #self.two_pieces_of_type_on_board("bishop", piece.color) # Power of Bishop Pair
-                        ):
+                        #self.two_pieces_of_type_on_board("bishop", piece.color) 
+                        ): # Bishop Pair Bonus
                     val += vs * 0.25
                 if(num_moves > 11): # Bishop has a lot of scope
                     val += vs * 0.03
