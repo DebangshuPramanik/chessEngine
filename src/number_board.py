@@ -456,7 +456,7 @@ class NumberBoard:
         total = 0
         for i in range(number):
             start = time()
-            self.calc_color_moves(len(self.move_list))
+            self.calc_color_moves(1 if len(self.move_list) % 2 == 0 else -1)
             end = time()
             total += end - start
         return total / number
