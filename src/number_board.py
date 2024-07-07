@@ -159,158 +159,296 @@ class NumberBoard:
         return nb
 
     def sevaluate_board(self):
-        val_map=[0,1,3,3.1,5,9,10000]
+        val_map = [0, 1, 3, 3.1, 5, 9, 10000]
         total = 0
-        for cols in range(0,8):
-            for row in range(0,8):
-                total += color(self.squares[row][cols])*val_map[abs(self.squares[row][cols])]
+        for cols in range(0, 8):
+            for row in range(0, 8):
+                total += (
+                    color(self.squares[row][cols])
+                    * val_map[abs(self.squares[row][cols])]
+                )
         return total
 
     def evaluate_board(self):
-        val_map=[0,1,3,3,5,9,10000]
+        val_map = [0, 1, 3, 3, 5, 9, 10000]
+
         # Evaluates the intrinsic value of a Pawn based on its position and squares controlled.
         def pawn_eval(row, col, piece):
             # Initially, the piece is worth the amount of points it has in the game by default
             val = val_map[abs(piece)]
             # Shorthanding the value sign of a piece.
-            vs = color(piece) #piece.value_sign
-            # rr measures how many squares the pawn is advanced, it stands for "real row" on the board of the pawn
-            rr = row if vs == 1 else 8 - row
-
-            # Getting the moves a piece has (i.e., the squares that it controls)
-            moves = self.calc_moves((row, col))
-            if(moves != None):
-                num_moves = len(moves) # Stores the number of possible moves of the piece in this position.
-                if num_moves == 0 or num_moves == None:  # Pawn cannot move
-                    val -= vs * 0.1
-                elif rr < 2:  # Pawn is not advanced.
-                    val -= vs * 0.75
-                elif rr < 3:  # Pawn is advanced 1 square.
-                    val += vs * 0.08
-                elif rr < 5:  # Pawn is advanced 2 or 3 squares.
-                    val += vs * 0.1
-                elif rr < 7:  # Pawn is advanced between 3 squares and 6 sqyares.
-                    val += vs * 0.65
-                else:  # Pawn is advanced almost to promotion!!!
-                    val += vs * 0.04
-
-            return val # Returns the instantaneous positional value of the pawn
+            vs = color(piece)  # piece.value_sign
+            # Evaluating pawns below purely based on the location of their board.
+            if (
+                row == 7 or row == 0
+            ):  # Pawns should not exist on these squares: they are promoted by then, so the piece they become is then used.
+                val += 0.0
+            elif (row == 6 and vs == 1) or (row == 1 and vs == -1):
+                if col == 0 or col == 7:
+                    val += vs * 0.5
+                elif col == 1 or col == 2 or col == 5 or col == 6:
+                    val += vs * 0.5
+                else:
+                    val += vs * -2.0
+            elif (row == 5 and vs == 1) or (row == 2 and vs == -1):
+                if col == 0 or col == 7:
+                    val += vs * 0.5
+                elif col == 1 or col == 6:
+                    val -= vs * 0.5
+                elif col == 2 or col == 5:
+                    val -= vs * 1.0
+            elif (row == 4 and vs == 1) or (row == 3 and vs == -1):
+                if col == 3 or col == 4:
+                    val += vs * 2.0
+            elif (row == 3 and vs == 1) or (row == 4 and vs == -1):
+                if col == 0 or col == 1 or col == 6 or col == 7:
+                    val += vs * 0.5
+                elif col == 2 or col == 5:
+                    val += vs * 1.0
+                else:
+                    val += vs * 2.5
+            elif (row == 2 and vs == 1) or (row == 5 and vs == -1):
+                if col == 0 or col == 1 or col == 6 or col == 7:
+                    val += vs * 1.0
+                elif col == 2 or col == 5:
+                    val += vs * 2.0
+                else:
+                    val += vs * 3.0
+            else:
+                val += vs * 5.0
+            return val  # Returns the instantaneous positional value of the pawn
 
         def knight_eval(row, col, piece):
             # Initially, the piece is worth the amount of points it has in the game by default
             val = abs(piece)
             # Shorthanding the value sign of a piece.
             vs = color(piece)
-            # Getting the list of moves a piece has (i.e., the squares that it controls)
-            moves = self.calc_moves((row , col))
-            if(moves != None):
-                num_moves = len(moves) # The length of this list would be its total possible moves.
-                if(num_moves == 8 and (row >= 2 and row <= 5 and col >= 2 and col <= 5)): # Centralized knight that controls enemy/empty space
-                    val += vs * 0.75
-                if(     len([p for col in self.squares for p in col if p == 2 * color(piece)]) >= 2
-                        #self.two_pieces_of_type_on_board("knight", piece.color)
-                        ): # Knight pair bonus
-                    val += vs * 0.1
-                if(row >= 2 and row <= 5 and col >= 2 and col <= 5): # Centralized knight
-                    val += vs * 0.05
-                elif(row == 1 or col == 1 or row == 6 or col == 6): # Edge Knight, but not rim
-                    val -= vs * 0.04
+            # Evaluating knight(s) purely based on board location.
+            if row == 7 or row == 0:
+                if col == 0 or col == 7:
+                    val -= vs * 5.0
+                elif col == 1 or col == 6:
+                    val -= vs * 4.0
                 else:
-                    val -= vs * 0.1 # Rim knight, "A knight on the rim is dim"
-
-            return val # Returns the instantaneous potential value of the knight
+                    val -= vs * 3.0
+            elif (row == 6 and vs == 1) or (row == 1 and vs == -1):
+                if col == 0 or col == 7:
+                    val -= vs * 4.0
+                elif col == 1 or col == 6:
+                    val -= vs * 2.0
+                elif col == 3 or col == 4:
+                    val += vs * 0.5
+            elif (row == 5 and vs == 1) or (row == 2 and vs == -1):
+                if col == 0 or col == 7:
+                    val -= vs * 3.0
+                elif col == 1 or col == 6:
+                    val += vs * 0.5
+                elif col == 2 or col == 5:
+                    val += vs * 1.0
+                else:
+                    val += vs * 1.5
+            elif (row == 4 and vs == 1) or (row == 3 and vs == -1):
+                if col == 0 or col == 7:
+                    val -= vs * 3.0
+                elif col == 1 or col == 6:
+                    val += 0.0
+                elif col == 2 or col == 5:
+                    val += vs * 1.5
+                else:
+                    val += vs * 2.0
+            elif (row == 3 and vs == 1) or (row == 4 and vs == -1):
+                if col == 0 or col == 7:
+                    val -= vs * 3.0
+                elif col == 1 or col == 6:
+                    val += vs * 0.5
+                elif col == 2 or col == 5:
+                    val += vs * 1.5
+                else:
+                    val += vs * 2.0
+            elif (row == 2 and vs == 1) or (row == 5 and vs == -1):
+                if col == 0 or col == 7:
+                    val -= vs * 3.0
+                elif col == 1 or col == 6:
+                    val += 0.0
+                elif col == 2 or col == 5:
+                    val += vs * 1.0
+                else:
+                    val += vs * 1.5
+            elif (row == 1 and vs == -1) or (row == 6 and vs == -1):
+                if col == 0 or col == 7:
+                    val -= vs * 4.0
+                elif col == 1 or col == 6:
+                    val -= vs * 2.0
+            return val  # Returns the instantaneous potential value of the knight
 
         def bishop_eval(row, col, piece):
             # Initially, the piece is worth the amount of points it has in the game by default
             val = abs(piece)
             # Shorthanding the value sign of a piece.
             vs = color(piece)
-            # Getting the list of moves a piece has (i.e., the squares that it controls)
-            moves = self.calc_moves((row, col))
-            if(moves != None):
-                num_moves = len(moves)
-                if( len([p for col in self.squares for p in col if p == 3 * color(piece)]) >= 2
-
-                        #self.two_pieces_of_type_on_board("bishop", piece.color) 
-                        ): # Bishop Pair Bonus
-                    val += vs * 0.25
-                if(num_moves > 11): # Bishop has a lot of scope
-                    val += vs * 0.03
-                elif(num_moves >= 6): # Bishop has a decent amount of scope
-                    val += vs * 0.2
-                elif(num_moves >= 4): # Bishop has little scope
-                    val += vs * 0.05
-                else:                  # Bishop has no scope.
-                    val -= vs * 0.15
-
-            return val
+            # Evaluating bishop(s) purely based on board location.
+            if row == 7 or row == 0:
+                if col == 0 or col == 7:
+                    val -= vs * -2.0
+                else:
+                    val -= vs * -1.0
+            elif (row == 6 and vs == 1) or (row == 1 and vs == -1):
+                if col == 0 or col == 7:
+                    val -= vs * 1.0
+                elif col == 1 or col == 6:
+                    val += vs * 0.5
+            elif (row == 5 and vs == 1) or (row == 2 and vs == -1):
+                if col == 0 or col == 7:
+                    val -= vs * 1.0
+                else:
+                    val += vs * 1.0
+            elif (row == 4 and vs == 1) or (row == 3 and vs == -1):
+                if col == 0 or col == 7:
+                    val -= vs * 1.0
+                elif col == 1 or col == 6:
+                    val += 0.0
+                else:
+                    val += vs * 1.0
+            elif (row == 3 and vs == 1) or (row == 4 and vs == -1):
+                if col == 0 or col == 7:
+                    val -= vs * 1.0
+                elif col == 1 or col == 2 or col == 5 or col == 6:
+                    val += vs * 0.5
+                else:
+                    val += vs * 1.0
+            elif (row == 2 and vs == 1) or (row == 5 and vs == -1):
+                if col == 0 or col == 7:
+                    val -= vs * -1.0
+                elif col == 1 or col == 6:
+                    val += 0.0
+                elif col == 2 or col == 5:
+                    val += vs * 0.5
+                else:
+                    val += vs * 1.0
+            else:
+                if col == 0 or col == 7:
+                    val -= vs * 1.0
+            return val  # Returns the instantaneous potential value of the bishop
 
         def rook_eval(row, col, piece):
             # Initially, the piece is worth the amount of points it has in the game by default
             val = abs(piece)
             # Shorthanding the value sign of a piece.
             vs = color(piece)
-            # Getting the list of moves a piece has (i.e., the squares that it controls)
-            moves = self.calc_moves((row, col))
-            if(moves != None):
-                num_moves = len(moves)
-                if( len([p for col in self.squares for p in col if p == (4 * color(piece))]) >= 2
-
-                       # self.two_pieces_of_type_on_board("rook", piece.color)
-                        ):
-                    val += 0.3
-                if(num_moves > 11): # Rook has a lot of scope
-                    val += vs * 0.03
-                elif(num_moves >= 6): # Rook has a decent amount of scope
-                    val += vs * 0.2
-                elif(num_moves >= 4): # Rook has little scope
-                    val += vs * 0.05
-                else:                  # Rook has no scope.
-                    val -= vs * 0.15
-            return val
+            # Evaluating rook(s) purely based on board location
+            if row == 7 or row == 0:
+                if col == 3 or col == 4:
+                    val += vs * 0.5
+            elif (row >= 2 and row <= 7 and vs == 1) or (
+                row <= 6 and row >= 1 and vs == -1
+            ):
+                if col == 0 or col == 7:
+                    val -= vs * 0.5
+            else:
+                if col == 0 or col == 7:
+                    val += vs * 0.5
+                else:
+                    val += vs * 1.0
+            return val  # Returns the instantaneous potential value of the rook
 
         def queen_eval(row, col, piece):
+            # Initially, the piece is worth the amount of points it has in the game by default
+            val = abs(piece)
+            # Shorthanding the value sign of a piece.
             vs = color(piece)
-            return (
-                bishop_eval(row, col, piece) - (6 * vs)
-                + rook_eval(row, col, piece) - (4 * vs)
-                + color(piece)
-            )  # Rook (5) + Bishop (3) + 1 = Queen (9), * Piece (Points)
+            # Evaluating queen purely based on board location
+            if row == 7 or row == 0:
+                if col == 0 or col == 7:
+                    val -= vs * 2.0
+                elif col == 1 or col == 2 or col == 5 or col == 6:
+                    val -= vs * 1.0
+            elif (row == 6 and vs == 1) or (row == 1 and vs == -1):
+                if col == 0 or col == 7:
+                    val -= vs * -1.0
+                elif col == 2:
+                    val += vs * 0.5
+            elif (row == 5 and vs == 1) or (row == 2 and vs == -1):
+                if col == 0 or col == 7:
+                    val -= vs * -1.0
+                elif col != 6:
+                    val += vs * 0.5
+            elif (row == 4 and vs == 1) or (row == 3 and vs == -1):
+                if col == 7:
+                    val -= vs * 0.5
+                elif col == 2 or col == 3 or col == 4 or col == 5:
+                    val += vs * 0.5
+            elif (row == 3 and vs == 1) or (row == 4 and vs == -1):
+                if col == 0 or col == 7:
+                    val -= vs * 0.5
+                elif col != 1 or col != 6:
+                    val += vs * 0.5
+            elif (row == 2 and vs == 1) or (row == 5 and vs == -1):
+                if col == 0 or col == 7:
+                    val -= vs * 1.0
+                elif col != 1 or col != 6:
+                    val += vs * 0.5
+            else:
+                if col == 0 or col == 7:
+                    val -= vs * 1.0
+            return val  # Returns the instantaneous potential value of the queen
 
         def king_eval(row, col, piece):
-            val = 0
-            moves = self.calc_moves((row, col))
-            pieces = [(p for col in self.squares for p in col if row) != 0] # self.get_pieces_and_locs_on_board()[0] list of pieces
+            # Initially, the piece is worth the amount of points it has in the game by default
+            val = abs(piece)
+            # Shorthanding the value sign of a piece.
             vs = color(piece)
-            if (moves != None and pieces != None):
-                increment = 1/len(pieces)
-                if(len(pieces) <= 3):
-                    val += vs * (increment + 0.3)
-                elif(len(pieces) <= 6):
-                    val += vs * (increment + 0.1)
+            # Evaluating king purely based on board location
+            if (row == 7 and vs == 1) or (row == 0 and vs == -1):
+                if col == 0 or col == 7:
+                    val += vs * 2.0
+                elif col == 1 or col == 6:
+                    val += vs * 3.0
+                elif col == 2 or col == 5:
+                    val += vs * 1.0
+            elif (row == 6 and vs == 1) or (row == 1 and vs == -1):
+                if col == 0 or col == 1 or col == 6 or col == 7:
+                    val += vs * 2.0
+            elif (row == 5 and vs == 1) or (row == 2 and vs == -1):
+                if col == 0 or col == 7:
+                    val -= vs * 1.0
                 else:
-                    val -= vs * increment
-            return val + 10000 * vs
-
+                    val -= vs * 2.0
+            elif (row == 4 and vs == 1) or (row == 3 and vs == -1):
+                if col == 0 or col == 7:
+                    val -= vs * 2.0
+                elif col == 1 or col == 2 or col == 5 or col == 6:
+                    val -= vs * 3.0
+                else:
+                    val -= vs * 4.0
+            else:
+                if col == 0 or col == 7:
+                    val -= vs * 3.0
+                elif col == 1 or col == 2 or col == 5 or col == 6:
+                    val -= vs * 4.0
+                else:
+                    val -= vs * 5.0
+            return val  # Returns the instantaneous potential value of the king
 
         # def pawn_eval(row, col, piece):
         #     c = color(piece)
         #     eval = c * val_map[piece]
 
         eval = {
-            0 : (lambda x, y, z: 0),
-            1 : pawn_eval,
-            2 : knight_eval,
-            3 : bishop_eval,
-            4 : rook_eval,
-            5 : queen_eval,
-            6 : king_eval
+            0: (lambda x, y, z: 0),
+            1: pawn_eval,
+            2: knight_eval,
+            3: bishop_eval,
+            4: rook_eval,
+            5: queen_eval,
+            6: king_eval,
         }
 
         total = 0
-        for cols in range(0,8):
-            for row in range(0,8):
-                total += eval[abs(self.squares[row][cols])](row, cols, self.squares[row][cols])
+        for cols in range(0, 8):
+            for row in range(0, 8):
+                total += eval[abs(self.squares[row][cols])](
+                    row, cols, self.squares[row][cols]
+                )
         return total
 
     def testcm(self):
@@ -320,8 +458,8 @@ class NumberBoard:
             start = time()
             self.calc_color_moves(len(self.move_list))
             end = time()
-            total += (end - start)
-        return total/number
+            total += end - start
+        return total / number
 
     def at(self, square):
         row, col = square
@@ -352,7 +490,7 @@ class NumberBoard:
         ir, ic = start
         fr, fc = end
         self.en_passant = None
-        #assert p != 0
+        # assert p != 0
         self._move(start, end)
 
         if abs(p) == 1:  # Pawn
@@ -539,14 +677,15 @@ class NumberBoard:
         sr, sc = move.start
         er, ec = move.end
         halfway_move = Move(move.start, (sr, (sc + ec) // 2))
-        return ( not self.in_check(color)
-              and not self.move_in_check(halfway_move, color)
-            )
+        return not self.in_check(color) and not self.move_in_check(halfway_move, color)
+
     def valid_move(self, move, color):
         pt = abs(self.at(move.start))
-        if (pt == 6 and abs(move.start[1] - move.end[1]) == 2):
-            return (not self.move_in_check(move, color) and self.valid_castle_move(move, color))
-        return (not self.move_in_check(move, color))
+        if pt == 6 and abs(move.start[1] - move.end[1]) == 2:
+            return not self.move_in_check(move, color) and self.valid_castle_move(
+                move, color
+            )
+        return not self.move_in_check(move, color)
 
     def calc_moves(self, square):
         # The moves returned here
@@ -626,23 +765,35 @@ class NumberBoard:
         def all_light_square_bishops(c):
             def sq_color(x, y):
                 # ((x + y) % 2) gets the color as a 0 or a 1, but I want that as a -1 or a +1
-                return 1 if ((x + y) % 2) else -1 # 0 as False, everything else as true
+                return 1 if ((x + y) % 2) else -1  # 0 as False, everything else as true
+
             cps = [p for p in ps if color(p) == c and abs(p) != 6]
-            if (all(abs(p) == 3 for p in cps)):
+            if all(abs(p) == 3 for p in cps):
                 # (assume cs is colors is already there is a matrix, and c is the color is already there)
                 # bs =. (3=|).*(c=*)/ board
                 # ,(bs * cs)
                 # */ (= {.) -.&0 bs
                 # returns 1 if all bishops on same color
-                colors = [sq_color(x, y) for x in range(8) for y in range(8)] # generate a list of colors in the board, -1 is one color, 1 is the other
-                bishops = [(color(p) == c and abs(p) == 3) for row in self.squares for p in row] # bishop mask
-                bishop_colors = [b*c for b,c in zip(bishops,colors)] # multiply color by bishop mask
-                bishops_list = [p for p in bishop_colors if p != 0] # get only the bishops
-                if all(bishops_list[0] == p for p in bishops_list): return True # return true if they all are the same
+                colors = [
+                    sq_color(x, y) for x in range(8) for y in range(8)
+                ]  # generate a list of colors in the board, -1 is one color, 1 is the other
+                bishops = [
+                    (color(p) == c and abs(p) == 3) for row in self.squares for p in row
+                ]  # bishop mask
+                bishop_colors = [
+                    b * c for b, c in zip(bishops, colors)
+                ]  # multiply color by bishop mask
+                bishops_list = [
+                    p for p in bishop_colors if p != 0
+                ]  # get only the bishops
+                if all(bishops_list[0] == p for p in bishops_list):
+                    return True  # return true if they all are the same
             return False
+
         def side_insufficient_material(c, ps):
             cps = [p for p in ps if color(p) == c and abs(p) != 6]
-            if len(cps) == 0: return True
+            if len(cps) == 0:
+                return True
             # Color has more than 2 non-king pieces
             if len(cps) > 2:
                 return False
@@ -652,7 +803,8 @@ class NumberBoard:
             # Color has 2 pieces, both of which are not knights
             # Color has 2 bishops, both of which are the same color
             if all(abs(p) == 3 for p in cps) and len(cps) == 2:
-                if all_light_square_bishops(c): return True
+                if all_light_square_bishops(c):
+                    return True
             # Color has 2 pieces, both of which aren't knights, and both of which are not bishops on the same color
             if len(cps) == 2:
                 return False
@@ -666,8 +818,14 @@ class NumberBoard:
         ps = [p for row in self.squares for p in row if p != 0]
         if any(abs(p) == 1 for p in ps):
             return False  # Pawns
-        if all_light_square_bishops(1) and all(abs(p) == 6 for p in ps if color(p) == -1): return True
-        if all_light_square_bishops(-1) and all(abs(p) == 6 for p in ps if color(p) == 1): return True
+        if all_light_square_bishops(1) and all(
+            abs(p) == 6 for p in ps if color(p) == -1
+        ):
+            return True
+        if all_light_square_bishops(-1) and all(
+            abs(p) == 6 for p in ps if color(p) == 1
+        ):
+            return True
         if len(ps) >= 5:
             return False  # At least 5 pieces on the board
         # (There is a possible forced mate)

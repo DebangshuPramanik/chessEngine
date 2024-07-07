@@ -12,19 +12,28 @@ from number_board import NumberBoard
 from time import time
 from user_interface import *
 
+
 class Main:
     def __init__(self):
+        # Initializing pygame.
         pygame.init()
-        self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
-        pygame.display.set_caption("Chess")
 
         # Game initialization
+        self.GAME_SCREEN = pygame.display.set_mode((WIDTH, HEIGHT))
+        pygame.display.set_caption("Chess")
         self.game = Game()
-        self.sidebar = Sidebar(self.screen)
         self.bot = Bot("black")
-
         self.bot_playing = False
         self.bot_index = 0
+
+        # Initializing game screen
+        self.screen = self.GAME_SCREEN
+        self.sidebar = Sidebar(self.GAME_SCREEN)
+
+        # Initializing empty screens to be used later.
+        self.START_SCREEN = pygame.display.set_mode((600, 600))
+        self.END_SCREEN = pygame.display.set_mode((680, 680))
+        self.ANALYSIS_SCREEN = self.GAME_SCREEN
 
     def mousedown(self, event):
         game = self.game
@@ -73,7 +82,9 @@ class Main:
             released_row = dragger.mouseY // SQSIZE
             released_col = dragger.mouseX // SQSIZE
 
-            if (not (released_col in range(0, 8) and released_row in range(0, 8))) or (released_col in range(0, 8) and not released_row in range(0, 8)):
+            if (not (released_col in range(0, 8) and released_row in range(0, 8))) or (
+                released_col in range(0, 8) and not released_row in range(0, 8)
+            ):
                 dragger.undrag_piece()
                 return
 
@@ -102,7 +113,7 @@ class Main:
                     start = time()
                     best_move = find_best_move(board=board)
                     end = time()
-                    print("found best move in "+str(end-start)+" seconds")
+                    print("found best move in " + str(end - start) + " seconds")
                     captured = board.squares[best_move.final.row][
                         best_move.final.col
                     ].has_piece()
@@ -134,7 +145,7 @@ class Main:
         game.check_game_over()
 
     def mainloop(self):
-        screen = self.screen
+        screen = self.GAME_SCREEN
         game = self.game
         dragger = game.dragger
         board = game.board
@@ -166,7 +177,7 @@ class Main:
                 elif event.type == pygame.MOUSEBUTTONUP:
                     self.mouseup(event)
 
-                # Key Press to change Theme or restart
+                # Key Press to change Theme, take back a move, or restart
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_y:
                         board.take_back()
@@ -196,7 +207,42 @@ class Main:
             pygame.display.update()
         game.end_the_game(screen)
 
+    def start_loop(self):  # Start screen loop; this will render the start screen
+        font = pygame.font.SysFont(
+            "Times New Roman", 20
+        )  # Setting the font of this screen.
+        screen = self.START_SCREEN  # Setting Screen
+
+        # Colors
+        sky_blue = (135, 206, 235)  # Storing tuple for RGB of sky blue color.
+        black = (255, 255, 255)
+        blue = (0, 0, 128)
+
+        # Creating the 'play with player' game button
+        play_game_button_rect = (
+            100,
+            100,
+            150,
+            150,
+        )  # rect is created with parameters in this order: x, y, length, and height; x and y are of top left corner
+        pygame.draw.rect(screen, sky_blue, play_game_button_rect)
+        play_button_text = font.render("Play With Player", True, black, sky_blue)
+
+        # Creating the 'play with computer' game button
+        while True:
+            screen.blit(play_button_text, play_game_button_rect)
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+            pygame.display.update()
+
+    def end_loop(self):  # Ending screen loop
+        pass
+
+    def analysis_loop(self):  # Analysis screen loop
+        pass
+
 
 # Creation of a main object before running the game's main loop (the game itself).
 main = Main()
-main.mainloop()
+main.start_loop()
