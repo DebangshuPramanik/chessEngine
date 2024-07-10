@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# TODO: WHY IS THE BOT STILL USING A BOARD'S CALCMOVES IM GOING INSANE:)))))))
 from multiprocessing import Pool
 from number_board import NumberBoard
 from move import *
