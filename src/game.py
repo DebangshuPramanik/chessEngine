@@ -152,7 +152,7 @@ class Game:
             pygame.display.set_caption("The game is a draw")
         else:
             pygame.display.set_caption(self.winner + " has won the game.")
-    
+
     def check_game_over(self):
         # Necessary Lists that are traversed to check for checks, and then for stalemate or checkmate, whichever occurs on the board
         total_black_moves = 0

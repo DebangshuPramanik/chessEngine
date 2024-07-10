@@ -38,7 +38,6 @@ def interactive_test():
 # )
 
 
-
 nb.from_string(
     """
 . . . . . . . .
@@ -101,7 +100,6 @@ print(nb.draw_by_insufficient_material())
 
 nbb = NumberBoard(Board())
 nbb.print()
-
 
 
 s = """
