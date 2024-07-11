@@ -10,30 +10,22 @@ from piece import *
 from other_bot import find_best_move
 from number_board import NumberBoard
 from time import time
-from user_interface import *
-
 
 class Main:
     def __init__(self):
-        # Initializing pygame.
+        # Note: the main game screen is referred to as self.screen, as it was the primary and only screen when we started the project
+                                                # and is too ubiquitously used to replace everywhere
+        # Pygame and game screen initialization
         pygame.init()
-
-        # Game initialization
-        self.GAME_SCREEN = pygame.display.set_mode((WIDTH, HEIGHT))
+        self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
         pygame.display.set_caption("Chess")
+
+        # Game and Bot initialization
         self.game = Game()
+        self.sidebar = Sidebar(self.screen)
         self.bot = Bot("black")
         self.bot_playing = False
         self.bot_index = 0
-
-        # Initializing game screen
-        self.screen = self.GAME_SCREEN
-        self.sidebar = Sidebar(self.GAME_SCREEN)
-
-        # Initializing empty screens to be used later.
-        self.START_SCREEN = pygame.display.set_mode((600, 600))
-        self.END_SCREEN = pygame.display.set_mode((680, 680))
-        self.ANALYSIS_SCREEN = self.GAME_SCREEN
 
     def mousedown(self, event):
         game = self.game
@@ -82,9 +74,7 @@ class Main:
             released_row = dragger.mouseY // SQSIZE
             released_col = dragger.mouseX // SQSIZE
 
-            if (not (released_col in range(0, 8) and released_row in range(0, 8))) or (
-                released_col in range(0, 8) and not released_row in range(0, 8)
-            ):
+            if (not (released_col in range(0, 8) and released_row in range(0, 8))) or (released_col in range(0, 8) and not released_row in range(0, 8)):
                 dragger.undrag_piece()
                 return
 
@@ -113,7 +103,7 @@ class Main:
                     start = time()
                     best_move = find_best_move(board=board)
                     end = time()
-                    print("found best move in " + str(end - start) + " seconds")
+                    print("found best move in "+str(end-start)+" seconds")
                     captured = board.squares[best_move.final.row][
                         best_move.final.col
                     ].has_piece()
@@ -137,16 +127,11 @@ class Main:
                 # print(board.position_to_FEN())
                 # print(board.move_to_pgn(board.moves[-1]))
 
-                # print("Current Score: " + str(board.evaluate_board()))
-
-                nb = NumberBoard(board=game.board)
-                print("Current Score: " + str(nb.sevaluate_board()))
-
         dragger.undrag_piece()
         game.check_game_over()
 
-    def mainloop(self):
-        screen = self.GAME_SCREEN
+    def main_loop(self):
+        screen = self.screen
         game = self.game
         dragger = game.dragger
         board = game.board
@@ -178,7 +163,7 @@ class Main:
                 elif event.type == pygame.MOUSEBUTTONUP:
                     self.mouseup(event)
 
-                # Key Press to change Theme, take back a move, or restart
+                # Key Press to change Theme or restart
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_y:
                         board.take_back()
@@ -192,11 +177,16 @@ class Main:
                         board = game.board
                     # toggles whether you're playing against the bot
                     elif event.key == pygame.K_b:
+                        game.reset()
+                        game = self.game
+                        dragger = game.dragger
+                        board = game.board
                         self.bot_playing = True if self.bot_index % 2 == 0 else False
                         self.bot_index += 1
                     elif event.key == pygame.K_n:
                         nb = NumberBoard(board=game.board)
                         print(nb.testcm())
+                        print(str(nb.evaluate_board()))
 
                 # Quit Application
                 elif event.type == pygame.QUIT:
@@ -208,36 +198,88 @@ class Main:
         font = pygame.font.SysFont(
             "Times New Roman", 20
         )  # Setting the font of this screen.
-        screen = self.START_SCREEN  # Setting Screen
+        screen = pygame.display.set_mode((800, 800))  # Creating new screen
 
-        # Colors
-        sky_blue = (135, 206, 235)  # Storing tuple for RGB of sky blue color.
-        black = (255, 255, 255)
+        # Colors in tuples
+        sky_blue = (135, 206, 235)  
+        black = (0, 0, 0)
         blue = (0, 0, 128)
+        golden = (255, 215, 0)
+        light_green = (144, 238, 144)
+        light_gray = (211, 211, 211)
 
-        # Creating the 'play with player' game button
-        play_game_button_rect = (
-            100,
-            100,
-            150,
-            150,
+        # Background rect
+        bg_rect = (
+            0, 
+            0, 
+            800, 
+            800
+        )
+        pygame.draw.rect(screen, light_gray, bg_rect)
+
+        # Creating the 'play vs player', or pvp, game button
+        pvp_button_rect = (
+            25,
+            25,
+            250,
+            250
         )  # rect is created with parameters in this order: x, y, length, and height; x and y are of top left corner
-        pygame.draw.rect(screen, sky_blue, play_game_button_rect)
-        play_button_text = font.render("Play With Player", True, black, sky_blue)
+        pygame.draw.rect(screen, sky_blue, pvp_button_rect)
+        pvp_button_text = font.render("Play vs Player", True, black, sky_blue)
 
-        # Creating the 'play with computer' game button
+        # Creating the 'play with computer', or pvc, game button
+        pvc_button_rect = (
+            300, 
+            75,
+            150,
+            150
+        )
+        pygame.draw.rect(screen, golden, pvc_button_rect)
+        pvc_button_text = font.render("Play vs Computer", True, black, golden)
+
+        # Creating the 'analysis' button
+        analysis_button_rect = (
+            180, 
+            300, 
+            150, 
+            150
+        )
+        pygame.draw.rect(screen, light_green, analysis_button_rect)
+        analysis_button_text = font.render("Analyze a game!", True, black, light_green)
+
+        # Start screen loop to run the screen. 
         while True:
-            screen.blit(play_button_text, play_game_button_rect)
+            screen.blit(pvp_button_text, pvp_button_rect)
+            screen.blit(pvc_button_text, pvc_button_rect)
+            screen.blit(analysis_button_text, analysis_button_rect)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
+                x, y = pygame.mouse.get_pos()
+                if event.type == pygame.MOUSEBUTTONUP:
+                    if(75 <= y <= 225): # Checking for clicking of player v. player or player v. computer buttons
+                        if(150 <= x <= 225): # Player v. Player button
+                            self.__init__() # Quickly restarts program, since this is how the program starts
+                            return self.main_loop() # Starts the game main loop. 
+                        elif(300 <= x <= 450): # Player v. computer button activated
+                            self.__init__()
+                            self.bot_playing = True # Starts the main game with the computer having been chosen. 
+                            return self.main_loop()
+                    elif((180 <= x <= 330) and (300 <= y <= 450)):
+                        self.__init__()
+                        return self.analysis_loop()
             pygame.display.update()
+
+    def selection_loop(self):
+        pass
 
     def end_loop(self):  # Ending screen loop
         pass
 
     def analysis_loop(self):  # Analysis screen loop
-        pass
+        print("analysis")
+        pygame.quit()
+
 
 
 # Creation of a main object before running the game's main loop (the game itself).
