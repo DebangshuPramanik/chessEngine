@@ -219,8 +219,8 @@ class Main:
 
         # Creating the 'play vs player', or pvp, game button
         pvp_button_rect = (
-            25,
-            25,
+            75,
+            75,
             250,
             250
         )  # rect is created with parameters in this order: x, y, length, and height; x and y are of top left corner
@@ -229,10 +229,10 @@ class Main:
 
         # Creating the 'play with computer', or pvc, game button
         pvc_button_rect = (
-            300, 
+            450, 
             75,
-            150,
-            150
+            250,
+            250
         )
         pygame.draw.rect(screen, golden, pvc_button_rect)
         pvc_button_text = font.render("Play vs Computer", True, black, golden)
@@ -241,27 +241,29 @@ class Main:
         analysis_button_rect = (
             180, 
             300, 
-            150, 
-            150
+            250, 
+            250
         )
         pygame.draw.rect(screen, light_green, analysis_button_rect)
         analysis_button_text = font.render("Analyze a game!", True, black, light_green)
 
+        # Blitting the text and buttons. 
+        screen.blit(pvp_button_text, pvp_button_rect)
+        screen.blit(pvc_button_text, pvc_button_rect)
+        screen.blit(analysis_button_text, analysis_button_rect)
+
         # Start screen loop to run the screen. 
         while True:
-            screen.blit(pvp_button_text, pvp_button_rect)
-            screen.blit(pvc_button_text, pvc_button_rect)
-            screen.blit(analysis_button_text, analysis_button_rect)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
                 x, y = pygame.mouse.get_pos()
                 if event.type == pygame.MOUSEBUTTONUP:
-                    if(75 <= y <= 225): # Checking for clicking of player v. player or player v. computer buttons
-                        if(150 <= x <= 225): # Player v. Player button
+                    if(75 <= y <= 325): # Checking for clicking of player v. player or player v. computer buttons
+                        if(75 <= x <= 325): # Player v. Player button
                             self.__init__() # Quickly restarts program, since this is how the program starts
                             return self.main_loop() # Starts the game main loop. 
-                        elif(300 <= x <= 450): # Player v. computer button activated
+                        elif(450 <= x <= 700): # Player v. computer button activated
                             self.__init__()
                             self.bot_playing = True # Starts the main game with the computer having been chosen. 
                             return self.main_loop()

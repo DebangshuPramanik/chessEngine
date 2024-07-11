@@ -60,7 +60,6 @@ def ab(board, depth, white):
     value = alphabeta(board, depth, float("-inf"), float("inf"), white)
     return value
 
-
 def eval_move(state):
     board, move = state
     tb = board.copy()
@@ -71,7 +70,6 @@ def eval_move(state):
     # print(val)
     # print("---")
     return (move, val)
-
 
 def find_best_move(board):
     nb = NumberBoard(board)
