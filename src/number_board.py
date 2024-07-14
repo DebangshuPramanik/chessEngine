@@ -121,7 +121,8 @@ class NumberBoard:
         self.black_castleable = [True, True]
         self.castleable = [None, self.white_castleable, self.black_castleable]
         self.move_number = 0
-        self.move_list = []
+        self.move_list = [] # Used to store all the moves made to get to a position
+        self.possible_moves = [] # Used to store all of the possible moves in a given position: USED FOR CHESS ENGINE
         if board:
             self.move_number = board.counter
             self.squares = self.from_board(board)
@@ -525,6 +526,9 @@ class NumberBoard:
         return [p for p in places if self.in_board(p)]
 
     def calc_moves_no_check(self, square):
+        if not(len(self.possible_moves) == 0 or self.possible_moves == None):
+            self.possible_moves.clear()
+
         # NOT ALLOWED TO CALL IN_CHECK
         def color(piece):
             if piece == 0:
@@ -573,7 +577,11 @@ class NumberBoard:
 
             ends = [end for end in ends if self.in_board(end)]
             moves = [promotion_moves(end) for end in ends]
-            return [move for ms in moves for move in ms]
+            generated_moves = []
+            generated_moves.append([move for ms in moves for move in ms])
+            for move in generated_moves:
+                self.possible_moves.append(move)
+            return generated_moves
 
         def knight():
             possible_ends = [
@@ -587,7 +595,10 @@ class NumberBoard:
                 (row - 1, col + 2),
             ]
             possible_ends = self.places_in_board(possible_ends)
-            return [Move.end(e) for e in possible_ends if color(self.at(e)) != pcolor]
+            generated_moves = [Move.end(e) for e in possible_ends if color(self.at(e)) != pcolor]
+            for move in generated_moves:
+                self.possible_moves.append(move)
+            return generated_moves
 
         def bishop():
             moves = []
@@ -595,6 +606,8 @@ class NumberBoard:
             moves.extend(straight_line_moves((-1, 1)))
             moves.extend(straight_line_moves((1, -1)))
             moves.extend(straight_line_moves((-1, -1)))
+            for move in moves:
+                self.possible_moves.append(move)
             return moves
 
         def rook():
@@ -603,12 +616,16 @@ class NumberBoard:
             moves.extend(straight_line_moves((0, 1)))
             moves.extend(straight_line_moves((-1, 0)))
             moves.extend(straight_line_moves((0, -1)))
+            for move in moves:
+                self.possible_moves.append(move)
             return moves
 
         def queen():
             moves = []
             moves.extend(rook())
             moves.extend(bishop())
+            for move in moves:
+                self.possible_moves.append(move)
             return moves
 
         def king():
@@ -643,8 +660,11 @@ class NumberBoard:
                 and self.at((row, col + 2)) == 0
             ):
                 possible_ends.append((row, col + 2))
-
-            return [Move.end(e) for e in possible_ends if (color(self.at(e)) != pcolor)]
+            generated_moves = []
+            generated_moves.append([Move.end(e) for e in possible_ends if (color(self.at(e)) != pcolor)])
+            for move in generated_moves:
+                self.possible_moves.append(move)
+            return generated_moves
 
         def straight_line_moves(direction):
             ends = []
